@@ -30,6 +30,11 @@ module.exports = async (req, res) => {
       const g = pi.metadata || {};
       if (g.code_cadeau) await sendMail(team(), `Carte cadeau vendue : ${g.repas} repas`, `<p><b>${esc(g.de)}</b> offre <b>${esc(g.repas)} repas</b> à <b>${esc(g.pour)}</b>.</p><p>Code : <b>${esc(g.code_cadeau)}</b><br>Montant : ${eur(o.amount_total || 0)}<br>Acheteur : ${esc((o.customer_details && o.customer_details.email) || "")}</p><p><a href="${site()}/admin.html">Ouvrir l'admin</a></p>`).catch((e) => console.error(e));
     }
+    if (ev.type === "checkout.session.async_payment_failed") {
+      const email = o.customer_details && o.customer_details.email, m = o.metadata || {};
+      if (email) await sendMail(email, "Votre prélèvement Resto Pickup n'est pas passé", `<p>Bonjour,</p><p>Le prélèvement de ${eur(o.amount_total || 0)} pour votre commande a été refusé par la banque. Votre livraison n'est pas confirmée.</p><p>Appelez-nous au 06 60 68 05 07 : nous trouvons une solution ensemble, par carte ou par un nouveau prélèvement.</p>`).catch((e) => console.error(e));
+      await sendMail(team(), `Prélèvement refusé : ${m.livre_nom || email}`, `<p>Le prélèvement SEPA de ${eur(o.amount_total || 0)} a échoué. <b>Ne pas livrer</b> avant d'avoir appelé le client.</p><p>Tél. livraison : ${esc(m.livre_tel)}<br>Adresse : ${esc(m.livre_adresse)}</p>`).catch(() => {});
+    }
     if (ev.type === "invoice.payment_failed") {
       const c = await stripe.customers.retrieve(o.customer);
       if (c.email) await sendMail(c.email, "Votre paiement Resto Pickup n'est pas passé",

@@ -6,7 +6,7 @@ const { stripe, site } = require("./_lib");
 const store = require("./_store");
 
 const PRIX = 1199;
-const EVENTS = ["checkout.session.completed", "invoice.payment_failed", "customer.subscription.deleted"];
+const EVENTS = ["checkout.session.completed", "checkout.session.async_payment_failed", "invoice.payment_failed", "customer.subscription.deleted"];
 let _cat = null;
 
 async function priceByKey(key) {
@@ -52,7 +52,10 @@ async function ensureWebhook() {
   const saved = await store.get("cfg/webhook");
   const list = await stripe.webhookEndpoints.list({ limit: 100 });
   const found = list.data.find((w) => w.url === url && w.status === "enabled");
-  if (found && saved && saved.id === found.id) return (_wh = true);
+  if (found && saved && saved.id === found.id) {
+    if (EVENTS.some((e) => !found.enabled_events.includes(e))) await stripe.webhookEndpoints.update(found.id, { enabled_events: EVENTS });
+    return (_wh = true);
+  }
   // le secret n'est lisible qu'à la création : on recrée l'adresse si on ne l'a pas
   if (found) await stripe.webhookEndpoints.del(found.id);
   const w = await stripe.webhookEndpoints.create({ url, enabled_events: EVENTS, description: "Site Resto Pickup (créé automatiquement)" });
