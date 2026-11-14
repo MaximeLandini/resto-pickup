@@ -34,13 +34,15 @@ module.exports = async (req, res) => {
       ["Message", clean(b.message, 600)],
       ["Page", clean(b.page, 80)],
     ].filter((r) => r[1]);
-    const html = `<p><b>${TYPES[type]}</b></p><table cellpadding="6" style="border-collapse:collapse">${rows
-      .map(([k, v]) => `<tr><td style="color:#4A5368">${k}</td><td><b>${esc(v)}</b></td></tr>`)
-      .join("")}</table>${tel ? `<p><a href="tel:${esc(tel)}">Appeler</a> · <a href="${site()}/equipe.html#tel=${encodeURIComponent(tel)}">Préparer le lien de paiement</a></p>` : ""}`;
     const store = require("./_store");
     const id = store.uid();
     await store.set(`req/${id}`, { id, type, statut: "nouveau", date: new Date().toISOString(), champs: Object.fromEntries(rows) }).catch((e) => console.error(e));
-    await sendMail(team(), `${TYPES[type]} : ${clean(b.nom, 60) || tel}`, html, clean(b.email, 120) || undefined);
+    const { T } = require("./_mail");
+    const champs = Object.fromEntries(rows);
+    await sendMail(team(), T.demandeEquipe({ type, titre: TYPES[type], champs, email: clean(b.email, 120) || undefined }));
+    // accusé de réception à la personne, si elle a laissé son e-mail (pas pour une personne orientée par un tiers)
+    const mailPerso = type === "orientation" ? "" : clean(b.email, 120);
+    if (/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(mailPerso)) await sendMail(mailPerso, T.demandeAccuse({ type, prenom: clean(b.nom, 60).split(" ")[0] })).catch(() => {});
     return res.status(200).json({ ok: true });
   } catch (e) {
     return fail(res, e);

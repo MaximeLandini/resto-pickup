@@ -54,6 +54,8 @@ function parseOrder(b) {
     livre_nom: clean(`${b.prenom || ""} ${b.nom || ""}`, 120),
     livre_adresse: clean(`${b.adresse}, ${b.cp} ${b.commune}`, 300),
     livre_tel: clean(b.tel, 20),
+    livre_commune: clean(b.commune, 80),
+    livre_email: proche ? clean(b.email, 120).toLowerCase() : "",
     consignes: clean(b.consignes, 450),
     payeur: proche ? clean(`${b.p_prenom || ""} ${b.p_nom || ""}, ${b.p_tel || ""}`, 200) : "",
     canal: clean(b.canal, 20) || "site",

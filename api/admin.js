@@ -138,7 +138,7 @@ module.exports = async (req, res) => {
       if (!texte) return res.status(400).json({ error: "Message vide" });
       const c = await stripe.customers.retrieve(b.cid);
       const t = await store.addMessage(b.cid, "equipe", texte, c.name || c.email);
-      if (c.email) await sendMail(c.email, "Resto Pickup vous a répondu", `<p>Bonjour,</p><p>${esc(texte).replace(/\n/g, "<br>")}</p><p><a href="${site()}/mon-compte.html">Répondre depuis votre espace</a></p>`).catch((e) => console.error(e));
+      if (c.email) await sendMail(c.email, require("./_mail").T.reponseClient(texte)).catch((e) => console.error(e));
       return res.status(200).json({ messages: t.messages });
     }
 

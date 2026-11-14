@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
       if (allowed.includes(email)) {
         const code = String(crypto.randomInt(0, 1e6)).padStart(6, "0");
         await store.set(key, { h: hmac(code + email), exp: Date.now() + 10 * 60e3, essais: 0 });
-        await sendCode(email, code);
+        await sendCode(email, code, { equipe: true });
       }
       return res.status(200).json({ ok: true });
     }

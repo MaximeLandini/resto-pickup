@@ -38,11 +38,7 @@ module.exports = async (req, res) => {
       const carte = { code: m.code_cadeau, repas: +m.repas, montant: s.amount_total, de: m.de, pour: m.pour, message: m.message, expire: +m.expire };
       if (!m.envoyee && s.customer_details && s.customer_details.email) {
         const lien = `${site()}/offrir-des-repas.html?carte=${id}#carte`;
-        await sendMail(s.customer_details.email, `Votre carte cadeau Resto Pickup ${carte.code}`,
-          `<p>Bonjour ${esc(m.de)},</p><p>Merci ! Voici votre carte cadeau pour ${esc(m.pour)} : <b>${carte.repas} repas</b>, soit ${fmt(carte.montant)}.</p>
-           <p style="font-size:26px;letter-spacing:3px"><b>${carte.code}</b></p>
-           <p>Pour l'imprimer ou la transférer : <a href="${lien}">ouvrir la carte</a>.</p>
-           <p>Pour l'utiliser, il suffit de saisir ce code au moment de commander sur le site, ou d'appeler le 06 60 68 05 07. La carte est valable un an.</p>`);
+        await sendMail(s.customer_details.email, require("./_mail").T.cadeauAcheteur(carte, lien));
         await stripe.paymentIntents.update(s.payment_intent.id, { metadata: { envoyee: "1" } });
       }
       return res.status(200).json(carte);

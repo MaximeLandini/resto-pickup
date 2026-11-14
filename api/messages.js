@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
     if (texte.length < 2) return res.status(400).json({ error: "Message vide" });
     const c = await stripe.customers.retrieve(cid);
     const t = await store.addMessage(cid, "client", texte, c.name || c.email);
-    await sendMail(team(), `Message de ${c.name || c.email}`, `<p><b>${esc(c.name || "")}</b> (${esc(c.email || "")}) a écrit :</p><blockquote style="border-left:4px solid #E04A2F;padding-left:12px">${esc(texte).replace(/\n/g, "<br>")}</blockquote><p><a href="${site()}/admin.html#client=${cid}">Répondre depuis l'espace admin</a></p>`, c.email).catch(() => {});
+    await sendMail(team(), require("./_mail").T.messageEquipe({ nom: c.name || c.email, email: c.email, texte, cid })).catch(() => {});
     return res.status(200).json({ messages: t.messages });
   } catch (e) { console.error(e); await require("./_lib").reportBug("/api/messages", e); return res.status(500).json({ error: "Erreur" }); }
 };

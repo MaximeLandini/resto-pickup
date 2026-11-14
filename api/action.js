@@ -3,10 +3,12 @@ const { stripe, verifyToken, activeSub, body, nextDelivery, ZONES, site, notifyT
 const esc = (x) => String(x || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const SVC = { midi: "le midi", soir: "le soir", "midi-soir": "midi et soir" };
 const JN = ["", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam.", "dim."];
-async function alerte(cid, titre, detail) {
+const { T } = require("./_mail");
+async function alerte(cid, titre, detail, accuse) {
   const c = await stripe.customers.retrieve(cid).catch(() => ({}));
   const nom = c.name || c.email || cid;
-  return notifyTeam(`Espace client : ${titre} (${nom})`, `<p><b>${esc(nom)}</b>${c.email ? ` (${esc(c.email)})` : ""}${c.phone ? `, ${esc(c.phone)}` : ""}</p><p>${detail}</p><p><a href="${site()}/admin.html#client=${cid}">Voir la fiche</a></p>`, c.email);
+  await notifyTeam(T.actionEquipe({ titre, nom, email: c.email, tel: c.phone, detail, cid }));
+  if (accuse && c.email) await require("./_lib").sendMail(c.email, T.actionClient(accuse[0], accuse[1])).catch((e) => console.error(e));
 }
 const { fee, REPAS_MIN } = require("./_commande");
 module.exports = async (req, res) => {
@@ -32,10 +34,11 @@ module.exports = async (req, res) => {
       const resume = new Date(next.getTime() + (7 * (semaines - 1) + 4) * 864e5);
       const absences = [m.absences, next.toISOString().slice(0, 10)].filter(Boolean).join(",").slice(-480);
       await stripe.subscriptions.update(s.id, { pause_collection: { behavior: "void", resumes_at: Math.floor(resume / 1000) }, metadata: { absences } });
-      await alerte(cid, "absence signalée", `Absent ${semaines > 1 ? semaines + " semaines" : "une semaine"} à partir de la livraison du <b>${next.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</b>. Ni livraison ni prélèvement, reprise automatique le ${resume.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}.`);
+      await alerte(cid, "absence signalée", `Absent ${semaines > 1 ? semaines + " semaines" : "une semaine"} à partir de la livraison du <b>${next.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</b>. Ni livraison ni prélèvement, reprise automatique le ${resume.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}.`,
+        ["absence", { semaines, debut: next.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }), reprise: resume.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) }]);
     } else if (b.type === "resume") {
       await stripe.subscriptions.update(s.id, { pause_collection: "" });
-      await alerte(cid, "reprise des livraisons", "Le client a annulé son absence : livraisons et prélèvements reprennent dès la semaine prochaine.");
+      await alerte(cid, "reprise des livraisons", "Le client a annulé son absence : livraisons et prélèvements reprennent dès la semaine prochaine.", ["reprise", {}]);
     } else if (b.type === "change") {
       const service = ["midi", "soir", "midi-soir"].includes(b.service) ? b.service : "soir";
       const jours = [...new Set(String(b.jours || "").replace(/[^1-7]/g, "").split(""))].sort().join("");
@@ -51,18 +54,19 @@ module.exports = async (req, res) => {
         items: [{ id: itRepas.id, quantity: repas }, itLiv ? { id: itLiv.id, price_data: liv, quantity: 1 } : { price_data: liv, quantity: 1 }],
         proration_behavior: "none", metadata: { service, jours, personnes: String(personnes) },
       });
-      await alerte(cid, "formule modifiée", `Nouvelle formule : <b>${SVC[service]}</b>, ${jours.split("").map((d) => JN[+d]).join(" ")}, ${personnes === 2 ? "2 personnes" : "1 personne"}, soit <b>${repas} repas</b> par semaine.<br>Avant : ${esc(SVC[m.service] || m.service)}, jours ${esc(m.jours)}, ${esc(m.personnes || 1)} pers.`);
+      await alerte(cid, "formule modifiée", `Nouvelle formule : <b>${SVC[service]}</b>, ${jours.split("").map((d) => JN[+d]).join(" ")}, ${personnes === 2 ? "2 personnes" : "1 personne"}, soit <b>${repas} repas</b> par semaine.<br>Avant : ${esc(SVC[m.service] || m.service)}, jours ${esc(m.jours)}, ${esc(m.personnes || 1)} pers.`,
+        ["formule", { resume: `${SVC[service]}, ${require("./_mail").joursTxt(jours)}, ${personnes === 2 ? "2 personnes" : "1 personne"}`, repas }]);
     } else if (b.type === "cadeau") {
       const { findGift } = require("./_commande");
       const g = await findGift(b.code);
       if (!g || g.utilisee || g.expiree) return res.status(400).json({ error: !g ? "Code inconnu" : g.utilisee ? "Code déjà utilisé" : "Code expiré" });
       await stripe.customers.createBalanceTransaction(cid, { amount: -g.montant, currency: "eur", description: `Carte cadeau ${g.code}` });
       await stripe.paymentIntents.update(g.pi.id, { metadata: { utilisee: cid } });
-      await alerte(cid, "carte cadeau utilisée", `Code <b>${esc(g.code)}</b> crédité : ${(g.montant / 100).toFixed(2).replace(".", ",")} € déduits des prochains prélèvements.`);
+      await alerte(cid, "carte cadeau utilisée", `Code <b>${esc(g.code)}</b> crédité : ${(g.montant / 100).toFixed(2).replace(".", ",")} € déduits des prochains prélèvements.`, ["cadeau", { code: g.code, montant: (g.montant / 100).toFixed(2).replace(".", ",") + " €" }]);
       return res.status(200).json({ ok: true, montant: g.montant / 100 });
     } else if (b.type === "address") {
       await stripe.subscriptions.update(s.id, { metadata: { livre_adresse: String(b.adresse || "").slice(0, 300), consignes: String(b.consignes || "").slice(0, 450) } });
-      await alerte(cid, "adresse ou consignes modifiées", `Adresse : <b>${esc(b.adresse)}</b><br>Consignes : ${esc(b.consignes) || "aucune"}<br><span style="color:#4A5368">Avant : ${esc(m.livre_adresse)} / ${esc(m.consignes) || "aucune"}</span>`);
+      await alerte(cid, "adresse ou consignes modifiées", `Adresse : <b>${esc(b.adresse)}</b><br>Consignes : ${esc(b.consignes) || "aucune"}<br><span style="color:#4A5368">Avant : ${esc(m.livre_adresse)} / ${esc(m.consignes) || "aucune"}</span>`, ["adresse", { adresse: b.adresse, consignes: b.consignes }]);
     } else return res.status(400).json({ error: "Action inconnue" });
     return res.status(200).json({ ok: true });
   } catch (e) { console.error(e); await reportBug("espace client, action " + (body(req).type || "?"), e); return res.status(500).json({ error: "Erreur, appelez le 06 60 68 05 07" }); }
