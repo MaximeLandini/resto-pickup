@@ -4,7 +4,7 @@
       <p class="tag">À table, chez vous.</p>
       <h1>Les bons repas de la semaine, <span class="relief">livrés chez vous en une fois.</span></h1>
       <p class="hero3__lead">Un bon plat et son dessert, cuisinés comme chez le traiteur. Vous choisissez combien de repas vous voulez. Vous les rangez au frigo et vous les réchauffez en quelques minutes.</p>
-      <p class="hero3__price"><strong>{{prix}}</strong> <span>le repas, plat et dessert<br>+ livraison, {{livmax}} maximum par semaine</span></p>
+      <p class="hero3__price"><strong>{{prix}}</strong> <span>le repas, plat et dessert<br> + livraison, {{livmax}} maximum par semaine</span></p>
       <div class="hero3__cta">
         <a class="btn btn--main btn--lg" href="#composer">Voir mon prix et ma date</a>
         <a class="btn btn--ghost btn--lg" href="tel:{{telHref}}">{{ic_telephone}}{{tel}}</a>
@@ -110,19 +110,19 @@
     <div class="stage__grid">
       <form class="phrase" id="phrase" novalidate aria-label="Composer votre semaine">
         <p class="phrase__line">
-          <span class="ph">Je commande pour <span class="slot"><select id="ph-pour" aria-label="Pour qui">
+          <span class="ph" data-lab="Pour qui"><span class="ph__t">Je commande pour </span><span class="slot"><select id="ph-pour" aria-label="Pour qui">
             <option value="moi">moi</option><option value="mere">ma mère</option><option value="pere">mon père</option><option value="parents">mes parents</option><option value="proche">un proche</option>
-          </select></span>,</span>
-          <span class="ph"><span class="slot"><select id="ph-pers" aria-label="Nombre de personnes">
+          </select></span><i class="ph__p">,</i></span>
+          <span class="ph" data-lab="Combien de personnes"><span class="slot"><select id="ph-pers" aria-label="Nombre de personnes">
             <option value="1">une personne</option><option value="2">deux personnes</option>
-          </select></span>,</span>
-          <span class="ph"><span class="slot"><select id="ph-svc" aria-label="Quels repas">
+          </select></span><i class="ph__p">,</i></span>
+          <span class="ph" data-lab="Quels repas"><span class="slot"><select id="ph-svc" aria-label="Quels repas">
             <option value="soir">le soir</option><option value="midi">le midi</option><option value="midi-soir">midi et soir</option>
           </select></span></span>
-          <span class="ph"><span class="slot"><select id="ph-jours" aria-label="Combien de jours par semaine">
+          <span class="ph" data-lab="Quels jours"><span class="slot"><select id="ph-jours" aria-label="Combien de jours par semaine">
             <option value="7">tous les jours</option><option value="6">6 jours sur 7</option><option value="5">5 jours sur 7</option><option value="4">4 jours par semaine</option><option value="alt">un jour sur deux</option><option value="3">3 jours par semaine</option><option value="2">2 jours par semaine</option><option value="x" hidden>jours choisis</option>
-          </select></span>,</span>
-          <span class="ph">livré au <span class="slot slot--cp"><input id="ph-cp" inputmode="numeric" maxlength="5" autocomplete="postal-code" placeholder="72000" aria-label="Code postal de livraison"></span>.</span>
+          </select></span><i class="ph__p">,</i></span>
+          <span class="ph" data-lab="Code postal de livraison"><span class="ph__t">livré au </span><span class="slot slot--cp"><input id="ph-cp" inputmode="numeric" maxlength="5" autocomplete="postal-code" placeholder="72000" aria-label="Code postal de livraison"></span><i class="ph__p">.</i></span>
         </p>
         <div class="phrase__answer" aria-live="polite">
           <p class="phrase__price"><strong id="ph-total">{{p1}}</strong> <span id="ph-per">par semaine, 7 repas</span></p>

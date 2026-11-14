@@ -41,15 +41,15 @@
 
         <fieldset data-step="1">
           <legend>Vos repas</legend>
-          <div class="phone-band"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5h3l1.4 4.3-2 1.5a11.5 11.5 0 0 0 5.3 5.3l1.5-2 4.3 1.4v3a2 2 0 0 1-2 2A16.5 16.5 0 0 1 5 5.5a2 2 0 0 1 2-2z"/></svg><p><b>Pas à l'aise avec Internet ?</b>On vous rappelle et on fait la commande ensemble.</p><button type="button" class="btn btn--ghost" data-rappel>Être rappelé</button></div>
+          <div class="phone-band"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5h3l1.4 4.3-2 1.5a11.5 11.5 0 0 0 5.3 5.3l1.5-2 4.3 1.4v3a2 2 0 0 1-2 2A16.5 16.5 0 0 1 5 5.5a2 2 0 0 1 2-2z"/></svg><p><b>Pas à l'aise avec Internet ?</b>On vous rappelle et on fait la commande ensemble.</p><button type="button" class="btn btn--ghost" data-rappel>Être rappelé</button></div>
           <p class="mini-total" id="mini-total" aria-live="polite"></p>
-          <span class="qlabel" id="q-svc">Quels repas ?</span>
+          <span class="qlabel" id="q-svc">Quels repas ?</span>
           <div class="choices choices--3" role="radiogroup" aria-labelledby="q-svc">
             <label class="choice"><input type="radio" name="service" value="midi"><span><b>Le midi</b><small>Le déjeuner</small></span></label>
             <label class="choice"><input type="radio" name="service" value="soir" checked><span><b>Le soir</b><small>Le dîner</small></span></label>
             <label class="choice"><input type="radio" name="service" value="midi-soir"><span><b>Midi et soir</b><small>Les deux repas</small></span></label>
           </div>
-          <span class="qlabel" id="q-days">Quels jours ? <small class="qhint">Touchez un jour pour l'ajouter ou le retirer.</small></span>
+          <span class="qlabel" id="q-days">Quels jours ? <small class="qhint">Touchez un jour pour l'ajouter ou le retirer.</small></span>
           <div class="presets" role="group" aria-label="Choix rapides"><button type="button" data-preset="1234567" aria-pressed="false">Tous les jours</button><button type="button" data-preset="12345" aria-pressed="false">Du lundi au vendredi</button><button type="button" data-preset="1357" aria-pressed="false">Un jour sur deux</button></div>
           <div class="daypick" role="group" aria-labelledby="q-days">
             <label><input type="checkbox" name="jours" value="1" checked><span>Lun.</span></label>
@@ -61,12 +61,12 @@
             <label><input type="checkbox" name="jours" value="7" checked><span>Dim.</span></label>
           </div>
           <p class="err" id="days-err" aria-live="polite"></p>
-          <span class="qlabel">Pour combien de personnes ?</span>
+          <span class="qlabel">Pour combien de personnes ?</span>
           <div class="choices">
             <label class="choice"><input type="radio" name="personnes" value="1" checked><span><b>1 personne</b><small>Un repas à chaque fois</small></span></label>
             <label class="choice"><input type="radio" name="personnes" value="2"><span><b>2 personnes</b><small>Deux repas identiques à chaque fois</small></span></label>
           </div>
-          <span class="qlabel">Qui reçoit les repas ?</span>
+          <span class="qlabel">Qui reçoit les repas ?</span>
           <div class="choices">
             <label class="choice"><input type="radio" name="pour" value="moi" checked><span><b>Moi</b><small>Je les reçois chez moi</small></span></label>
             <label class="choice"><input type="radio" name="pour" value="proche"><span><b>Un parent ou un proche</b><small>Je paie, il ou elle les reçoit chez lui</small></span></label>
@@ -76,7 +76,7 @@
         </fieldset>
 
         <fieldset data-step="2" hidden>
-          <legend>Où livrons-nous ?</legend>
+          <legend>Où livrons-nous ?</legend>
           <p class="mini-recap" id="mini-recap"></p>
           <div class="form-stack">
             <p class="sub" id="who-label">Vos coordonnées de livraison</p>
@@ -102,7 +102,7 @@
                 <div class="field"><label for="p-tel">Votre téléphone</label><input id="p-tel" name="p_tel" type="tel" autocomplete="tel" data-req="1"></div>
               </div>
             </div>
-            <div class="field" data-moi><label for="f-email">E-mail <span style="font-weight:400">(pour les factures)</span></label><input id="f-email" name="email" type="email" autocomplete="email"><p class="hint">Pas d'e-mail ? Laissez vide, les factures arrivent par courrier.</p></div>
+            <div class="field" data-moi><label for="f-email">E-mail <span style="font-weight:400">(pour les factures)</span></label><input id="f-email" name="email" type="email" autocomplete="email"><p class="hint">Pas d'e-mail ? Laissez vide, les factures arrivent par courrier.</p></div>
           </div>
           <div class="nav-steps"><button type="button" class="btn btn--ghost" data-prev>Retour</button><button type="button" class="btn btn--main" data-next>Continuer</button></div>
         </fieldset>
@@ -118,7 +118,7 @@
           </div>
           <p class="err" id="pay-err" aria-live="polite"></p>
           <div class="nav-steps"><button type="button" class="btn btn--ghost" data-prev>Retour</button><button type="submit" class="btn btn--accent btn--lg" id="pay-btn">Payer et valider</button></div>
-          <p class="demo" id="pay-demo" hidden>Aperçu : ici le client part sur la page de paiement sécurisée Stripe (carte, Apple Pay, Google Pay ou prélèvement SEPA), puis revient sur la confirmation.</p>
+          <p class="demo" id="pay-demo" hidden>Aperçu : ici le client part sur la page de paiement sécurisée Stripe (carte, Apple Pay, Google Pay ou prélèvement SEPA), puis revient sur la confirmation.</p>
         </fieldset>
       </form>
 
@@ -135,7 +135,7 @@
         <div class="total"><span id="s-per">Par semaine</span><strong id="s-total">98,91 €</strong></div>
         <p class="small" id="s-small">Débité chaque semaine. Pause ou arrêt sans frais avant le samedi.</p>
         <div class="pay-logos" aria-label="Moyens de paiement acceptés"><span>CB</span><span>Visa</span><span>Mastercard</span><span>Apple Pay</span><span>Google Pay</span><span>Prélèvement</span></div>
-        <p class="small" style="margin-top:1rem">Besoin d'aide ? <a href="tel:+33660680507"><strong>06 60 68 05 07</strong></a></p>
+        <p class="small" style="margin-top:1rem">Besoin d'aide ? <a href="tel:+33660680507"><strong>06 60 68 05 07</strong></a></p>
       </aside>
     </div>
   </div>
@@ -144,7 +144,7 @@
 <footer class="foot">
   <div class="foot__days" aria-hidden="true"><img src="img/jour-1.svg" alt="" width="44" height="44"><img src="img/jour-2.svg" alt="" width="44" height="44"><img src="img/jour-3.svg" alt="" width="44" height="44"><img src="img/jour-4.svg" alt="" width="44" height="44"><img src="img/jour-5.svg" alt="" width="44" height="44"><img src="img/jour-6.svg" alt="" width="44" height="44"><img src="img/jour-7.svg" alt="" width="44" height="44"></div>
   <div class="wrap">
-    <div class="foot__hero">
+    <div class="foot__hero" hidden>
       <div><p class="foot__big">À table, <span>chez vous.</span></p><p class="foot__sub">Tous vos repas de la semaine, livrés en une fois. Plat et dessert, 11,99 € le repas.</p></div>
       <div class="foot__call">
         <p>Une personne vous répond, du lundi au vendredi</p>
@@ -157,7 +157,7 @@
       <div><img class="foot__logo" src="img/logo-blanc.svg" alt="Resto Pickup" width="170" height="106"><p>Livraison hebdomadaire de repas complets de qualité traiteur, à domicile, en Sarthe, en Mayenne et dans l'Orne. Pour vous, ou pour un parent.</p></div>
       <div><h2>Nous livrons</h2><ul class="foot__zones"><li><a class="fz" href="portage-repas-le-mans.html"><img src="img/jour-2.svg" alt="" width="36" height="36"><span><b>Le Mans et 30 km autour</b>Livré le mardi</span></a></li><li><a class="fz" href="portage-repas-loue.html"><img src="img/jour-4.svg" alt="" width="36" height="36"><span><b>Loué, Sablé et alentour</b>Livré le jeudi</span></a></li><li><a class="fz" href="portage-repas-laval-alencon.html"><img src="img/jour-4.svg" alt="" width="36" height="36"><span><b>Laval, Évron, Alençon et alentour</b>Livré le jeudi</span></a></li></ul></div>
       <div><h2>Pratique</h2><ul><li><a href="index.html#menu">Le menu de la semaine</a></li><li><a href="index.html#carton">Comment ça marche</a></li><li><a href="repas-domicile-parent-age.html">Commander pour un parent</a></li><li><a href="offrir-des-repas.html">Offrir des repas</a></li><li><a href="professionnels-partenaires.html">Professionnels et partenaires</a></li><li><a href="communes-livrees.html">Toutes les communes livrées</a></li><li><a href="index.html#questions">Questions fréquentes</a></li></ul></div>
-      <div><h2>Votre compte</h2><ul><li><a href="mon-compte.html">Mon espace client</a></li><li><a href="mon-compte.html">Signaler une absence</a></li><li><a href="mon-compte.html">Mes factures</a></li><li>E-mail : bonjour@restopickup.com</li></ul></div>
+      <div><h2>Votre compte</h2><ul><li><a href="mon-compte.html">Mon espace client</a></li><li><a href="mon-compte.html">Signaler une absence</a></li><li><a href="mon-compte.html">Mes factures</a></li><li>E-mail : bonjour@restopickup.com</li></ul></div>
     </div>
     <div class="foot__base">
       <div class="foot__pay" aria-label="Paiement sécurisé"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/><circle class="dot" cx="12" cy="15.5" r="1.5"/></svg><span>Paiement sécurisé par Stripe</span><i>CB</i><i>Visa</i><i>Mastercard</i><i>Apple Pay</i><i>Google Pay</i><i>Prélèvement</i></div>
@@ -176,11 +176,11 @@
       <div class="field"><label for="r-tel">Votre téléphone</label><input id="r-tel" name="tel" type="tel" inputmode="tel" autocomplete="tel" required><p class="err" data-err></p></div>
       <span class="qlabel">C'est pour</span>
       <div class="rseg" role="radiogroup"><label><input type="radio" name="pour" value="moi" checked><span>Moi</span></label><label><input type="radio" name="pour" value="parent"><span>Un parent</span></label></div>
-      <span class="qlabel">Quand vous rappeler ?</span>
+      <span class="qlabel">Quand vous rappeler ?</span>
       <div class="rseg rseg--3" role="radiogroup"><label><input type="radio" name="creneau" value="matin"><span>Le matin</span></label><label><input type="radio" name="creneau" value="aprem"><span>L'après-midi</span></label><label><input type="radio" name="creneau" value="" checked><span>Peu importe</span></label></div>
       <input type="hidden" name="type" value="rappel"><input class="hp" name="site_web" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button type="submit" class="btn btn--main btn--lg sheet__go">Être rappelé</button>
-      <p class="sheet__alt">Vous préférez appeler ? <a href="tel:+33660680507"><b>06 60 68 05 07</b></a>, du lundi au vendredi.</p>
+      <p class="sheet__alt">Vous préférez appeler ? <a href="tel:+33660680507"><b>06 60 68 05 07</b></a>, du lundi au vendredi.</p>
       <p class="sheet__rgpd">Votre numéro sert uniquement à vous rappeler.</p>
     </div>
     <div class="sheet__ok" data-ok hidden>

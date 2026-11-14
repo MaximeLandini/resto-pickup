@@ -228,7 +228,9 @@ def towns(z):
         cps = ", ".join(sorted({c for nn, c, *_ in z["communes"] if nn == n}))
         cc = next((c for c in COMMUNES.values() if c["nom"] == n and c["zone"] is z), None)
         out.append(f'<li><a href="{cc["page"]}">{E(n)}</a> <small>{cps}</small></li>' if cc else f"<li>{E(n)} <small>{cps}</small></li>")
-    return "<ul class=\"towns-grid\">" + "".join(out) + "</ul>"
+    tid = "tg-" + slugify(z["id"]) if "slugify" in globals() else "tg-" + z["id"]
+    more = (f'<label for="{tid}" class="btn btn--ghost tg-more__btn">Voir les {len(out)} communes</label>' if len(out) > 20 else "")
+    return f'<input type="checkbox" id="{tid}" class="tg-more" hidden><ul class="towns-grid">' + "".join(out) + "</ul>" + more
 
 J0 = D["menu"]["jours"]
 def _short(p): p = p.split(",")[0].strip(); return p[0].lower() + p[1:]
@@ -282,7 +284,21 @@ RAPPEL = """
   </form>
 </dialog>"""
 
-def footer():
+_NB = "\u202f"
+def frtypo(html):
+    out, i = [], 0
+    for m in re.finditer(r"<(script|style|textarea|pre)\b.*?</\1>|<[^>]+>", html, re.S | re.I):
+        out.append(_frtext(html[i:m.start()])); out.append(m.group(0)); i = m.end()
+    out.append(_frtext(html[i:]))
+    return "".join(out)
+def _frtext(t):
+    if not t.strip(): return t
+    t = re.sub(r"[ \u00a0]+([?!;])", _NB + r"\1", t)
+    t = re.sub(r"(?<=[\w\)»%€]) +:(?=\s|$|<)", "\u00a0:", t)
+    t = re.sub(r"« +", "«" + _NB, t); t = re.sub(r" +»", _NB + "»", t)
+    return t
+
+def footer(slug=""):
     L = D["legal"]
     zl = "".join(f'<li><a class="fz" href="{z["page"]}"><img src="img/jour-{z["jour"]}.svg" alt="" width="36" height="36"><span><b>{E(z["nom"])}</b>Livré le {z["jourNom"]}</span></a></li>' for z in D["zones"])
     days = "".join(f'<img src="img/jour-{i}.svg" alt="" width="44" height="44">' for i in range(1, 8))
@@ -290,7 +306,7 @@ def footer():
 <footer class="foot">
   <div class="foot__days" aria-hidden="true">{days}</div>
   <div class="wrap">
-    <div class="foot__hero">
+    <div class="foot__hero"{' hidden' if slug in ("commander.html", "mon-compte.html", "equipe.html") else ''}>
       <div><p class="foot__big">À table, <span>chez vous.</span></p><p class="foot__sub">Tous vos repas de la semaine, livrés en une fois. Plat et dessert, {eur(P)} le repas.</p></div>
       <div class="foot__call">
         <p>Une personne vous répond, du lundi au vendredi</p>
@@ -653,15 +669,16 @@ def main():
     for slug, title, desc, body, ld in pages:
         hdr = fill(HEADER)
         if slug in ("commander.html", "equipe.html"): hdr = hdr.replace('class="top"', 'class="top top--slim"')
-        content = fill(body) if slug == "admin.html" else hdr + fill(body) + footer()
+        content = fill(body) if slug == "admin.html" else hdr + fill(body) + footer(slug)
         scripts = '<script src="config.js"></script>\n<script src="admin.js"></script>' if slug == "admin.html" else SCRIPTS
         full = (f'<!doctype html>\n<html lang="fr">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
                 f'<meta name="claude:viewport-fit-sides" content="cover">\n{head_bits(slug, title, desc, ld)}\n</head>\n<body>\n{content}\n{scripts}\n</body>\n</html>\n')
+        full = frtypo(full)
         open(os.path.join(SITE, slug), "w", encoding="utf-8").write(full)
         if slug == "index.html":
             frag = (f'<meta name="claude:viewport-fit-sides" content="cover">\n{head_bits(slug, title, desc, ld)}\n'
                     f'<script>document.documentElement.lang="fr"</script>\n{content}\n{SCRIPTS}\n')
-            open(os.path.join(ART, "index.html"), "w", encoding="utf-8").write(frag)
+            open(os.path.join(ART, "index.html"), "w", encoding="utf-8").write(frtypo(frag))
         else:
             open(os.path.join(ART, slug), "w", encoding="utf-8").write(full)
     _map = zmap()
