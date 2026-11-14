@@ -4,4 +4,4 @@ Disallow: /api/
 Disallow: /equipe.html
 Disallow: /admin.html
 
-Sitemap: https://www.restopickup.com/sitemap.xml
+Sitemap: https://restopickup.com/sitemap.xml

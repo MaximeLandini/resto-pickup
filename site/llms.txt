@@ -25,17 +25,17 @@
 - Laval, Évron, Alençon et alentour : Alençon, Alexain, Ancinnes, Andouillé, Argentré, Aron, Arquenay, Arçonnay, Assé-le-Boisne, Averton, Bais, Bazougers, Belgeard, Bierné-les-Villages, Bonchamp-lès-Laval, Boulay-les-Ifs, Bourg-le-Roi, Bouère, Brée, Bérus, Béthon, Cerisé, Champfleur, Champfrémont, Champgenéteux, Champéon, Changé, Charchigné, Chemazé, Chenay, Châlons-du-Maine, Château-Gontier-sur-Mayenne, Châtelain, Chérisay, Commer, Condé-sur-Sarthe, Contest, Coudray, Courcité, Crennes-sur-Fraubée, Cuissai, Damigny, Daon, Entrammes, Forcé, Fromentières, Gennes-Longuefuye, Gesnes, Gesnes-le-Gandelin, Gesvres, Grazay, Grez-en-Bouère, Hambers, Hardanges, Houssay, Héloup, Izé, Javron-les-Chapelles, Jublains, L'Huisserie, La Bazoge-Montpinçon, La Bazouge-de-Chemeré, La Bazouge-des-Alleux, La Bigottière, La Chapelle-Anthenaise, La Chapelle-Rainsouin, La Chapelle-au-Riboul, La Cropte, La Ferrière-Bochard, La Roche-Neuville, Laval, Le Bignon-du-Maine, Le Buret, Le Ham, Le Horps, Le Ribay, Livet, Lonrai, Loupfougères, Louverné, Louvigné, Maisoncelles-du-Maine, Marcillé-la-Ville, Marigné-Peuton, Martigné-sur-Mayenne, Mayenne, Meslay-du-Maine, Mieuxcé, Mont-Saint-Jean, Montflours, Montigné-le-Brillant, Montreuil-Poulay, Montsûrs, Moulay, Moulins-le-Carbonnel, Ménil, Mézangers, Neau, Nuillé-sur-Vicoin, Oisseau-le-Petit, Origné, Pacé, Parigné-sur-Braye, Parné-sur-Roc, Peuton, Placé, Pré-en-Pail-Saint-Samson, Préaux, Quelaines-Saint-Gault, Ravigny, Ruillé-Froid-Fonds, Sacé, Saint-Aubin-du-Désert, Saint-Baudelle, Saint-Brice, Saint-Charles-la-Forêt, Saint-Cyr-en-Pail, Saint-Céneri-le-Gérei, Saint-Denis-d'Anjou, Saint-Denis-du-Maine, Saint-Denis-sur-Sarthon, Saint-Fraimbault-de-Prières, Saint-Georges-le-Fléchard, Saint-Georges-le-Gaultier, Saint-Germain-d'Anxure, Saint-Germain-de-Coulamer, Saint-Germain-du-Corbéis, Saint-Germain-le-Fouilloux, Saint-Jean-sur-Mayenne, Saint-Léonard-des-Bois, Saint-Mars-du-Désert, Saint-Paterne - Le Chevain, Saint-Paul-le-Gaultier, Saint-Pierre-des-Nids, Saint-Thomas-de-Courceriers, Sainte-Gemmes-le-Robert, Sougé-le-Ganelon, Soulgé-sur-Ouette, Souvigné-sur-Sarthe, Trans, Vaiges, Villaines-la-Juhel, Villepail, Villiers-Charlemagne, Vimartin-sur-Orthe, Évron
 
 ## Pages
-- [Accueil, menu, prix, commande](https://www.restopickup.com/)
-- [Portage de repas au Mans](https://www.restopickup.com/portage-repas-le-mans.html)
-- [Portage de repas à Loué et Sablé](https://www.restopickup.com/portage-repas-loue.html)
-- [Portage de repas à Laval, Évron, Mayenne et Alençon](https://www.restopickup.com/portage-repas-laval-alencon.html)
-- [Repas à domicile pour un parent âgé](https://www.restopickup.com/repas-domicile-parent-age.html)
-- [Carte cadeau : offrir des repas](https://www.restopickup.com/offrir-des-repas.html)
-- [Professionnels : CCAS, soignants, résidences](https://www.restopickup.com/professionnels-partenaires.html)
-- [Toutes les communes livrées, avec leur jour](https://www.restopickup.com/communes-livrees.html)
+- [Accueil, menu, prix, commande](https://restopickup.com/)
+- [Portage de repas au Mans](https://restopickup.com/portage-repas-le-mans.html)
+- [Portage de repas à Loué et Sablé](https://restopickup.com/portage-repas-loue.html)
+- [Portage de repas à Laval, Évron, Mayenne et Alençon](https://restopickup.com/portage-repas-laval-alencon.html)
+- [Repas à domicile pour un parent âgé](https://restopickup.com/repas-domicile-parent-age.html)
+- [Carte cadeau : offrir des repas](https://restopickup.com/offrir-des-repas.html)
+- [Professionnels : CCAS, soignants, résidences](https://restopickup.com/professionnels-partenaires.html)
+- [Toutes les communes livrées, avec leur jour](https://restopickup.com/communes-livrees.html)
 
 ## Pour les aidants qui vivent loin
-Un enfant ou un proche peut commander depuis n'importe quelle ville de France (ou de l'étranger) pour un parent qui vit dans une commune desservie : commande et paiement en ligne ou par téléphone, factures envoyées au payeur, appel du livreur au proche si personne n'ouvre. Chaque commune desservie a sa page : https://www.restopickup.com/repas-domicile-<nom-de-la-commune>.html (exemple : https://www.restopickup.com/repas-domicile-brulon.html).
+Un enfant ou un proche peut commander depuis n'importe quelle ville de France (ou de l'étranger) pour un parent qui vit dans une commune desservie : commande et paiement en ligne ou par téléphone, factures envoyées au payeur, appel du livreur au proche si personne n'ouvre. Chaque commune desservie a sa page : https://restopickup.com/repas-domicile-<nom-de-la-commune>.html (exemple : https://restopickup.com/repas-domicile-brulon.html).
 
 ## Société
 R L C RL CONCEPT, EURL, SIREN 572 136 869, nom commercial Resto Pickup.
