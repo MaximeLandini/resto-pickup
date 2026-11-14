@@ -1554,3 +1554,23 @@ p { text-wrap: pretty; }
 .algs legend { font-weight: 700; padding: 0 .4rem; }
 .algs .check { grid-template-columns: 1.5rem 1fr; gap: .45rem; align-items: center; font-size: .92rem; }
 .algs .check input { width: 1.3rem; height: 1.3rem; margin: 0; }
+
+/* ===== Guides ===== */
+.guides { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: 1rem; }
+.gcard a { display: grid; gap: .45rem; height: 100%; padding: 1.3rem 1.4rem; background: var(--rp-blanc); border: 1px solid var(--rp-filet); border-radius: var(--r); color: var(--rp-marine); text-decoration: none; transition: border-color .15s, transform .15s; }
+.gcard a:hover { border-color: var(--rp-marine); transform: translateY(-2px); }
+.gcard b { font: 400 1.2rem/1.25 "Young Serif", Georgia, serif; }
+.gcard span { color: var(--rp-ardoise); font-size: .95rem; }
+.gcard .gcard__d { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.guide .tbl-wrap { margin: 1rem 0 1.4rem; }
+.cmp { width: 100%; border-collapse: collapse; min-width: 32rem; font-size: .95rem; }
+.cmp th, .cmp td { text-align: left; padding: .7rem .9rem; border-bottom: 1px solid var(--rp-filet); vertical-align: top; }
+.cmp thead th { font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--rp-ardoise); border-bottom: 2px solid var(--rp-filet); }
+.cmp tbody th { color: var(--rp-marine); }
+.guide ol li, .guide ul li { margin-bottom: .45rem; }
+.sources { font-size: .9rem; }
+.sources a { word-break: break-word; }
+.guide__by { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--rp-filet); color: var(--rp-ardoise); font-size: .92rem; }
+.cmp--num { min-width: 30rem; }
+.cmp--num td { white-space: nowrap; }
+@media (max-width: 600px) { .cmp:not(.cmp--num) { min-width: 0; } .cmp:not(.cmp--num), .cmp:not(.cmp--num) tbody, .cmp:not(.cmp--num) tr, .cmp:not(.cmp--num) td, .cmp:not(.cmp--num) tbody th { display: block; } .cmp:not(.cmp--num) thead { display: none; } .cmp:not(.cmp--num) tr { padding: .6rem 0; border-bottom: 1px solid var(--rp-filet); } .cmp:not(.cmp--num) td, .cmp:not(.cmp--num) tbody th { border: 0; padding: .2rem .9rem; } }

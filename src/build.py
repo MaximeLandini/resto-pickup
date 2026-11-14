@@ -250,9 +250,9 @@ HEADER = """<a class="skip" href="#contenu">Aller au contenu</a>
   </div>
 </div></div>
 <header class="top"><div class="wrap top__in">
-  <a class="brand" href="index.html"><img src="img/logo-compacte.svg" alt="Resto Pickup, retour à l'accueil" width="260" height="64"></a>
-  <nav class="top__nav" aria-label="Navigation principale"><a href="index.html#carton">Comment ça marche</a><a href="index.html#menu">Le menu</a><a href="index.html#composer">Prix et commande</a><a href="index.html#proches">Pour un parent</a><a href="index.html#zones">Où livrons-nous</a><a href="index.html#questions">Questions</a></nav>
-  <a class="btn btn--main top__cta" href="index.html#composer">Commander</a><a class="top__call" href="tel:{{telHref}}" aria-label="Appeler le {{tel}}">""" + icon("telephone") + """</a>
+  <a class="brand" href="./"><img src="img/logo-compacte.svg" alt="Resto Pickup, retour à l'accueil" width="260" height="64"></a>
+  <nav class="top__nav" aria-label="Navigation principale"><a href="./#carton">Comment ça marche</a><a href="./#menu">Le menu</a><a href="./#composer">Prix et commande</a><a href="./#proches">Pour un parent</a><a href="./#zones">Où livrons-nous</a><a href="./#questions">Questions</a></nav>
+  <a class="btn btn--main top__cta" href="./#composer">Commander</a><a class="top__call" href="tel:{{telHref}}" aria-label="Appeler le {{tel}}">""" + icon("telephone") + """</a>
 </div></header>
 <main id="contenu">"""
 
@@ -312,13 +312,13 @@ def footer(slug=""):
         <p>Une personne vous répond, du lundi au vendredi</p>
         <a class="foot__tel" href="tel:{D['telHref']}">{icon("telephone")}{E(D['tel'])}</a>
         <button type="button" class="btn btn--line-on" data-rappel>Être rappelé</button>
-        <a class="btn btn--on btn--lg" href="index.html#composer">Composer ma semaine</a>
+        <a class="btn btn--on btn--lg" href="./#composer">Composer ma semaine</a>
       </div>
     </div>
     <div class="foot__grid">
       <div><img class="foot__logo" src="img/logo-blanc.svg" alt="Resto Pickup" width="170" height="106"><p>Livraison hebdomadaire de repas complets de qualité traiteur, à domicile, en Sarthe, en Mayenne et dans l'Orne. Pour vous, ou pour un parent.</p></div>
       <div><h2>Nous livrons</h2><ul class="foot__zones">{zl}</ul></div>
-      <div><h2>Pratique</h2><ul><li><a href="index.html#menu">Le menu de la semaine</a></li><li><a href="index.html#carton">Comment ça marche</a></li><li><a href="repas-domicile-parent-age.html">Commander pour un parent</a></li><li><a href="offrir-des-repas.html">Offrir des repas</a></li><li><a href="professionnels-partenaires.html">Professionnels et partenaires</a></li><li><a href="communes-livrees.html">Toutes les communes livrées</a></li><li><a href="index.html#questions">Questions fréquentes</a></li></ul></div>
+      <div><h2>Pratique</h2><ul><li><a href="./#menu">Le menu de la semaine</a></li><li><a href="./#carton">Comment ça marche</a></li><li><a href="repas-domicile-parent-age.html">Commander pour un parent</a></li><li><a href="offrir-des-repas.html">Offrir des repas</a></li><li><a href="professionnels-partenaires.html">Professionnels et partenaires</a></li><li><a href="communes-livrees.html">Toutes les communes livrées</a></li><li><a href="guides.html">Guides pratiques</a></li><li><a href="./#questions">Questions fréquentes</a></li></ul></div>
       <div><h2>Votre compte</h2><ul><li><a href="mon-compte.html">Mon espace client</a></li><li><a href="mon-compte.html">Signaler une absence</a></li><li><a href="mon-compte.html">Mes factures</a></li><li>E-mail : {E(D['email'])}</li></ul></div>
     </div>
     <div class="foot__base">
@@ -353,7 +353,7 @@ def crumbs_ld(items):
     return {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": n, "item": D["site"] + "/" + u} for i, (n, u) in enumerate(items)]}
 
 def crumbs_html(items):
-    parts = [f'<a href="{u or "index.html"}">{E(n)}</a>' for n, u in items[:-1]] + [E(items[-1][0])]
+    parts = [f'<a href="{u or "./"}">{E(n)}</a>' for n, u in items[:-1]] + [E(items[-1][0])]
     return '<nav class="crumbs wrap" aria-label="Fil d\'Ariane">' + " › ".join(parts) + "</nav>"
 
 # ---------- Pages par commune (SEO local : l'aidant cherche la commune de son parent) ----------
@@ -394,7 +394,8 @@ def nearest_big(c):
     return best
 def cmd_link(c):
     from urllib.parse import quote
-    return f"commander.html?cp={c['cps'][0]}&amp;commune={quote(c['nom'])}"
+    # lien unique vers commander.html : la commune passe par data-*, pas par l'URL (évite 400 URL non indexables à crawler)
+    return f"commander.html\" data-cp=\"{c['cps'][0]}\" data-commune=\"{E(c['nom'])}"
 
 def commune_page(c):
     z, n, dep = c["zone"], c["nom"], DEPT.get(c["dept"], "")
@@ -433,7 +434,7 @@ def commune_page(c):
     <p>Le livreur sonne et remet le carton en main propre, jamais devant la porte. Il range les repas au frigo si on le lui demande. Si personne n'ouvre, il appelle votre parent, puis vous.</p>
     <h2>Ce qui est livré à {E(n)}</h2>
     <ul><li><b>Vous choisissez</b> le midi, le soir ou les deux, de 2 à 7 jours par semaine, ou un jour sur deux.</li><li><b>Une barquette par repas</b>, avec le jour écrit dessus.</li><li><b>Sans engagement</b> : pause pendant une hospitalisation, arrêt d'un simple appel.</li></ul>
-    <p>Exemple : 5 soirs par semaine, {eur(tot(5))} livraison comprise. <a href="index.html#menu">Voir le menu de la semaine</a>.</p>
+    <p>Exemple : 5 soirs par semaine, {eur(tot(5))} livraison comprise. <a href="./#menu">Voir le menu de la semaine</a>.</p>
   </div>
   <aside class="cm-near"><h2>Communes voisines livrées</h2><ul>{near}</ul><p><a href="communes-livrees.html">Toutes les communes livrées</a></p></aside>
 </div></section>
@@ -497,7 +498,7 @@ def zone_page(z):
   <p>Notre camion réfrigéré passe une fois par semaine, le {z['jourNom']}. Le livreur sonne, remet les repas en main propre et, si vous le souhaitez, les range au réfrigérateur. Chaque barquette porte le jour, le service (midi ou soir) et sa date limite.</p>
   <h2>Des repas à la carte</h2>
   <ul><li><b>Vous choisissez vos repas</b> : le midi, le soir ou les deux.</li><li><b>Vous choisissez vos jours</b> : de 2 à 7 jours par semaine, ou un jour sur deux.</li><li><b>Un seul prix</b> : {eur(P)} le repas, plat et dessert, plus la livraison ({eur(LPR)} par repas, jamais plus de {eur(LMAX)} par semaine). Par exemple, 5 soirs par semaine : {eur(tot(5))} livraison comprise.</li></ul>
-  <p>Sans engagement : pause ou arrêt par téléphone avant le samedi pour la semaine suivante. Voir <a href="index.html#menu">le menu de la semaine</a>.</p>
+  <p>Sans engagement : pause ou arrêt par téléphone avant le samedi pour la semaine suivante. Voir <a href="./#menu">le menu de la semaine</a>.</p>
   <h2>Questions sur {E(first)}</h2>
   <div class="faq" style="margin-top:0">{faq_html(faq)}</div>
 </div></section>
@@ -537,7 +538,7 @@ def parent_page():
   <p>C'est la situation de la plupart des familles qui nous appellent : un fils à Paris, une fille à Marseille ou à Lyon, et un parent qui vit seul à Brûlon, à Évron ou à Sillé-le-Guillaume. Vous gérez tout à distance : la commande, le paiement, les absences et les changements, en ligne ou par téléphone. Votre parent n'a qu'à ouvrir la porte une fois par semaine.</p>
   <ul><li><b>Vous recevez</b> les factures, le menu de la semaine et un appel si personne n'ouvre.</li><li><b>Votre parent reçoit</b> ses repas en main propre, rangés au frigo s'il le souhaite.</li><li><b>Vous gardez la main</b> : pause pendant une hospitalisation, arrêt d'un appel.</li></ul>
   <p>Des aides peuvent exister pour le portage de repas, selon la situation de votre parent. Le CCAS de sa commune ou le service autonomie du Département vous diront à quoi il a droit. Voir aussi <a href="https://www.pour-les-personnes-agees.gouv.fr" rel="noopener">pour-les-personnes-agees.gouv.fr</a>.</p>
-  <p><a href="communes-livrees.html">Vérifiez que la commune de votre parent est livrée</a>.</p>
+  <p><a href="communes-livrees.html">Vérifiez que la commune de votre parent est livrée</a>. Pour aller plus loin : <a href="guide-organiser-repas-parent-age-a-distance.html">organiser les repas d'un parent âgé à distance</a> et <a href="guide-prix-portage-repas-domicile.html">le vrai prix du portage de repas</a>.</p>
 </div></section>
 <section class="section"><div class="wrap"><div class="callout"><div><h2>On en parle de vive voix ?</h2><p>Nous répondons aux familles du lundi au vendredi. Vous pouvez aussi <button type="button" class="linkbtn linkbtn--on" data-rappel="parent">demander à être rappelé</button>.</p></div><a class="big-tel" href="tel:{D['telHref']}">{E(D['tel'])}</a></div></div></section>"""
     title = "Repas à domicile pour un parent âgé, commandés à distance | Resto Pickup"
@@ -682,6 +683,66 @@ def index_page():
 
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible+Next:wght@400;700&display=swap"><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">'
 
+
+# ---------- Guides (blog) : un fichier src/guides/<slug>.html par article ----------
+# 1re ligne : <!--{json}--> avec title, desc, h1, chapo, date, maj, faq [[q,a]], sources [[libellé,url]]
+GUIDES_DIR = os.path.join(ROOT, "guides")
+def load_guides():
+    out = []
+    if not os.path.isdir(GUIDES_DIR): return out
+    for f in sorted(os.listdir(GUIDES_DIR)):
+        if not f.endswith(".html"): continue
+        raw = open(os.path.join(GUIDES_DIR, f), encoding="utf-8").read()
+        m = re.match(r"\s*<!--(.*?)-->\s*", raw, re.S)
+        meta = json.loads(m.group(1)); meta["slug"] = "guide-" + f; meta["body"] = raw[m.end():]
+        if meta.get("brouillon"): continue
+        out.append(meta)
+    return sorted(out, key=lambda g: g["date"], reverse=True)
+
+def fdate(iso):
+    y, mo, d = iso.split("-"); M = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"]
+    return f"{int(d)} {M[int(mo)-1]} {y}"
+
+def guide_page(g, allg):
+    cr = [("Accueil", ""), ("Guides", "guides.html"), (g["h1"], g["slug"])]
+    autres = [x for x in allg if x["slug"] != g["slug"]][:3]
+    src = "".join(f'<li><a href="{E(u)}" rel="noopener" target="_blank">{E(l)}</a></li>' for l, u in g.get("sources", []))
+    faq = [(q, a) for q, a in g.get("faq", [])]
+    body = f"""{crumbs_html(cr)}
+<article class="section guide" style="padding-top:1.5rem"><div class="wrap prose">
+  <p class="eyebrow">Guide · mis à jour le <time datetime="{g.get('maj', g['date'])}">{fdate(g.get('maj', g['date']))}</time></p>
+  <h1>{E(g['h1'])}</h1>
+  <p class="lead">{g['chapo']}</p>
+  {g['body']}
+  {('<h2>Questions fréquentes</h2><div class="faq" style="margin-top:0">' + faq_html(faq) + '</div>') if faq else ''}
+  {('<h2>Sources</h2><ul class="sources">' + src + '</ul>') if src else ''}
+  <p class="guide__by">Rédigé par l'équipe Resto Pickup, livraison de repas à domicile en Sarthe, en Mayenne et dans l'Orne. Une question : <a href="tel:{D['telHref']}">{E(D['tel'])}</a>.</p>
+</div></article>
+<section class="section section--sunk"><div class="wrap">
+  <div class="callout"><div><h2>Des repas de qualité traiteur, livrés une fois par semaine</h2><p>Plat et dessert à {eur(P)}, sans engagement, en Sarthe, en Mayenne et dans l'Orne.</p></div><a class="btn btn--main btn--lg" href="./#composer">Composer la semaine</a></div>
+  {('<h2 style="margin-top:2rem">À lire aussi</h2><ul class="guides">' + "".join(guide_card(x) for x in autres) + '</ul>') if autres else ''}
+</div></section>"""
+    art = {"@type": "Article", "headline": g["h1"], "description": g["desc"], "datePublished": g["date"], "dateModified": g.get("maj", g["date"]),
+           "inLanguage": "fr-FR", "mainEntityOfPage": D["site"] + "/" + g["slug"], "author": {"@type": "Organization", "name": "Resto Pickup", "url": D["site"]},
+           "publisher": {"@id": D["site"] + "/#entreprise"}}
+    if g.get("sources"): art["citation"] = [u for _, u in g["sources"]]
+    ld = [ORG, art, crumbs_ld(cr)] + ([faq_ld(faq)] if faq else [])
+    return g["slug"], g["title"], g["desc"], body, ld
+
+def guide_card(g):
+    return f'<li class="gcard"><a href="{g["slug"]}"><span class="gcard__d">{fdate(g.get("maj", g["date"]))}</span><b>{E(g["h1"])}</b><span>{E(g["desc"])}</span></a></li>'
+
+def guides_index(allg):
+    cr = [("Accueil", ""), ("Guides", "guides.html")]
+    body = f"""{crumbs_html(cr)}
+<section class="section" style="padding-top:1.5rem"><div class="wrap">
+  <div class="prose"><p class="eyebrow">Guides pratiques</p><h1>Bien manger chez soi après 70 ans : nos guides</h1>
+  <p class="lead">Prix du portage de repas, aides, organisation à distance quand on est aidant : des réponses claires, sourcées, écrites par l'équipe qui livre chaque semaine.</p></div>
+  <ul class="guides">{"".join(guide_card(g) for g in allg)}</ul>
+</div></section>"""
+    items = {"@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": D["site"] + "/" + g["slug"], "name": g["h1"]} for i, g in enumerate(allg)]}
+    return "guides.html", "Guides : portage de repas, aides et conseils pour les aidants | Resto Pickup", "Prix du portage de repas à domicile, aides possibles, organiser les repas d'un parent à distance : les guides pratiques de Resto Pickup.", body, [ORG, items, crumbs_ld(cr)]
+
 def head_bits(slug, title, desc, ld):
     url = D["site"] + "/" + ("" if slug == "index.html" else slug)
     ldj = json.dumps({"@context": "https://schema.org", "@graph": ld}, ensure_ascii=False)
@@ -696,7 +757,9 @@ SCRIPTS = '<script src="config.js"></script>\n<script src="contact.js"></script>
 
 def main():
     os.makedirs(SITE, exist_ok=True); os.makedirs(ART, exist_ok=True)
+    GU = load_guides()
     pages = [index_page(), commander_page(), compte_page()] + [zone_page(z) for z in D["zones"]] + [parent_page(), gift_page(), pro_page(), equipe_page(), admin_page(), legal_page(), cgv_page(), privacy_page(), communes_index_page()] + [commune_page(c) for c in COMMUNES.values() if c["page"].startswith("repas-domicile-")]
+    if GU: pages += [guides_index(GU)] + [guide_page(g, GU) for g in GU]
     for slug, title, desc, body, ld in pages:
         hdr = fill(HEADER)
         if slug in ("commander.html", "equipe.html"): hdr = hdr.replace('class="top"', 'class="top top--slim"')
@@ -775,6 +838,7 @@ Un enfant ou un proche peut commander depuis n'importe quelle ville de France (o
 ## Société
 {D['legal']['raison']}, {D['legal']['forme']}, SIREN 572 136 869, nom commercial Resto Pickup.
 """
+    if GU: llms += "\n## Guides\n" + "".join(f"- [{g['h1']}]({D['site']}/{g['slug']}) : {g['desc']}\n" for g in GU)
     open(os.path.join(SITE, "llms.txt"), "w", encoding="utf-8").write(llms)
     print("OK", len(pages), "pages")
 

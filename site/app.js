@@ -7,6 +7,8 @@
     get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
     set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   };
+  // liens « Commander pour <commune> » des pages communes : la commune est mémorisée au clic
+  document.addEventListener("click", function (e) { var a = e.target.closest && e.target.closest("a[data-cp]"); if (a) { store.set("rp-cp", a.dataset.cp); store.set("rp-commune", a.dataset.commune || ""); } });
   var euro = function (n) { return n.toFixed(2).replace(".", ",") + "\u00a0€"; };
   var JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
   var MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
