@@ -11,5 +11,5 @@ module.exports = async (req, res) => {
       await sendCode(c.email, code);
     }
     return res.status(200).json({ ok: true }); // même réponse que le compte existe ou non
-  } catch (e) { console.error(e); return res.status(500).json({ error: "Envoi impossible" }); }
+  } catch (e) { console.error(e); await require("./_lib").reportBug("/api/login", e); return res.status(500).json({ error: "Envoi impossible" }); }
 };

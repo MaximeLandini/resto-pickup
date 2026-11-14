@@ -8,7 +8,13 @@ const stripe = new Proxy({}, { get(_, k) {
   if (!_s) { if (!process.env.STRIPE_SECRET_KEY) { const e = new Error("Paiement pas encore configuré"); e.status = 503; throw e; } _s = new Stripe(process.env.STRIPE_SECRET_KEY); }
   return _s[k];
 } });
-const SECRET = process.env.SESSION_SECRET || "";
+// Sans SESSION_SECRET, le secret de session est dérivé de la clé Stripe (jamais exposé).
+const SECRET = process.env.SESSION_SECRET || (process.env.STRIPE_SECRET_KEY ? crypto.createHash("sha256").update("rp-session:" + process.env.STRIPE_SECRET_KEY).digest("hex") : "");
+const site = () => (process.env.SITE_URL || "https://restopickup.com").replace(/\/$/, "");
+// Destinataires des alertes (commandes, demandes de l'espace client, bugs). MAIL_EQUIPE les remplace si renseignée.
+const TEAM_DEFAUT = "maxime@gardenevents.fr, robertlandini@yahoo.fr";
+const team = () => String(process.env.MAIL_EQUIPE || TEAM_DEFAUT).split(/[,; ]+/).filter(Boolean);
+const mailFrom = () => process.env.MAIL_FROM || "bonjour@restopickup.com";
 const ZONES = { "le-mans": { jour: 2, nom: "mardi" }, loue: { jour: 4, nom: "jeudi" }, "mayenne-orne": { jour: 4, nom: "jeudi" } };
 const DELAI = 3;
 
@@ -48,7 +54,7 @@ async function sendCode(to, code) {
     method: "POST",
     headers: { "api-key": process.env.BREVO_API_KEY, "content-type": "application/json" },
     body: JSON.stringify({
-      sender: { name: "Resto Pickup", email: process.env.MAIL_FROM },
+      sender: { name: "Resto Pickup", email: mailFrom() },
       to: [{ email: to }],
       subject: `Votre code Resto Pickup : ${code}`,
       htmlContent: `<p style="font-family:Arial;font-size:18px">Bonjour,</p><p style="font-family:Arial;font-size:18px">Voici votre code pour ouvrir votre espace : <b style="font-size:28px;letter-spacing:4px">${code}</b></p><p style="font-family:Arial;font-size:16px;color:#4A5368">Il est valable 15 minutes. Si vous n'avez rien demandé, ignorez ce message.</p>`,
@@ -62,18 +68,38 @@ function verifyAdmin(req) {
   const id = verifyToken(req);
   if (!id || !id.startsWith("admin:")) return null;
   const email = id.slice(6);
-  const allowed = String(process.env.ADMIN_EMAILS || "").toLowerCase().split(/[,; ]+/).filter(Boolean);
+  const allowed = String(process.env.ADMIN_EMAILS || TEAM_DEFAUT).toLowerCase().split(/[,; ]+/).filter(Boolean);
   return allowed.includes(email) ? email : null;
 }
 async function sendMail(to, subject, html, replyTo) {
+  const dest = (Array.isArray(to) ? to : String(to || "").split(/[,;]+/)).map((e) => String(e).trim()).filter(Boolean);
+  if (!dest.length) return;
+  if (!process.env.BREVO_API_KEY) { console.error("BREVO_API_KEY absente, e-mail non envoyé :", subject); return; }
   const r = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: { "api-key": process.env.BREVO_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({ sender: { name: "Resto Pickup", email: process.env.MAIL_FROM }, to: [{ email: to }], ...(replyTo ? { replyTo: { email: replyTo } } : {}), subject,
-      htmlContent: `<div style="font-family:Arial,sans-serif;font-size:17px;line-height:1.55;color:#1B2A4E;max-width:560px">${html}<p style="color:#4A5368;font-size:14px;margin-top:28px">Resto Pickup · 06 60 68 05 07 · <a href="${process.env.SITE_URL}/mon-compte.html">Mon espace</a></p></div>` }),
+    body: JSON.stringify({ sender: { name: "Resto Pickup", email: mailFrom() }, to: dest.map((email) => ({ email })), ...(replyTo ? { replyTo: { email: replyTo } } : {}), subject,
+      htmlContent: `<div style="font-family:Arial,sans-serif;font-size:17px;line-height:1.55;color:#1B2A4E;max-width:560px">${html}<p style="color:#4A5368;font-size:14px;margin-top:28px">Resto Pickup · 06 60 68 05 07 · <a href="${site()}/mon-compte.html">Mon espace</a></p></div>` }),
   });
-  if (!r.ok) throw new Error("envoi e-mail");
+  if (!r.ok) throw new Error("envoi e-mail " + r.status + " " + (await r.text()).slice(0, 200));
+}
+// Alerte équipe : ne bloque jamais la réponse au client
+function notifyTeam(subject, html, replyTo) {
+  return sendMail(team(), subject, html, replyTo).catch((e) => console.error("alerte équipe", e.message));
+}
+// Bug serveur ou navigateur : un e-mail par type d'erreur et par heure au maximum
+async function reportBug(where, err, extra = "") {
+  try {
+    const msg = String((err && (err.stack || err.message)) || err || "").slice(0, 1500);
+    const sig = crypto.createHash("sha1").update(where + "|" + msg.split("\n")[0]).digest("hex").slice(0, 16);
+    const store = require("./_store");
+    const k = `bug/${sig}`, prev = await store.get(k).catch(() => null);
+    if (prev && Date.now() - prev.t < 3600e3) { await store.set(k, { ...prev, n: (prev.n || 1) + 1 }).catch(() => {}); return; }
+    await store.set(k, { t: Date.now(), n: 1, where, msg: msg.slice(0, 300) }).catch(() => {});
+    const esc = (x) => String(x).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+    await notifyTeam(`Bug sur le site : ${where}`, `<p>Une erreur s'est produite sur <b>${esc(where)}</b>${prev ? ` (${prev.n || 1} fois depuis la dernière alerte)` : ""}.</p><pre style="white-space:pre-wrap;font-size:13px;background:#f4f1ea;padding:12px;border-radius:8px">${esc(msg)}</pre>${extra ? `<p style="font-size:14px">${extra}</p>` : ""}<p style="font-size:14px">Date : ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</p>`);
+  } catch (e) { console.error("reportBug", e); }
 }
 // Montant hebdomadaire d'un abonnement (repas + livraison)
 const weekly = (s) => s.items.data.reduce((t, i) => t + (i.price.unit_amount || 0) * (i.quantity || 1), 0) / 100;
-module.exports = { stripe, hmac, body, sign, verifyToken, signAdmin, verifyAdmin, findCustomer, activeSub, nextDelivery, sendCode, sendMail, weekly, ZONES };
+module.exports = { site, team, notifyTeam, reportBug, stripe, hmac, body, sign, verifyToken, signAdmin, verifyAdmin, findCustomer, activeSub, nextDelivery, sendCode, sendMail, weekly, ZONES };

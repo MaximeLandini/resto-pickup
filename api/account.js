@@ -25,5 +25,5 @@ module.exports = async (req, res) => {
       prixSemaine: weekly(s), statutPaiement: s.status, avoir, factures, messages: t.messages, nonLu: t.nonLuClient || 0,
       prochainPrelevement: s.current_period_end ? new Date(s.current_period_end * 1000).toISOString().slice(0, 10) : null,
     });
-  } catch (e) { console.error(e); return res.status(500).json({ error: "Erreur" }); }
+  } catch (e) { console.error(e); await require("./_lib").reportBug("/api/account", e); return res.status(500).json({ error: "Erreur" }); }
 };

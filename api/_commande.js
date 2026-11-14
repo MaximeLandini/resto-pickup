@@ -1,9 +1,10 @@
 // Logique commune aux commandes : création de la page de paiement Stripe, cartes cadeaux, envoi d'e-mails.
 // Utilisée par checkout.js (commande en ligne) et lien.js (commande prise au téléphone par l'équipe).
-// Variables : STRIPE_SECRET_KEY, STRIPE_PRICE_REPAS (récurrent hebdo 11,99 € TTC), STRIPE_PRICE_REPAS_UNIQUE (ponctuel 11,99 € TTC),
-// SITE_URL, BREVO_API_KEY, MAIL_FROM, MAIL_EQUIPE (adresse qui reçoit les demandes de rappel).
+// Variable indispensable : STRIPE_SECRET_KEY.
+// Tarifs Stripe créés automatiquement (voir _setup.js). E-mails : BREVO_API_KEY.
 const crypto = require("crypto");
-const { stripe } = require("./_lib");
+const { stripe, sendMail, site } = require("./_lib");
+const { catalog, ensureWebhook } = require("./_setup");
 
 const PRIX = 1199; // centimes
 // Livraison : 2,14 € par repas, 6,43 € minimum, 15 € maximum par semaine. Commande minimum 3 repas.
@@ -12,21 +13,6 @@ const fee = (n) => Math.min(LIV_MAX, Math.max(LIV_MIN, LIV_REPAS * n));
 const GIFT_UNIT = PRIX + LIV_REPAS; // repas offert, livraison comprise
 const clean = (v, n = 200) => String(v || "").trim().slice(0, n);
 const esc = (s) => String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-
-async function sendMail(to, subject, html, replyTo) {
-  const r = await fetch("https://api.brevo.com/v3/smtp/email", {
-    method: "POST",
-    headers: { "api-key": process.env.BREVO_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({
-      sender: { name: "Resto Pickup", email: process.env.MAIL_FROM },
-      to: [{ email: to }],
-      ...(replyTo ? { replyTo: { email: replyTo } } : {}),
-      subject,
-      htmlContent: `<div style="font-family:Arial,sans-serif;font-size:17px;line-height:1.5;color:#1B2A4E">${html}</div>`,
-    }),
-  });
-  if (!r.ok) throw new Error("envoi e-mail");
-}
 
 // Code lisible au téléphone : pas de 0/O, 1/I.
 function giftCode() {
@@ -105,30 +91,32 @@ async function createCheckout(b) {
     billing_address_collection: "auto",
     metadata: o.meta,
     expires_at: Math.floor(Date.now() / 1000) + 23 * 3600, // maximum autorisé par Stripe : 24 h
-    success_url: `${process.env.SITE_URL}/commander.html#merci`,
-    cancel_url: `${process.env.SITE_URL}/commander.html`,
+    success_url: `${site()}/commander.html#merci`,
+    cancel_url: `${site()}/commander.html`,
   };
+  const cat = await catalog();
+  await ensureWebhook().catch((e) => console.error("webhook auto", e.message));
   const desc = `Resto Pickup, ${o.service}, jours ${o.jours}, ${o.personnes} pers., livraison ${o.meta.zone}`;
   const session = o.essai
     ? await stripe.checkout.sessions.create({
         ...common, mode: "payment",
         ...(customer ? {} : { customer_creation: "always" }),
         ...(discounts ? { discounts } : {}),
-        line_items: [{ price: process.env.STRIPE_PRICE_REPAS_UNIQUE, quantity: o.repas }, { quantity: 1, price_data: { currency: "eur", unit_amount: fee(o.repas), product: process.env.STRIPE_PRODUCT_LIVRAISON } }],
+        line_items: [{ price: cat.repasUnique, quantity: o.repas }, { quantity: 1, price_data: { currency: "eur", unit_amount: fee(o.repas), product: cat.livraison } }],
         payment_intent_data: { metadata: o.meta, description: `${desc}, semaine d'essai` },
       })
     : await stripe.checkout.sessions.create({
         ...common, mode: "subscription",
-        line_items: [{ price: process.env.STRIPE_PRICE_REPAS, quantity: o.repas }, { quantity: 1, price_data: { currency: "eur", unit_amount: fee(o.repas), product: process.env.STRIPE_PRODUCT_LIVRAISON, recurring: { interval: "week" } } }],
+        line_items: [{ price: cat.repas, quantity: o.repas }, { quantity: 1, price_data: { currency: "eur", unit_amount: fee(o.repas), product: cat.livraison, recurring: { interval: "week" } } }],
         subscription_data: { metadata: o.meta, description: desc },
       });
   return { url: session.url, repas: o.repas, total: o.repas * PRIX + fee(o.repas) };
 }
 
-function fail(res, e) {
+function fail(res, e, where = "commande") {
   if (e.status) return res.status(e.status).json({ error: e.message });
   console.error(e);
-  return res.status(500).json({ error: "Service indisponible, appelez-nous" });
+  return require("./_lib").reportBug(where, e).finally(() => res.status(500).json({ error: "Service indisponible, appelez le 06 60 68 05 07" }));
 }
 
 module.exports = { PRIX, GIFT_UNIT, fee, REPAS_MIN, clean, esc, sendMail, giftCode, normCode, findGift, parseOrder, createCheckout, fail };

@@ -52,6 +52,18 @@
     load().then(function () {
       var h = /client=([\w]+)/.exec(location.hash); if (h) openClient(h[1]);
     });
+    if (!demo) checkSetup();
+  }
+  // Vérifie Stripe, webhook, portail et e-mails ; crée ce qui manque. Bandeau seulement en cas de problème.
+  function checkSetup() {
+    fetch(API + "/api/setup", { headers: { Authorization: "Bearer " + token } }).then(function (r) { return r.json(); }).then(function (j) {
+      var pb = [];
+      if (!j.stripe) pb.push("clé Stripe absente (variable STRIPE_SECRET_KEY)");
+      else if (!j.ok) pb.push("Stripe : " + (j.erreur || "configuration incomplète"));
+      if (!j.brevo) pb.push("aucun e-mail ne part : clé Brevo absente (variable BREVO_API_KEY)");
+      var el = $("adm-demo");
+      if (pb.length) { el.hidden = false; el.textContent = "À régler : " + pb.join(" ; ") + "."; el.classList.add("adm-warn"); }
+    }).catch(function () {});
   }
 
   /* ---------- Navigation ---------- */

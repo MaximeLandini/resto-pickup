@@ -9,6 +9,8 @@
   var euro = function (x) { return x.toFixed(2).replace(".", ",") + " €"; };
   var store = { get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
   var key = $("#t-key"); key.value = store.get("rp-admin") || "";
+  // connecté à l'espace équipe : la clé n'est plus nécessaire
+  if (store.get("rp-admin-token") && key.closest(".field")) key.closest(".field").hidden = true;
   key.addEventListener("change", function () { store.set("rp-admin", key.value); });
   var JN = ["", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam.", "dim."];
 
@@ -50,7 +52,7 @@
   if (hp) $("#t-tel").value = decodeURIComponent(hp[1]);
 
   function post(body) {
-    return fetch(API + "/api/lien", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": key.value }, body: JSON.stringify(body) })
+    return fetch(API + "/api/lien", { method: "POST", headers: Object.assign({ "Content-Type": "application/json", "x-admin-key": key.value }, store.get("rp-admin-token") ? { Authorization: "Bearer " + store.get("rp-admin-token") } : {}), body: JSON.stringify(body) })
       .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || "Erreur"); return j; }); });
   }
   $("#t-check").addEventListener("click", function () {

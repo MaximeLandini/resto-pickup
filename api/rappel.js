@@ -1,6 +1,6 @@
 // Demandes de contact : « On vous rappelle », orientation par un professionnel, demande de flyers.
 // Envoie un e-mail à l'équipe (MAIL_EQUIPE). Rien n'est stocké ailleurs.
-const { body } = require("./_lib");
+const { body, site, team } = require("./_lib");
 const { clean, esc, sendMail, fail } = require("./_commande");
 
 const TYPES = {
@@ -36,11 +36,11 @@ module.exports = async (req, res) => {
     ].filter((r) => r[1]);
     const html = `<p><b>${TYPES[type]}</b></p><table cellpadding="6" style="border-collapse:collapse">${rows
       .map(([k, v]) => `<tr><td style="color:#4A5368">${k}</td><td><b>${esc(v)}</b></td></tr>`)
-      .join("")}</table>${tel ? `<p><a href="tel:${esc(tel)}">Appeler</a> · <a href="${process.env.SITE_URL}/equipe.html#tel=${encodeURIComponent(tel)}">Préparer le lien de paiement</a></p>` : ""}`;
+      .join("")}</table>${tel ? `<p><a href="tel:${esc(tel)}">Appeler</a> · <a href="${site()}/equipe.html#tel=${encodeURIComponent(tel)}">Préparer le lien de paiement</a></p>` : ""}`;
     const store = require("./_store");
     const id = store.uid();
     await store.set(`req/${id}`, { id, type, statut: "nouveau", date: new Date().toISOString(), champs: Object.fromEntries(rows) }).catch((e) => console.error(e));
-    await sendMail(process.env.MAIL_EQUIPE, `${TYPES[type]} : ${clean(b.nom, 60) || tel}`, html, clean(b.email, 120) || undefined);
+    await sendMail(team(), `${TYPES[type]} : ${clean(b.nom, 60) || tel}`, html, clean(b.email, 120) || undefined);
     return res.status(200).json({ ok: true });
   } catch (e) {
     return fail(res, e);

@@ -1,6 +1,6 @@
 // Carte cadeau : POST = ouvre le paiement Stripe ; GET ?id=<session> = renvoie la carte une fois payée
 // (et l'envoie par e-mail à l'acheteur la première fois).
-const { stripe, body } = require("./_lib");
+const { stripe, body, site } = require("./_lib");
 const { GIFT_UNIT, clean, esc, sendMail, giftCode, fail } = require("./_commande");
 
 const VALIDITE_JOURS = 365;
@@ -24,8 +24,8 @@ module.exports = async (req, res) => {
         locale: "fr", mode: "payment", customer_email: email, metadata: meta,
         line_items: [{ quantity: repas, price_data: { currency: "eur", unit_amount: GIFT_UNIT, product_data: { name: "Carte cadeau Resto Pickup, repas livré (plat, dessert et livraison)" } } }],
         payment_intent_data: { metadata: meta, description: `Carte cadeau ${code}, ${repas} repas` },
-        success_url: `${process.env.SITE_URL}/offrir-des-repas.html?carte={CHECKOUT_SESSION_ID}#carte`,
-        cancel_url: `${process.env.SITE_URL}/offrir-des-repas.html`,
+        success_url: `${site()}/offrir-des-repas.html?carte={CHECKOUT_SESSION_ID}#carte`,
+        cancel_url: `${site()}/offrir-des-repas.html`,
       });
       return res.status(200).json({ url: session.url });
     }
@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
       const m = s.payment_intent.metadata;
       const carte = { code: m.code_cadeau, repas: +m.repas, montant: s.amount_total, de: m.de, pour: m.pour, message: m.message, expire: +m.expire };
       if (!m.envoyee && s.customer_details && s.customer_details.email) {
-        const lien = `${process.env.SITE_URL}/offrir-des-repas.html?carte=${id}#carte`;
+        const lien = `${site()}/offrir-des-repas.html?carte=${id}#carte`;
         await sendMail(s.customer_details.email, `Votre carte cadeau Resto Pickup ${carte.code}`,
           `<p>Bonjour ${esc(m.de)},</p><p>Merci ! Voici votre carte cadeau pour ${esc(m.pour)} : <b>${carte.repas} repas</b>, soit ${fmt(carte.montant)}.</p>
            <p style="font-size:26px;letter-spacing:3px"><b>${carte.code}</b></p>

@@ -1,7 +1,7 @@
 // Commande prise au téléphone : l'équipe saisit la commande sur equipe.html et obtient un lien de paiement Stripe
-// à envoyer par SMS ou e-mail au client ou à son enfant. Protégé par la variable ADMIN_KEY.
+// à envoyer par SMS ou e-mail au client ou à son enfant. Accès : session de l'espace équipe, ou clé ADMIN_KEY.
 const crypto = require("crypto");
-const { body } = require("./_lib");
+const { body, verifyAdmin } = require("./_lib");
 const { createCheckout, findGift, fail } = require("./_commande");
 
 const okKey = (k) => {
@@ -11,7 +11,7 @@ const okKey = (k) => {
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return res.status(405).json({ error: "Méthode non autorisée" });
-  if (!okKey(req.headers["x-admin-key"])) return res.status(401).json({ error: "Clé équipe incorrecte" });
+  if (!verifyAdmin(req) && !okKey(req.headers["x-admin-key"])) return res.status(401).json({ error: "Connectez-vous à l'espace équipe" });
   try {
     const b = body(req);
     if (b.verifier_code) {

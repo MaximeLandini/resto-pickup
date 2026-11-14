@@ -1,5 +1,5 @@
 // Messagerie client ↔ équipe. GET : le fil du client connecté. POST { texte } : nouveau message (e-mail à l'équipe).
-const { stripe, verifyToken, body, sendMail } = require("./_lib");
+const { stripe, verifyToken, body, sendMail, site, team } = require("./_lib");
 const store = require("./_store");
 const esc = (s) => String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 module.exports = async (req, res) => {
@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
     if (texte.length < 2) return res.status(400).json({ error: "Message vide" });
     const c = await stripe.customers.retrieve(cid);
     const t = await store.addMessage(cid, "client", texte, c.name || c.email);
-    await sendMail(process.env.MAIL_EQUIPE, `Message de ${c.name || c.email}`, `<p><b>${esc(c.name || "")}</b> (${esc(c.email || "")}) a écrit :</p><blockquote style="border-left:4px solid #E04A2F;padding-left:12px">${esc(texte).replace(/\n/g, "<br>")}</blockquote><p><a href="${process.env.SITE_URL}/admin.html#client=${cid}">Répondre depuis l'espace admin</a></p>`, c.email).catch(() => {});
+    await sendMail(team(), `Message de ${c.name || c.email}`, `<p><b>${esc(c.name || "")}</b> (${esc(c.email || "")}) a écrit :</p><blockquote style="border-left:4px solid #E04A2F;padding-left:12px">${esc(texte).replace(/\n/g, "<br>")}</blockquote><p><a href="${site()}/admin.html#client=${cid}">Répondre depuis l'espace admin</a></p>`, c.email).catch(() => {});
     return res.status(200).json({ messages: t.messages });
-  } catch (e) { console.error(e); return res.status(500).json({ error: "Erreur" }); }
+  } catch (e) { console.error(e); await require("./_lib").reportBug("/api/messages", e); return res.status(500).json({ error: "Erreur" }); }
 };

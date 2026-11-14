@@ -13,6 +13,8 @@ const R = {
   webhook: require("../../api/webhook"),
   "admin-login": require("../../api/admin-login"),
   admin: require("../../api/admin"),
+  setup: require("../../api/setup"),
+  bug: require("../../api/bug"),
 };
 
 exports.handler = async (event) => {
@@ -33,6 +35,6 @@ exports.handler = async (event) => {
       end() { resolve({ statusCode: code, headers: h, body: "" }); },
     };
     let p; try { p = Promise.resolve(fn(req, res)); } catch (e) { p = Promise.reject(e); }
-    p.catch((e) => { console.error(e); resolve({ statusCode: e.status || 500, headers: h, body: JSON.stringify({ error: e.status === 503 ? "Service pas encore configuré, appelez le 06 60 68 05 07" : "Erreur serveur" }) }); });
+    p.catch(async (e) => { console.error(e); if (e.status !== 503) await require("../../api/_lib").reportBug("/api/" + name, e).catch(() => {}); resolve({ statusCode: e.status || 500, headers: h, body: JSON.stringify({ error: e.status === 503 ? "Service pas encore configuré, appelez le 06 60 68 05 07" : "Erreur serveur" }) }); });
   });
 };

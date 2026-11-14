@@ -10,5 +10,5 @@ module.exports = async (req, res) => {
       return res.status(401).json({ error: "Code incorrect ou expiré" });
     await stripe.customers.update(c.id, { metadata: { login_hash: "", login_exp: "" } });
     return res.status(200).json({ token: sign(c.id) });
-  } catch (e) { console.error(e); return res.status(500).json({ error: "Erreur" }); }
+  } catch (e) { console.error(e); await require("./_lib").reportBug("/api/verify", e); return res.status(500).json({ error: "Erreur" }); }
 };

@@ -21,5 +21,5 @@ module.exports = async (req, res) => {
     if (hmac(String(b.code).trim() + email) !== r.h) { r.essais++; await store.set(key, r); return res.status(401).json({ error: "Code incorrect" }); }
     await store.del(key);
     return res.status(200).json({ token: signAdmin(email) });
-  } catch (e) { console.error(e); return res.status(500).json({ error: "Erreur" }); }
+  } catch (e) { console.error(e); await require("./_lib").reportBug("/api/admin-login", e); return res.status(500).json({ error: "Erreur" }); }
 };

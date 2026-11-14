@@ -1,5 +1,5 @@
 // Espace admin : POST { action, ... } avec le jeton équipe (Authorization: Bearer).
-const { stripe, body, verifyAdmin, sendMail, weekly, nextDelivery, ZONES } = require("./_lib");
+const { stripe, body, verifyAdmin, sendMail, weekly, nextDelivery, ZONES, site } = require("./_lib");
 const { fee, REPAS_MIN, findGift } = require("./_commande");
 const store = require("./_store");
 const esc = (s) => String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -109,9 +109,10 @@ module.exports = async (req, res) => {
         const personnes = String(b.personnes) === "2" ? 2 : 1;
         const repas = jours.length * (service === "midi-soir" ? 2 : 1) * personnes;
         if (repas < REPAS_MIN) return res.status(400).json({ error: `Minimum ${REPAS_MIN} repas` });
-        const itRepas = s.items.data.find((i) => i.price.id === process.env.STRIPE_PRICE_REPAS) || s.items.data[0];
+        const cat = await require("./_setup").catalog();
+        const itRepas = s.items.data.find((i) => i.price.id === cat.repas) || s.items.data[0];
         const itLiv = s.items.data.find((i) => i.id !== itRepas.id);
-        const liv = { currency: "eur", unit_amount: fee(repas), product: process.env.STRIPE_PRODUCT_LIVRAISON, recurring: { interval: "week" } };
+        const liv = { currency: "eur", unit_amount: fee(repas), product: cat.livraison, recurring: { interval: "week" } };
         await stripe.subscriptions.update(s.id, { items: [{ id: itRepas.id, quantity: repas }, itLiv ? { id: itLiv.id, price_data: liv, quantity: 1 } : { price_data: liv, quantity: 1 }], proration_behavior: "none", metadata: { service, jours, personnes: String(personnes) } });
       } else if (b.type === "pause") {
         const z = ZONES[m.zone] || ZONES["le-mans"];
@@ -137,7 +138,7 @@ module.exports = async (req, res) => {
       if (!texte) return res.status(400).json({ error: "Message vide" });
       const c = await stripe.customers.retrieve(b.cid);
       const t = await store.addMessage(b.cid, "equipe", texte, c.name || c.email);
-      if (c.email) await sendMail(c.email, "Resto Pickup vous a répondu", `<p>Bonjour,</p><p>${esc(texte).replace(/\n/g, "<br>")}</p><p><a href="${process.env.SITE_URL}/mon-compte.html">Répondre depuis votre espace</a></p>`).catch((e) => console.error(e));
+      if (c.email) await sendMail(c.email, "Resto Pickup vous a répondu", `<p>Bonjour,</p><p>${esc(texte).replace(/\n/g, "<br>")}</p><p><a href="${site()}/mon-compte.html">Répondre depuis votre espace</a></p>`).catch((e) => console.error(e));
       return res.status(200).json({ messages: t.messages });
     }
 
@@ -164,5 +165,5 @@ module.exports = async (req, res) => {
     }
 
     return res.status(400).json({ error: "Action inconnue" });
-  } catch (e) { console.error(e); return res.status(500).json({ error: e.message || "Erreur" }); }
+  } catch (e) { console.error(e); await require("./_lib").reportBug("/api/admin", e); return res.status(500).json({ error: e.message || "Erreur" }); }
 };
