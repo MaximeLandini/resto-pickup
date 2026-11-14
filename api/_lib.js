@@ -2,7 +2,12 @@
 // Variables : STRIPE_SECRET_KEY, SESSION_SECRET (longue chaîne aléatoire), BREVO_API_KEY, MAIL_FROM, SITE_URL.
 const crypto = require("crypto");
 const Stripe = require("stripe");
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// Initialisation paresseuse : sans clé, la fonction répond « non configuré » au lieu de planter.
+let _s = null;
+const stripe = new Proxy({}, { get(_, k) {
+  if (!_s) { if (!process.env.STRIPE_SECRET_KEY) { const e = new Error("Paiement pas encore configuré"); e.status = 503; throw e; } _s = new Stripe(process.env.STRIPE_SECRET_KEY); }
+  return _s[k];
+} });
 const SECRET = process.env.SESSION_SECRET || "";
 const ZONES = { "le-mans": { jour: 2, nom: "mardi" }, loue: { jour: 4, nom: "jeudi" }, "mayenne-orne": { jour: 4, nom: "jeudi" } };
 const DELAI = 3;

@@ -32,6 +32,7 @@ exports.handler = async (event) => {
       send(s) { resolve({ statusCode: code, headers: h, body: String(s) }); },
       end() { resolve({ statusCode: code, headers: h, body: "" }); },
     };
-    Promise.resolve(fn(req, res)).catch((e) => { console.error(e); resolve({ statusCode: 500, headers: h, body: JSON.stringify({ error: "Erreur serveur" }) }); });
+    let p; try { p = Promise.resolve(fn(req, res)); } catch (e) { p = Promise.reject(e); }
+    p.catch((e) => { console.error(e); resolve({ statusCode: e.status || 500, headers: h, body: JSON.stringify({ error: e.status === 503 ? "Service pas encore configuré, appelez le 06 60 68 05 07" : "Erreur serveur" }) }); });
   });
 };
