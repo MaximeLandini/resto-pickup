@@ -42,4 +42,4 @@ R L C RL CONCEPT, EURL, SIREN 572 136 869, nom commercial Resto Pickup.
 
 ## Guides
 - [Parent âgé qui vit loin : organiser ses repas à distance](https://restopickup.com/guide-organiser-repas-parent-age-a-distance.html) : Vous habitez loin de votre père ou de votre mère ? Repérer les signes qui doivent alerter, choisir un service de repas livrés, tout gérer à distance : le guide pratique des aidants.
-- [Prix du portage de repas à domicile : ce que vous payez vraiment](https://restopickup.com/guide-prix-portage-repas-domicile.html) : Prix d'un repas livré à domicile pour une personne âgée, frais de livraison, tarifs des CCAS, crédit d'impôt 2026 : la méthode pour comparer les offres sans se tromper.
+- [Prix du portage de repas à domicile : ce que vous payez vraiment](https://restopickup.com/guide-prix-portage-repas-domicile.html) : Prix d'un repas livré à domicile pour une personne âgée, frais de livraison, tarifs des CCAS, crédit d'impôt sur la livraison : la méthode pour comparer les offres sans se tromper.
