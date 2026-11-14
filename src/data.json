@@ -19,8 +19,8 @@
     "siret": "572 136 869 00037",
     "tva": "FR81572136869",
     "nomCommercial": "Resto Pickup",
-    "directeur": "[nom du gérant à compléter]",
-    "hebergeur": "[hébergeur à compléter : nom, adresse, téléphone]"
+    "directeur": "Roberto Landini, gérant",
+    "hebergeur": "Netlify, Inc., 101 2nd Street, San Francisco, CA 94105, États-Unis (netlify.com)"
   },
   "zones": [
     {

@@ -40,9 +40,10 @@ function etiquette(iso, sous) {
 }
 // Ticket façon « la carte » : intitulé, points de conduite, prix
 function ticket(rows, total, titre) {
-  const tr = rows.map(([k, v, s]) => `<tr><td style="padding:9px 0;font:17px/1.35 ${SANS};color:${C.marine};vertical-align:bottom">${esc(k)}${s ? `<br><span style="font-size:14px;color:${C.ardoise}">${esc(s)}</span>` : ""}</td>
-    <td style="padding:9px 8px;vertical-align:bottom;width:30%"><div style="border-bottom:2px dotted ${C.filet};height:1px;margin-bottom:6px"></div></td>
-    <td align="right" style="padding:9px 0;font:700 17px/1.35 ${SANS};color:${C.marine};vertical-align:bottom;white-space:nowrap">${v}</td></tr>`).join("");
+  const tr = rows.map(([k, v, s]) => `<tr><td style="padding:10px 0 2px;font:17px/1.3 ${SANS};color:${C.marine};vertical-align:bottom;white-space:nowrap">${esc(k)}</td>
+    <td width="100%" style="padding:10px 8px 2px;vertical-align:bottom"><div style="border-bottom:2px dotted ${C.filet};height:1px;margin-bottom:5px;min-width:24px"></div></td>
+    <td align="right" style="padding:10px 0 2px;font:700 17px/1.3 ${SANS};color:${C.marine};vertical-align:bottom;white-space:nowrap">${v}</td></tr>
+    ${s ? `<tr><td colspan="3" style="padding:0 0 6px;font:14px/1.3 ${SANS};color:${C.ardoise}">${esc(s)}</td></tr>` : ""}`).join("");
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 18px;background:#fff;border-radius:6px;box-shadow:0 0 0 2px ${C.marine},0 0 0 6px #fff,0 0 0 8px ${C.marine}">
   <tr><td style="padding:22px 24px 8px">${titre ? `<div style="font:22px/1.2 ${SERIF};color:${C.marine};text-align:center;margin-bottom:8px">${esc(titre)}</div>` : ""}
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${tr}</table>
@@ -141,7 +142,7 @@ function toText(o) {
 /* ---------- modèles ---------- */
 const recapCommande = (m) => {
   const repas = (String(m.jours || "").length || 0) * (m.service === "midi-soir" ? 2 : 1) * (m.personnes === "2" ? 2 : 1);
-  return [["Repas", `${SVC[m.service] || esc(m.service)}`, joursTxt(m.jours)], ["Pour", m.personnes === "2" ? "2 personnes" : "1 personne"], ["Repas par semaine", String(repas || "")]];
+  return [["Formule", `${SVC[m.service] || esc(m.service)}`, joursTxt(m.jours)], ["Pour", m.personnes === "2" ? "2 personnes" : "1 personne"], ["Barquettes", `${repas || ""} par semaine`]];
 };
 const T = {
   // Code de connexion à l'espace client ou équipe
@@ -155,13 +156,13 @@ const T = {
   // Commande confirmée (abonnement ou semaine d'essai)
   commandeClient: (m, montantCents) => {
     const proche = m.pour && m.pour !== "moi";
-    const rows = recapCommande(m).concat([["Livraison à", esc(m.livre_adresse || "")]]);
+    const rows = recapCommande(m);
     return client({
       subject: m.essai ? "Votre semaine d'essai est confirmée" : "Votre commande Resto Pickup est confirmée",
       preheader: `Première livraison ${dlong(m.premiere_livraison)}. Le livreur sonne et remet les repas en main propre.`,
-      eyebrow: "Commande confirmée", title: proche ? `C'est noté, ${esc(m.livre_nom || "votre proche")} sera bien servi.` : "C'est noté, on s'occupe de tout.",
+      eyebrow: "Commande confirmée", title: proche ? `C'est noté, on s'occupe de tout pour ${esc(m.livre_nom || "votre proche")}.` : "C'est noté, on s'occupe de tout.",
       body: P(proche ? `Merci pour votre confiance. Les repas de <b>${esc(m.livre_nom || "votre proche")}</b> sont commandés.` : "Merci pour votre confiance. Votre commande est bien enregistrée.")
-        + etiquette(m.premiere_livraison, "Puis chaque semaine, le même jour.")
+        + etiquette(m.premiere_livraison, m.essai ? m.livre_adresse : `${m.livre_adresse || ""}, puis chaque semaine le même jour.`)
         + ticket(rows.map((r) => [r[0], r[1], r[2]]), [m.essai ? "Semaine d'essai" : "Chaque semaine", eur(montantCents)], "Votre commande")
         + etapes([`Le livreur sonne et remet les repas <b>en main propre</b>${proche ? " à votre proche" : ""}, jamais devant la porte.`, "Les repas vont au frigo. Chaque barquette porte le jour et le repas : impossible de se tromper.", "Quelques minutes au micro-ondes, et c'est prêt."])
         + note(`Personne n'ouvre ? Le livreur appelle ${proche ? "votre proche, puis vous" : "le numéro indiqué"}.`, "ok")

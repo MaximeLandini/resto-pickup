@@ -45,12 +45,41 @@ function livresLe(clients, dateIso) {
 }
 const barquettes = (c) => c.jours.length * (c.service === "midi-soir" ? 2 : 1) * c.personnes;
 
+// Durées de conservation de la politique de confidentialité, appliquées automatiquement
+async function purge() {
+  const last = await store.get("cfg/purge");
+  if (last && Date.now() - last.t < 864e5) return;
+  await store.set("cfg/purge", { t: Date.now() });
+  const now = Date.now(), an = 365 * 864e5;
+  for (const k of await store.list("req/")) { const r = await store.get(k); if (r && now - Date.parse(r.date) > an) await store.del(k); }
+  for (const k of await store.list("bug/")) { const r = await store.get(k); if (r && now - r.t > 30 * 864e5) await store.del(k); }
+  for (const k of await store.list("evt/")) { const t = +k.split("/")[1].split("-")[0]; if (t && now - t > 90 * 864e5) await store.del(k); }
+  for (const k of await store.list("deliv/")) { const d = k.split("/")[1]; if (d && now - Date.parse(d) > an) await store.del(k); }
+  for (const k of await store.list("msg/")) { const t = await store.get(k); if (t && t.dernier && now - Date.parse(t.dernier) > 3 * an) await store.del(k); }
+  for (const k of await store.list("adminlogin/")) { const r = await store.get(k); if (r && r.exp < now) await store.del(k); }
+}
+
 module.exports = async (req, res) => {
   if (req.method !== "POST") return res.status(405).end();
   const admin = verifyAdmin(req);
   if (!admin) return res.status(401).json({ error: "Session équipe expirée" });
   try {
     const b = body(req), a = b.action;
+
+    if (a === "overview") purge().catch((e) => console.error("purge", e.message)); // durées de conservation (une fois par jour)
+    if (a === "effacer") {
+      // Droit à l'effacement : supprime messages, notes, statuts de livraison et anonymise la fiche Stripe (les factures restent, obligation légale)
+      const cid = String(b.cid || ""); if (!/^cus_/.test(cid)) return res.status(400).json({ error: "Client inconnu" });
+      const subs = await stripe.subscriptions.list({ customer: cid, status: "all", limit: 20 });
+      for (const sub of subs.data) {
+        if (["active", "trialing", "past_due"].includes(sub.status)) return res.status(400).json({ error: "Arrêtez d'abord l'abonnement" });
+        await stripe.subscriptions.update(sub.id, { metadata: { livre_nom: "", livre_adresse: "", livre_tel: "", livre_email: "", consignes: "", payeur: "", livre_commune: "" } }).catch(() => {});
+      }
+      await stripe.customers.update(cid, { name: "Client effacé", phone: "", address: null, shipping: null, metadata: { efface: new Date().toISOString().slice(0, 10), efface_par: admin } });
+      for (const k of [`msg/${cid}`, `note/${cid}`]) await store.del(k).catch(() => {});
+      for (const k of await store.list("deliv/")) if (k.endsWith("/" + cid)) await store.del(k).catch(() => {});
+      return res.status(200).json({ ok: true });
+    }
 
     if (a === "overview") {
       const [subs, ess, threads, reqs] = await Promise.all([allSubs(), essais(), store.list("msg/"), store.list("req/")]);

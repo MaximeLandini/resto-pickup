@@ -273,7 +273,7 @@ RAPPEL = """
       <input type="hidden" name="type" value="rappel"><input class="hp" name="site_web" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button type="submit" class="btn btn--main btn--lg sheet__go">Être rappelé</button>
       <p class="sheet__alt">Vous préférez appeler ? <a href="tel:""" + D["telHref"] + """"><b>""" + D["tel"] + """</b></a>, du lundi au vendredi.</p>
-      <p class="sheet__rgpd">Votre numéro sert uniquement à vous rappeler.</p>
+      <p class="sheet__rgpd">Votre numéro sert uniquement à vous rappeler. <a href="politique-confidentialite.html">Vos données</a></p>
     </div>
     <div class="sheet__ok" data-ok hidden>
       <img src="img/assiette.svg" alt="" width="88" height="88">
@@ -323,7 +323,7 @@ def footer(slug=""):
     </div>
     <div class="foot__base">
       <div class="foot__pay" aria-label="Paiement sécurisé">{icon("cadenas")}<span>Paiement sécurisé par Stripe</span><i>CB</i><i>Visa</i><i>Mastercard</i><i>Apple Pay</i><i>Google Pay</i><i>Prélèvement</i></div>
-      <p class="legal">© 2026 {E(L['nomCommercial'])}, marque de {E(L['raison'])}, {E(L['forme'])} au capital de {E(L['capital'])}, {E(L['rcs'])}. <a href="mentions-legales.html">Mentions légales</a> · <a href="conditions-generales.html">Conditions générales de vente</a></p>
+      <p class="legal">© 2026 {E(L['nomCommercial'])}, marque de {E(L['raison'])}, {E(L['forme'])} au capital de {E(L['capital'])}, {E(L['rcs'])}. <a href="mentions-legales.html">Mentions légales</a> · <a href="politique-confidentialite.html">Vos données</a> · <a href="conditions-generales.html">Conditions générales de vente</a></p>
     </div>
   </div>
 </footer>""" + RAPPEL
@@ -563,30 +563,61 @@ def legal_page():
   <h2>Hébergement</h2>
   <p>{E(L['hebergeur'])}</p>
   <h2>Données personnelles</h2>
-  <p>Les informations saisies lors de la commande (nom, adresse, téléphone, e-mail, consignes de livraison) servent uniquement à livrer les repas, facturer l'abonnement et vous contacter au sujet de votre commande. Elles ne sont ni vendues ni cédées.</p>
-  <p>Les paiements sont traités par Stripe : Resto Pickup n'a jamais accès à vos coordonnées bancaires complètes.</p>
-  <p>Vous pouvez demander l'accès, la rectification ou la suppression de vos données en écrivant à {E(D['email'])}.</p>
+  <p>Le traitement de vos données est décrit dans notre <a href="politique-confidentialite.html">politique de confidentialité</a> : ce que nous collectons, pourquoi, combien de temps, et comment exercer vos droits.</p>
   <h2>Cookies</h2>
-  <p>Ce site n'utilise que les cookies nécessaires à son fonctionnement et au paiement. Il ne dépose aucun cookie publicitaire.</p>
+  <p>Ce site ne dépose aucun cookie publicitaire ni de mesure d'audience. Seul est utilisé le stockage technique nécessaire à son fonctionnement (session de votre espace client, taille du texte choisie), qui ne nécessite pas de consentement.</p>
+  <h2>Propriété intellectuelle</h2>
+  <p>Les textes, illustrations, logos et la charte graphique du site sont la propriété de {E(L['raison'])}. Toute reproduction sans autorisation est interdite.</p>
 </div></section>"""
     return "mentions-legales.html", "Mentions légales | Resto Pickup", "Mentions légales du site Resto Pickup, édité par R L C RL CONCEPT.", body, [ORG]
 
 def cgv_page():
+    L = D["legal"]
     body = f"""{crumbs_html([("Accueil", ""), ("Conditions générales de vente", "conditions-generales.html")])}
 <section class="section" style="padding-top:1.5rem"><div class="wrap prose">
   <h1>Conditions générales de vente</h1>
-  <p class="demo">Document de travail à faire valider par un juriste avant la mise en ligne.</p>
-  <h2>Le service</h2><p>Resto Pickup livre à domicile, une fois par semaine, des repas (plat et dessert) à réchauffer, selon un menu unique publié chaque semaine sur le site.</p>
-  <h2>L'abonnement</h2><p>Le client choisit le service (midi, soir ou les deux), les jours de la semaine (au moins deux) et le nombre de personnes (une ou deux). L'abonnement est sans durée minimale. Une semaine d'essai sans abonnement est également proposée.</p>
-  <h2>Prix et paiement</h2><p>Le prix est de {eur(P)} TTC par repas complet. La livraison est facturée {eur(LPR)} TTC par repas, avec un minimum de {eur(LMIN)} et un maximum de {eur(LMAX)} par semaine. La commande minimum est de {RMIN} repas par semaine. Le montant de la semaine est débité automatiquement par carte bancaire ou prélèvement SEPA, via Stripe.</p>
-  <h2>Livraison</h2><p>Les repas sont remis en main propre au jour de livraison de la commune. Si personne n'est présent, le livreur appelle la personne livrée puis le contact indiqué. [Règle à définir en cas d'absence répétée.]</p>
-  <h2>Pause et arrêt</h2><p>Le client met en pause ou arrête son abonnement sans frais, par téléphone ou depuis son espace client, avant le samedi précédant la livraison concernée.</p>
-  <h2>Conservation et allergènes</h2><p>Les repas se conservent au réfrigérateur jusqu'à la date indiquée sur chaque barquette. La liste des allergènes accompagne chaque livraison.</p>
-  <h2>Cartes cadeaux</h2><p>La carte cadeau correspond à un nombre de repas payé d'avance. Elle est valable un an à compter de l'achat et s'utilise en une ou plusieurs fois, dans les communes desservies. Elle n'est ni remboursable ni échangeable contre des espèces. [Clause à faire valider par le juriste.]</p>
-  <h2>Droit de rétractation</h2><p>[Clause à rédiger par le juriste, compte tenu de la nature périssable des denrées.]</p>
-  <h2>Réclamations et médiation</h2><p>Toute réclamation est à adresser à {E(D['email'])} ou au {E(D['tel'])}. [Coordonnées du médiateur de la consommation à compléter.]</p>
+  <p>En vigueur au {datetime.date.today().strftime("%d/%m/%Y")}.</p>
+  <h2>1. Qui sommes-nous</h2><p>Resto Pickup est une marque de {E(L['raison'])}, {E(L['forme'])} au capital de {E(L['capital'])}, siège social {E(L['siege'])}, {E(L['rcs'])}, TVA {E(L['tva'])}. Contact : {E(D['tel'])}, {E(D['email'])}.</p>
+  <h2>2. Le service</h2><p>Resto Pickup livre à domicile, une fois par semaine, des repas complets (plat et dessert) à conserver au réfrigérateur et à réchauffer, selon un menu unique publié chaque semaine sur le site. Le service est réservé aux communes desservies, listées sur le site, et à des clients majeurs. Les repas ne sont pas adaptés aux régimes médicaux (sans sel, diabétique, texture modifiée).</p>
+  <h2>3. La commande</h2><p>Le client choisit le service (midi, soir ou les deux), les jours de la semaine et le nombre de personnes (une ou deux), avec un minimum de {RMIN} repas par semaine. Il peut commander pour lui-même ou pour un proche : la personne qui paie est alors le client, la personne livrée est le destinataire. La commande peut être passée en ligne ou par téléphone ; dans ce cas, un lien de paiement est envoyé par SMS ou par e-mail. Le contrat est conclu à la validation du paiement, confirmée par e-mail.</p>
+  <h2>4. Abonnement et semaine d'essai</h2><p>L'abonnement est hebdomadaire, sans durée minimale et sans frais de résiliation. La semaine d'essai est une commande unique, sans abonnement ni reconduction.</p>
+  <h2>5. Prix et paiement</h2><p>Le prix est de {eur(P)} TTC par repas complet. La livraison est facturée {eur(LPR)} TTC par repas, avec un minimum de {eur(LMIN)} et un maximum de {eur(LMAX)} par semaine. Le prix applicable est celui affiché au moment de la commande ; toute évolution est annoncée au moins quinze jours à l'avance par e-mail, le client restant libre d'arrêter. Le montant de la semaine est prélevé chaque semaine par carte bancaire ou prélèvement SEPA, par l'intermédiaire de Stripe. Resto Pickup n'a jamais accès aux coordonnées bancaires complètes. Une facture est disponible chaque semaine dans l'espace client.</p>
+  <h2>6. Impayés</h2><p>En cas de paiement refusé, le client est prévenu par e-mail et peut régler en ligne ou par téléphone. Les livraisons peuvent être suspendues jusqu'à régularisation.</p>
+  <h2>7. Livraison</h2><p>Les repas sont livrés le jour de tournée de la commune, en camion réfrigéré, et remis en main propre au destinataire ou à une personne présente à son domicile. Ils ne sont jamais laissés devant la porte. Si personne n'ouvre, le livreur appelle le destinataire puis le contact indiqué. Si la livraison reste impossible du fait du client (absence non signalée, adresse erronée), les repas ne peuvent être ni conservés ni livrés à nouveau, et la semaine reste due. Le transfert des risques a lieu à la remise des repas.</p>
+  <h2>8. Pause, modification et arrêt</h2><p>Le client met en pause, modifie ou arrête son abonnement sans frais, depuis son espace client ou par téléphone, au plus tard le samedi précédant la semaine de livraison concernée. Une pause suspend livraisons et prélèvements. Un arrêt prend effet à la fin de la semaine déjà payée.</p>
+  <h2>9. Conservation, allergènes et sécurité alimentaire</h2><p>Les repas se conservent au réfrigérateur, entre 0 et 4 °C, jusqu'à la date limite indiquée sur chaque barquette, et se réchauffent selon les indications de l'étiquette. La liste des ingrédients et des allergènes figure sur chaque barquette ; le client vérifie qu'elle convient au destinataire. Un repas dont la chaîne du froid a été rompue après la livraison ne doit pas être consommé.</p>
+  <h2>10. Droit de rétractation</h2><p>Les repas sont des denrées périssables. Conformément à l'article L221-28, 4° du Code de la consommation, le droit de rétractation ne s'applique pas aux biens susceptibles de se détériorer ou de se périmer rapidement. Le client peut en revanche arrêter son abonnement à tout moment, sans frais, dans les conditions de l'article 8.</p>
+  <h2>11. Réclamations</h2><p>Un repas manquant, abîmé ou non conforme est signalé dans les 24 heures suivant la livraison, au {E(D['tel'])} ou par message depuis l'espace client, si possible avec une photo. Après vérification, le repas est remplacé ou remboursé.</p>
+  <h2>12. Cartes cadeaux</h2><p>La carte cadeau correspond à un nombre de repas, livraison comprise, payé d'avance. Elle est valable un an à compter de l'achat, s'utilise en une ou plusieurs fois dans les communes desservies, en ligne ou par téléphone, et son montant est déduit des commandes de son bénéficiaire. Elle n'est pas remboursable en espèces. Un code perdu peut être retrouvé sur simple demande de l'acheteur.</p>
+  <h2>13. Données personnelles</h2><p>Les données nécessaires à la commande sont traitées conformément à notre <a href="politique-confidentialite.html">politique de confidentialité</a>.</p>
+  <h2>14. Litiges</h2><p>Toute réclamation est d'abord adressée à Resto Pickup, au {E(D['tel'])} ou à {E(D['email'])}, qui répond sous quinze jours. Les présentes conditions sont soumises au droit français.</p>
 </div></section>"""
-    return "conditions-generales.html", "Conditions générales de vente | Resto Pickup", "Conditions générales de vente de l'abonnement de repas à domicile Resto Pickup.", body, [ORG]
+    return "conditions-generales.html", "Conditions générales de vente | Resto Pickup", "Conditions générales de vente de l'abonnement de repas à domicile Resto Pickup : prix, livraison, pause, arrêt, cartes cadeaux.", body, [ORG]
+
+def privacy_page():
+    L = D["legal"]
+    body = f"""{crumbs_html([("Accueil", ""), ("Vos données", "politique-confidentialite.html")])}
+<section class="section" style="padding-top:1.5rem"><div class="wrap prose">
+  <h1>Vos données personnelles</h1>
+  <p class="lead">En bref : nous ne gardons que ce qui sert à livrer vos repas, à vous facturer et à vous répondre. Rien n'est vendu, rien n'est utilisé pour de la publicité.</p>
+  <h2>Qui est responsable</h2><p>{E(L['raison'])}, {E(L['forme'])}, {E(L['siege'])}, {E(L['rcs'])}, qui exploite la marque Resto Pickup. Pour toute question sur vos données : {E(D['email'])} ou {E(D['tel'])}.</p>
+  <h2>Ce que nous collectons, et pourquoi</h2>
+  <table class="dtable"><thead><tr><th>Usage</th><th>Données</th><th>Fondement</th><th>Durée de conservation</th></tr></thead><tbody>
+  <tr><td>Livrer les repas et gérer l'abonnement</td><td>Nom, adresse, téléphone, e-mail, consignes de livraison, formule, jour de livraison ; si vous commandez pour un proche, ses coordonnées et les vôtres</td><td>Exécution du contrat</td><td>Pendant l'abonnement, puis 3 ans après la dernière commande</td></tr>
+  <tr><td>Paiement et facturation</td><td>Montants, factures, moyen de paiement (géré par Stripe : nous ne voyons ni le numéro de carte ni l'IBAN complet)</td><td>Exécution du contrat et obligation légale</td><td>Factures : 10 ans, durée légale de conservation des pièces comptables</td></tr>
+  <tr><td>Connexion à l'espace client</td><td>E-mail, code à usage unique</td><td>Exécution du contrat</td><td>Code : 15 minutes ; session : 30 jours sur votre appareil</td></tr>
+  <tr><td>Vous répondre</td><td>Messages échangés depuis l'espace client</td><td>Exécution du contrat</td><td>3 ans après le dernier échange</td></tr>
+  <tr><td>Vous rappeler, répondre à un professionnel</td><td>Nom, téléphone, commune, créneau ; pour une personne orientée par un professionnel, les coordonnées données avec son accord</td><td>Intérêt légitime à répondre à la demande</td><td>1 an sans commande, puis suppression</td></tr>
+  <tr><td>Cartes cadeaux</td><td>Prénoms de l'acheteur et du bénéficiaire, message, e-mail de l'acheteur, code</td><td>Exécution du contrat</td><td>Validité de la carte, puis 3 ans</td></tr>
+  <tr><td>Sécurité et bon fonctionnement du site</td><td>Messages d'erreur techniques, type de navigateur</td><td>Intérêt légitime</td><td>30 jours</td></tr>
+  </tbody></table>
+  <p>Merci de ne pas indiquer d'informations médicales dans les consignes de livraison : seules les indications utiles au livreur sont nécessaires (digicode, étage, sonner longtemps).</p>
+  <h2>Qui y a accès</h2><p>L'équipe Resto Pickup et le livreur, pour les seules informations utiles à la livraison. Nos prestataires techniques, qui agissent sur nos instructions : Stripe (paiement), Brevo (envoi des e-mails), Netlify (hébergement du site et des données de l'espace client). Certains sont établis ou ont des serveurs hors de l'Union européenne ; ces transferts sont encadrés par les garanties prévues par le RGPD. Vos données ne sont jamais vendues ni louées.</p>
+  <h2>Pas de publicité, pas de pistage</h2><p>Le site n'utilise aucun cookie publicitaire, aucun outil de mesure d'audience et aucun réseau social intégré. Seul un stockage technique est utilisé sur votre appareil (session de l'espace client, taille du texte), ce qui ne demande pas de consentement.</p>
+  <h2>Vos droits</h2><p>Vous pouvez à tout moment accéder à vos données, les faire corriger ou supprimer, en limiter l'usage, vous opposer à leur traitement ou en demander une copie. Écrivez à {E(D['email'])} ou appelez le {E(D['tel'])} ; nous répondons sous un mois. Vos factures restent conservées le temps imposé par la loi. Si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir la CNIL (cnil.fr).</p>
+  <h2>Sécurité</h2><p>Le site est servi en HTTPS, l'espace client fonctionne par code à usage unique, sans mot de passe à retenir, et les paiements sont traités par Stripe, certifié PCI DSS. L'accès à l'espace équipe est réservé à des personnes nommément autorisées.</p>
+</div></section>"""
+    return "politique-confidentialite.html", "Vos données personnelles | Resto Pickup", "Politique de confidentialité de Resto Pickup : données collectées, finalités, durées de conservation, vos droits.", body, [ORG]
 
 GIFT_FAQ = [
     ("Comment mon proche utilise-t-il la carte ?",
@@ -665,7 +696,7 @@ SCRIPTS = '<script src="config.js"></script>\n<script src="contact.js"></script>
 
 def main():
     os.makedirs(SITE, exist_ok=True); os.makedirs(ART, exist_ok=True)
-    pages = [index_page(), commander_page(), compte_page()] + [zone_page(z) for z in D["zones"]] + [parent_page(), gift_page(), pro_page(), equipe_page(), admin_page(), legal_page(), cgv_page(), communes_index_page()] + [commune_page(c) for c in COMMUNES.values() if c["page"].startswith("repas-domicile-")]
+    pages = [index_page(), commander_page(), compte_page()] + [zone_page(z) for z in D["zones"]] + [parent_page(), gift_page(), pro_page(), equipe_page(), admin_page(), legal_page(), cgv_page(), privacy_page(), communes_index_page()] + [commune_page(c) for c in COMMUNES.values() if c["page"].startswith("repas-domicile-")]
     for slug, title, desc, body, ld in pages:
         hdr = fill(HEADER)
         if slug in ("commander.html", "equipe.html"): hdr = hdr.replace('class="top"', 'class="top top--slim"')
@@ -700,7 +731,7 @@ def main():
     for f in ("style.css", "app.js", "contact.js", "offrir.js", "equipe.js", "admin.js"):
         shutil.copy(os.path.join(SITE, f), os.path.join(ART, f))
     # SEO / GEO
-    urls = [p[0] for p in pages if p[0] not in ("mentions-legales.html", "conditions-generales.html", "commander.html", "mon-compte.html", "equipe.html", "admin.html")]
+    urls = [p[0] for p in pages if p[0] not in ("mentions-legales.html", "conditions-generales.html", "politique-confidentialite.html", "commander.html", "mon-compte.html", "equipe.html", "admin.html")]
     sm = "".join(f"<url><loc>{D['site']}/{'' if u=='index.html' else u}</loc><lastmod>{TODAY}</lastmod></url>" for u in urls)
     open(os.path.join(SITE, "sitemap.xml"), "w").write(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{sm}</urlset>\n')
     open(os.path.join(SITE, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /equipe.html\nDisallow: /admin.html\n\nSitemap: {D['site']}/sitemap.xml\n")
