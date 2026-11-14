@@ -1,12 +1,12 @@
 // Connexion à l'espace admin : e-mail autorisé (ADMIN_EMAILS) → code à 6 chiffres → jeton équipe de 12 h.
 const crypto = require("crypto");
-const { hmac, body, signAdmin, sendCode } = require("./_lib");
+const { hmac, body, signAdmin, sendCode, adminEmails } = require("./_lib");
 const store = require("./_store");
 module.exports = async (req, res) => {
   if (req.method !== "POST") return res.status(405).end();
   try {
     const b = body(req), email = String(b.email || "").trim().toLowerCase();
-    const allowed = String(process.env.ADMIN_EMAILS || "").toLowerCase().split(/[,; ]+/).filter(Boolean);
+    const allowed = adminEmails();
     const key = `adminlogin/${hmac(email).slice(0, 24)}`;
     if (!b.code) {
       if (allowed.includes(email)) {

@@ -14,6 +14,7 @@ const site = () => (process.env.SITE_URL || "https://restopickup.com").replace(/
 // Destinataires des alertes (commandes, demandes de l'espace client, bugs). MAIL_EQUIPE les remplace si renseignée.
 const TEAM_DEFAUT = "maxime@gardenevents.fr, robertlandini@yahoo.fr";
 const team = () => String(process.env.MAIL_EQUIPE || TEAM_DEFAUT).split(/[,; ]+/).filter(Boolean);
+const adminEmails = () => String(process.env.ADMIN_EMAILS || TEAM_DEFAUT).toLowerCase().split(/[,; ]+/).filter(Boolean);
 const mailFrom = () => process.env.MAIL_FROM || "bonjour@restopickup.com";
 const ZONES = { "le-mans": { jour: 2, nom: "mardi" }, loue: { jour: 4, nom: "jeudi" }, "mayenne-orne": { jour: 4, nom: "jeudi" } };
 const DELAI = 3;
@@ -68,8 +69,7 @@ function verifyAdmin(req) {
   const id = verifyToken(req);
   if (!id || !id.startsWith("admin:")) return null;
   const email = id.slice(6);
-  const allowed = String(process.env.ADMIN_EMAILS || TEAM_DEFAUT).toLowerCase().split(/[,; ]+/).filter(Boolean);
-  return allowed.includes(email) ? email : null;
+  return adminEmails().includes(email) ? email : null;
 }
 async function sendMail(to, subject, html, replyTo) {
   const dest = (Array.isArray(to) ? to : String(to || "").split(/[,;]+/)).map((e) => String(e).trim()).filter(Boolean);
@@ -102,4 +102,4 @@ async function reportBug(where, err, extra = "") {
 }
 // Montant hebdomadaire d'un abonnement (repas + livraison)
 const weekly = (s) => s.items.data.reduce((t, i) => t + (i.price.unit_amount || 0) * (i.quantity || 1), 0) / 100;
-module.exports = { site, team, notifyTeam, reportBug, stripe, hmac, body, sign, verifyToken, signAdmin, verifyAdmin, findCustomer, activeSub, nextDelivery, sendCode, sendMail, weekly, ZONES };
+module.exports = { site, team, adminEmails, notifyTeam, reportBug, stripe, hmac, body, sign, verifyToken, signAdmin, verifyAdmin, findCustomer, activeSub, nextDelivery, sendCode, sendMail, weekly, ZONES };
