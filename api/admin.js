@@ -68,6 +68,46 @@ module.exports = async (req, res) => {
     const b = body(req), a = b.action;
 
     if (a === "overview") purge().catch((e) => console.error("purge", e.message)); // durées de conservation (une fois par jour)
+    /* ---------- Menus et étiquettes ---------- */
+    if (a.startsWith("menu_") || a.startsWith("recette") || a === "etiquettes") {
+      const M = require("./_menu");
+      if (a === "recettes") return res.status(200).json({ recettes: await M.recettes(), allergenes: M.ALLERGENES });
+      if (a === "recette_save") {
+        const old = b.id ? await store.get(`recette/${String(b.id).replace(/[^a-z0-9]/gi, "")}`) : null;
+        const r = M.normRecette(b, old || {});
+        if (!r.nom) return res.status(400).json({ error: "Nom de la recette obligatoire" });
+        if (b.photo && /^data:image\/(jpeg|png|webp);base64,/.test(b.photo)) {
+          const [head, data] = b.photo.split(",");
+          if (data.length > 1.5e6) return res.status(400).json({ error: "Photo trop lourde (1 Mo maximum)" });
+          const pid = M.uid();
+          await store.set(`photo/${pid}`, { type: head.slice(5, head.indexOf(";")), data });
+          if (r.photo) await store.del(`photo/${r.photo}`).catch(() => {});
+          r.photo = pid;
+        }
+        await store.set(`recette/${r.id}`, r);
+        return res.status(200).json({ recette: r });
+      }
+      if (a === "recette_delete") {
+        const id = String(b.id || "").replace(/[^a-z0-9]/gi, ""); const r = await store.get(`recette/${id}`);
+        if (r && r.photo) await store.del(`photo/${r.photo}`).catch(() => {});
+        await store.del(`recette/${id}`);
+        return res.status(200).json({ ok: true });
+      }
+      if (a === "menu_get") { const l = M.lundi(b.semaine || new Date().toISOString()); return res.status(200).json({ menu: await M.menu(l) }); }
+      if (a === "menu_save") {
+        const l = M.lundi(b.semaine), jours = {};
+        for (let j = 1; j <= 7; j++) for (const sv of M.SVCS) { const x = ((b.jours || {})[j] || {})[sv] || {}; if (x.plat || x.dessert) { jours[j] = jours[j] || {}; jours[j][sv] = { plat: String(x.plat || "").slice(0, 40), dessert: String(x.dessert || "").slice(0, 40) }; } }
+        const m = { lundi: l, publie: !!b.publie, jours, maj: new Date().toISOString(), par: admin };
+        await store.set(`menu/${l}`, m);
+        return res.status(200).json({ menu: m });
+      }
+      if (a === "etiquettes") {
+        const date = String(b.date || "").slice(0, 10);
+        const clients = livresLe((await allSubs()).concat(await essais(28)), date).sort((x, y) => (x.zone + x.commune + x.adresse).localeCompare(y.zone + y.commune + y.adresse, "fr"));
+        return res.status(200).json({ date, ...(await M.etiquettes(clients, date)) });
+      }
+    }
+
     if (a === "rembourser") {
       // Remboursement total ou partiel d'un paiement : l'argent revient sur la carte ou le compte du client (5 à 10 jours)
       const pid = String(b.pi || ""); if (!/^pi_/.test(pid)) return res.status(400).json({ error: "Paiement inconnu" });

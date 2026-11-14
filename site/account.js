@@ -80,6 +80,7 @@
         $("a-nextsub").textContent = nbRepas(E) + " repas, remis en main propre. Vous aimez ? Passez à l'abonnement quand vous voulez, sans engagement.";
         $("a-kv").innerHTML = [["Repas", svcLab(E)], ["Jours", daysLab(E.jours || "")], ["Pour", E.personnes === 2 ? "2 personnes" : "1 personne"], ["Payé", euro(E.montant)], ["Adresse", E.adresse || ""]].map(function (r) { return "<dt>" + r[0] + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("");
         document.querySelectorAll("#a-week figure").forEach(function (f) { var dd = { lun: 1, mar: 2, mer: 3, jeu: 4, ven: 5, sam: 6, dim: 7 }[f.querySelector("figcaption").textContent.slice(0, 3).toLowerCase()]; f.hidden = (E.service !== "midi-soir" && f.dataset.svc !== E.service) || String(E.jours || "").indexOf(String(dd)) < 0; });
+        if (window.RPMenu) RPMenu.account(E.livraison, E.service, E.jours);
       } else {
         $("a-status").textContent = A.ancienAbonne ? "Votre abonnement est arrêté" : "Aucune commande en cours";
         $("a-next").textContent = "Envie de recommander ?";
@@ -103,6 +104,7 @@
     $("a-skip-t").textContent = A.pauseJusquau ? "Finalement, je serai là" : "Je serai absent cette semaine";
     $("a-skip-s").textContent = A.pauseJusquau ? "Annuler l'absence et recevoir la prochaine livraison." : "Pas de livraison, pas de paiement. Reprise la semaine suivante.";
     document.querySelectorAll("#a-week figure").forEach(function (f) { var dd = { lun: 1, mar: 2, mer: 3, jeu: 4, ven: 5, sam: 6, dim: 7 }[f.querySelector("figcaption").textContent.slice(0, 3).toLowerCase()]; f.hidden = (A.service !== "midi-soir" && f.dataset.svc !== A.service) || A.jours.indexOf(String(dd)) < 0; });
+    if (window.RPMenu) RPMenu.account(A.prochaine, A.service, A.jours);
     var rows = [["Repas", svcLab(A)], ["Jours", daysLab(A.jours)], ["Pour", A.personnes === 2 ? "2 personnes" : "1 personne"],
       ["Par semaine", euro(A.prixSemaine)], ["Livraison", "chaque " + A.jourNom], ["Adresse", A.adresse], ["Consignes", A.consignes || "aucune"]];
     if (A.payeur) rows.push(["Payé par", A.payeur]);

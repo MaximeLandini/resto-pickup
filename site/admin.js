@@ -76,6 +76,7 @@
     if (name === "demandes") loadReqs();
     if (name === "cadeaux") loadGifts();
     if (name === "clients") renderClients();
+    if (name === "menus") loadMenus();
     window.scrollTo(0, 0);
   }
   $$("[data-tab]").forEach(function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
@@ -303,6 +304,24 @@
     });
   }
 
+  function demoMenus(S) {
+    if (S.recettes) return;
+    var R = function (id, type, nom, desc, ing, al, poids, dlc) { return { id: id, type: type, nom: nom, description: desc, ingredients: ing, allergenes: al, traces: "", poids: poids, conservation: "Entre 0 et 4 °C", dlcJours: dlc, rechauffage: type === "plat" ? "Retirer le film. 2 à 3 minutes au micro-ondes, puissance moyenne. Bien mélanger." : "", sanitaire: "", photo: null }; };
+    S.recettes = [
+      R("p1", "plat", "Blanquette de veau, riz pilaf", "Veau mijoté, sauce crémeuse aux champignons", "Veau 32 %, riz, crème (lait), champignons de Paris, carottes, farine de blé, beurre, oignons, sel, poivre", ["lait", "gluten"], 350, 6),
+      R("p2", "plat", "Hachis parmentier", "Bœuf haché et purée maison gratinée", "Pommes de terre, bœuf haché 30 %, lait, oignons, emmental (lait), beurre, persil, sel, poivre", ["lait"], 350, 5),
+      R("p3", "plat", "Filet de colin, julienne de légumes", "Colin vapeur, beurre blanc", "Colin 40 % (poisson), carottes, poireaux, céleri, crème (lait), beurre, échalote, sel", ["poissons", "lait", "celeri"], 320, 4),
+      R("p4", "plat", "Poulet basquaise, semoule", "Cuisse de poulet aux poivrons", "Poulet 35 %, semoule de blé dur, tomates, poivrons, oignons, huile d'olive, ail, piment d'Espelette, sel", ["gluten"], 350, 6),
+      R("d1", "dessert", "Crème caramel", "", "Lait entier, sucre, œufs, caramel, vanille", ["lait", "oeufs"], 100, 7),
+      R("d2", "dessert", "Compote pomme poire", "", "Pommes 60 %, poires 38 %, sucre, cannelle", [], 100, 7),
+      R("d3", "dessert", "Riz au lait", "", "Lait, riz, sucre, vanille", ["lait"], 120, 6)
+    ];
+    S.menus = {};
+    var x = new Date(); x.setDate(x.getDate() - (x.getDay() + 6) % 7);
+    for (var w = -1; w < 3; w++) { var l = new Date(x); l.setDate(l.getDate() + 7 * w); var jours = {};
+      for (var j = 1; j <= 7; j++) jours[j] = { midi: { plat: "p" + ((j + w + 4) % 4 + 1), dessert: "d" + ((j + w + 3) % 3 + 1) }, soir: { plat: "p" + ((j + w + 6) % 4 + 1), dessert: "d" + ((j + w + 4) % 3 + 1) } };
+      S.menus[iso(l)] = { lundi: iso(l), publie: w < 2, jours: jours }; }
+  }
   /* ---------- Démonstration ---------- */
   var DEMO_STATE = null;
   function DEMO(action, d) {
@@ -326,7 +345,7 @@
         reqs: [{ id: "r1", type: "rappel", statut: "nouveau", date: new Date(Date.now() - 5400e3).toISOString(), champs: { Nom: "Yvette Morel", "Téléphone": "0243112233", Pour: "pour elle ou lui-même", "Créneau souhaité": "le matin", Page: "index.html" } },
           { id: "r2", type: "orientation", statut: "nouveau", date: new Date(Date.now() - 864e5).toISOString(), champs: { Nom: "M. Bellanger", "Téléphone": "0243445566", Commune: "Allonnes", Structure: "CCAS d'Allonnes", "Contact du professionnel": "Mme Roux, 02 43 00 00 00", Message: "Sort de l'hôpital vendredi, vit seul" } },
           { id: "r3", type: "flyers", statut: "traite", date: new Date(Date.now() - 4 * 864e5).toISOString(), champs: { Structure: "Pharmacie du Centre", "Adresse d'envoi": "5 place de la République, 72540 Loué", Quantité: "50" } }],
-        etats: {}, notes: { cus_1: "Diabète léger, ne prend pas de dessert sucré le soir (signalé par sa fille)." } };
+        etats: {}, notes: { cus_1: "Préfère être appelée par sa fille Claire avant toute modification. Portail vert, boîte aux lettres à gauche." } };
     }
     var S = DEMO_STATE, act = ["active", "trialing", "past_due", "fin_programmee"];
     var live = function (c, date) { var wd = new Date(date + "T12:00:00").getDay(); if (jourOf(c.zone) % 7 !== wd) return false; if (c.essai) return c.debut === date; return act.indexOf(c.statut) > -1 && !(c.pauseJusquau && c.pauseJusquau > date); };
@@ -339,6 +358,25 @@
     if (action === "livraison") { S.etats[d.date + d.cid] = { statut: d.statut, note: d.note }; return { ok: true }; }
     if (action === "client") { var c = S.clients.filter(function (x) { return x.cid === d.cid; })[0], t = S.threads.filter(function (x) { return x.cid === d.cid; })[0]; if (t) t.nonLu = 0; return { client: { cid: c.cid, nom: c.nom, email: c.email, tel: c.tel, avoir: 0 }, abonnements: [c], factures: [{ date: iso(new Date(Date.now() - 7 * 864e5)), montant: c.hebdo, statut: c.statut === "past_due" ? "open" : "paid", lien: "" }, { date: iso(new Date(Date.now() - 14 * 864e5)), montant: c.hebdo, statut: "paid", lien: "" }], paiements: [{ id: "pi_demo1", date: iso(new Date(Date.now() - 7 * 864e5)), montant: c.hebdo, rembourse: 0, statut: "succeeded" }, { id: "pi_demo2", date: iso(new Date(Date.now() - 14 * 864e5)), montant: c.hebdo, rembourse: 11.99, statut: "succeeded" }], messages: t ? t.messages : [], note: S.notes[d.cid] || "" }; }
     if (action === "rembourser") return { ok: true, rembourse: +d.montant };
+    if (action === "recettes") { demoMenus(S); return { recettes: S.recettes, allergenes: { gluten: "Gluten", crustaces: "Crustacés", oeufs: "Œufs", poissons: "Poissons", arachides: "Arachides", soja: "Soja", lait: "Lait", fruits_coque: "Fruits à coque", celeri: "Céleri", moutarde: "Moutarde", sesame: "Graines de sésame", sulfites: "Sulfites", lupin: "Lupin", mollusques: "Mollusques" } }; }
+    if (action === "recette_save") { demoMenus(S); var rr = Object.assign({}, d, { id: d.id || "r" + Date.now(), poids: +d.poids || 0, dlcJours: +d.dlcJours || 6, photo: null }); delete rr.photo; rr.photo = null; S.recettes = S.recettes.filter(function (x) { return x.id !== rr.id; }).concat([rr]); return { recette: rr }; }
+    if (action === "recette_delete") { S.recettes = S.recettes.filter(function (x) { return x.id !== d.id; }); return { ok: true }; }
+    if (action === "menu_get") { demoMenus(S); return { menu: S.menus[d.semaine] || { lundi: d.semaine, publie: false, jours: {} } }; }
+    if (action === "menu_save") { S.menus[d.semaine] = { lundi: d.semaine, publie: !!d.publie, jours: d.jours }; return { ok: true }; }
+    if (action === "etiquettes") {
+      demoMenus(S); var byId = {}; S.recettes.forEach(function (r) { byId[r.id] = r; });
+      var out = [], manq = {}, gras = function (t, al) { return esc(t).replace(/\b(lait|beurre|crème|farine de blé|blé|œufs?|moutarde|céleri|emmental)\b/gi, "<b>$1</b>"); };
+      S.clients.filter(function (c) { return live(c, d.date); }).forEach(function (c) {
+        for (var k = 0; k < 7; k++) { var x = new Date(d.date + "T12:00:00"); x.setDate(x.getDate() + k); var di = iso(x), j = (x.getDay() + 6) % 7 + 1; if (String(c.jours).indexOf(j) < 0) continue;
+          var lu = new Date(x); lu.setDate(lu.getDate() - j + 1); var m = S.menus[iso(lu)] || { jours: {} };
+          ["midi", "soir"].forEach(function (s) { if (c.service !== "midi-soir" && c.service !== s) return; var sel = (m.jours[j] || {})[s] || {}, p = byId[sel.plat], de = byId[sel.dessert]; if (!p) manq[di + " " + s] = 1;
+            var dl = new Date(d.date + "T12:00:00"); dl.setDate(dl.getDate() + Math.min(p ? p.dlcJours : 6, de ? de.dlcJours : 6));
+            var pk = function (r) { return r && { nom: r.nom, ingredients: gras(r.ingredients), allergenes: r.allergenes.map(function (a) { return a === "lait" ? "Lait" : a === "gluten" ? "Gluten" : a === "oeufs" ? "Œufs" : a === "celeri" ? "Céleri" : a; }), traces: r.traces, poids: r.poids, sanitaire: r.sanitaire, rechauffage: r.rechauffage }; };
+            for (var n = 0; n < c.personnes; n++) out.push({ client: c.nom, commune: c.commune, date: di, jour: j, service: s, plat: pk(p), dessert: pk(de), conservation: (p || de || {}).conservation || "Entre 0 et 4 °C", dlc: iso(dl), horsDlc: di > iso(dl), lot: d.date.replace(/-/g, "") }); });
+        } });
+      return { date: d.date, etiquettes: out, manques: Object.keys(manq).sort() };
+    }
+
     if (action === "modifier") { var c2 = S.clients.filter(function (x) { return x.sub === d.sub; })[0]; if (d.type === "pause") c2.pauseJusquau = iso(new Date(Date.now() + 7 * d.semaines * 864e5)); if (d.type === "reprendre") c2.pauseJusquau = null; if (d.type === "arreter") c2.statut = "fin_programmee"; if (d.type === "reactiver") c2.statut = "active"; if (d.type === "change") { c2.service = d.service; c2.jours = d.jours; c2.personnes = +d.personnes; c2.hebdo = RP.total(repasOf(c2)); } if (d.type === "adresse") { c2.adresse = d.adresse; c2.tel = d.tel; c2.consignes = d.consignes; } return { ok: true }; }
     if (action === "note") { S.notes[d.cid] = d.texte; return { ok: true }; }
     if (action === "repondre") { var t2 = S.threads.filter(function (x) { return x.cid === d.cid; })[0]; if (!t2) { t2 = { cid: d.cid, nom: "", messages: [] }; S.threads.push(t2); } t2.messages.push({ de: "equipe", texte: d.texte, date: new Date().toISOString() }); t2.dernier = new Date().toISOString(); return { messages: t2.messages }; }
@@ -347,6 +385,139 @@
     if (action === "demande") { S.reqs.filter(function (r) { return r.id === d.id; })[0].statut = d.statut; return { ok: true }; }
     if (action === "cadeaux") return { cartes: [{ code: "RP-K7QM-4XWA", montant: 141.3, repas: 10, de: "Julien", pour: "Maman", achat: iso(new Date(Date.now() - 3 * 864e5)), expire: iso(new Date(Date.now() + 362 * 864e5)), utilisee: "" }, { code: "RP-8HNZ-P2TC", montant: 70.65, repas: 5, de: "Les petits-enfants", pour: "Papi Jean", achat: iso(new Date(Date.now() - 12 * 864e5)), expire: iso(new Date(Date.now() + 353 * 864e5)), utilisee: "cus_6" }] };
     return {};
+  }
+
+
+  /* ---------- Menus, recettes et étiquettes ---------- */
+  var RECS = [], ALG = {}, MENUS = {};
+  var isoD = function (d) { return d.toISOString().slice(0, 10); };
+  function mondayOf(iso) { var d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7)); return isoD(d); }
+  function plusD(iso, n) { var d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return isoD(d); }
+  function loadMenus() {
+    if (!$("m-mois").value) { var n = new Date(); $("m-mois").value = n.getFullYear() + "-" + String(n.getMonth() + 1).padStart(2, "0"); }
+    return call("recettes").then(function (r) { RECS = r.recettes; ALG = r.allergenes; renderLib(); renderWeeks(); });
+  }
+  $$("[data-msub]").forEach(function (b) { b.addEventListener("click", function () {
+    $$("[data-msub]").forEach(function (x) { x.className = "btn " + (x === b ? "btn--main" : "btn--ghost"); });
+    $$("[data-mpanel]").forEach(function (p) { p.hidden = p.dataset.mpanel !== b.dataset.msub; });
+  }); });
+  $("m-mois").addEventListener("change", renderWeeks);
+  function weeksOfMonth(ym) {
+    var first = ym + "-01", l = mondayOf(first), out = [], mm = ym.slice(5, 7);
+    for (var i = 0; i < 6; i++) { var w = plusD(l, 7 * i); if (w.slice(5, 7) !== mm && plusD(w, 6).slice(5, 7) !== mm) continue; if (i > 0 && w.slice(5, 7) !== mm) continue; out.push(w); }
+    return out;
+  }
+  function recOpts(type, sel) {
+    return '<option value="">—</option>' + RECS.filter(function (r) { return r.type === type; }).map(function (r) { return '<option value="' + r.id + '"' + (r.id === sel ? " selected" : "") + ">" + esc(r.nom) + "</option>"; }).join("");
+  }
+  function renderWeeks() {
+    var box = $("m-weeks"), ws = weeksOfMonth($("m-mois").value);
+    box.innerHTML = '<p class="muted">Chargement…</p>';
+    Promise.all(ws.map(function (w) { return call("menu_get", { semaine: w }).then(function (r) { MENUS[w] = r.menu; return r.menu; }); })).then(function () {
+      if (!RECS.length) { box.innerHTML = '<p class="note-warn">Commencez par créer vos recettes dans l\'onglet « Recettes » : plats et desserts, avec photo, ingrédients et allergènes.</p>'; return; }
+      box.innerHTML = ws.map(function (w) {
+        var m = MENUS[w] || { jours: {} }, end = plusD(w, 6);
+        var rows = [1, 2, 3, 4, 5, 6, 7].map(function (j) {
+          var jj = (m.jours || {})[j] || {};
+          return "<tr><th>" + JL[j] + "<small>" + new Date(plusD(w, j - 1) + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) + "</small></th>" + ["midi", "soir"].map(function (s) { var x = jj[s] || {};
+            return '<td><select data-w="' + w + '" data-j="' + j + '" data-s="' + s + '" data-t="plat" aria-label="Plat ' + JL[j] + " " + s + '">' + recOpts("plat", x.plat) + '</select><select data-w="' + w + '" data-j="' + j + '" data-s="' + s + '" data-t="dessert" aria-label="Dessert ' + JL[j] + " " + s + '">' + recOpts("dessert", x.dessert) + "</select></td>"; }).join("") + "</tr>";
+        }).join("");
+        return '<article class="card mweek" data-week="' + w + '"><header class="mweek__h"><h2>Semaine du ' + new Date(w + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }) + " au " + new Date(end + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }) + "</h2>" +
+          '<span class="pill pill--' + (m.publie ? "ok" : "warn") + '">' + (m.publie ? "Publiée" : "Brouillon") + "</span></header>" +
+          '<div class="tbl-wrap"><table class="adm-tbl mgrid"><thead><tr><th></th><th>Midi : plat, dessert</th><th>Soir : plat, dessert</th></tr></thead><tbody>' + rows + "</tbody></table></div>" +
+          '<p class="hint mweek__s" id="ms-' + w + '"></p><div class="adm-tools"><button type="button" class="btn btn--ghost" data-mcopy="' + w + '">Copier la semaine précédente</button><button type="button" class="btn btn--ghost" data-msave="' + w + '" data-pub="0">Enregistrer le brouillon</button><button type="button" class="btn btn--main" data-msave="' + w + '" data-pub="1">' + (m.publie ? "Mettre à jour" : "Publier") + "</button></div></article>";
+      }).join("");
+      $$("[data-msave]").forEach(function (b) { b.addEventListener("click", function () { saveWeek(b.dataset.msave, b.dataset.pub === "1"); }); });
+      $$("[data-mcopy]").forEach(function (b) { b.addEventListener("click", function () { var w = b.dataset.mcopy, prev = plusD(w, -7); call("menu_get", { semaine: prev }).then(function (r) { var pj = r.menu.jours || {}; $$('select[data-w="' + w + '"]').forEach(function (sel) { var x = ((pj[sel.dataset.j] || {})[sel.dataset.s] || {})[sel.dataset.t]; if (x) sel.value = x; }); $("ms-" + w).textContent = Object.keys(pj).length ? "Semaine précédente copiée : vérifiez puis enregistrez." : "La semaine précédente est vide."; }); }); });
+    });
+  }
+  function saveWeek(w, publie) {
+    var jours = {}, vides = 0;
+    $$('select[data-w="' + w + '"]').forEach(function (sel) { var j = sel.dataset.j, s = sel.dataset.s; jours[j] = jours[j] || {}; jours[j][s] = jours[j][s] || {}; jours[j][s][sel.dataset.t] = sel.value; if (!sel.value) vides++; });
+    if (publie && vides && !confirm(vides + " case(s) vide(s) dans cette semaine. Publier quand même ?")) return;
+    call("menu_save", { semaine: w, jours: jours, publie: publie }).then(function () { $("ms-" + w).textContent = publie ? "Publiée : visible sur le site et dans l'espace client." : "Brouillon enregistré."; var pl = document.querySelector('[data-week="' + w + '"] .pill'); if (pl) { pl.className = "pill pill--" + (publie ? "ok" : "warn"); pl.textContent = publie ? "Publiée" : "Brouillon"; } })
+      .catch(function (e) { $("ms-" + w).textContent = e.message; });
+  }
+  function renderLib() {
+    var q = ($("r-q").value || "").toLowerCase(), f = $("r-f").value;
+    var list = RECS.filter(function (r) { return (!f || r.type === f) && (!q || r.nom.toLowerCase().indexOf(q) > -1); });
+    $("r-list").innerHTML = list.length ? list.map(function (r) {
+      return '<li class="recipe"><div class="recipe__ph">' + (r.photo ? '<img src="' + API + "/api/photo?id=" + r.photo + '" alt="" loading="lazy">' : "<span>Pas de photo</span>") + '</div><div class="recipe__b"><span class="pill pill--' + (r.type === "plat" ? "info" : "warn") + '">' + (r.type === "plat" ? "Plat" : "Dessert") + "</span><h3>" + esc(r.nom) + "</h3><p>" + (r.allergenes.length ? "Allergènes : <b>" + r.allergenes.map(function (a) { return esc(ALG[a] || a); }).join(", ") + "</b>" : '<span class="muted">Aucun allergène déclaré</span>') + "</p><p class=\"muted\">" + esc(r.conservation) + " · à consommer sous " + r.dlcJours + " jours" + (r.poids ? " · " + r.poids + " g" : "") + '</p></div><div class="recipe__a"><button type="button" class="btn btn--ghost" data-redit="' + r.id + '">Modifier</button></div></li>';
+    }).join("") : '<li class="muted">Aucune recette pour l\'instant. Cliquez sur « Nouvelle recette ».</li>';
+    $$("[data-redit]").forEach(function (b) { b.addEventListener("click", function () { recForm(RECS.filter(function (r) { return r.id === b.dataset.redit; })[0]); }); });
+  }
+  $("r-q").addEventListener("input", renderLib); $("r-f").addEventListener("change", renderLib);
+  $("r-new").addEventListener("click", function () { recForm(null); });
+  // Photo réduite dans le navigateur (900 px, JPEG) avant envoi
+  function resize(file) { return new Promise(function (ok, ko) { var img = new Image(), u = URL.createObjectURL(file); img.onload = function () { var k = Math.min(1, 900 / Math.max(img.width, img.height)), c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u); ok(c.toDataURL("image/jpeg", 0.82)); }; img.onerror = ko; img.src = u; }); }
+  function recForm(r) {
+    r = r || { type: "plat", allergenes: [], conservation: "Entre 0 et 4 °C", dlcJours: 6, rechauffage: "Retirer le film. 2 à 3 minutes au micro-ondes, puissance moyenne. Bien mélanger." };
+    var photoData = null;
+    $("drawer").hidden = false;
+    $("dr-body").innerHTML = '<p class="eyebrow">' + (r.id ? "Modifier la recette" : "Nouvelle recette") + '</p><h2 id="dr-t">' + esc(r.nom || "Nouvelle recette") + "</h2>" +
+      '<form class="dr-f recf" id="recf" novalidate>' +
+      '<div class="recf__ph" id="rf-ph">' + (r.photo ? '<img src="' + API + "/api/photo?id=" + r.photo + '" alt="">' : "<span>Ajouter une photo du plat</span>") + '</div><label>Photo<input type="file" accept="image/*" id="rf-file"></label>' +
+      '<label>Type<select name="type"><option value="plat">Plat</option><option value="dessert">Dessert</option></select></label>' +
+      '<label>Nom<input name="nom" value="' + esc(r.nom || "") + '" required placeholder="Blanquette de veau à l\'ancienne, riz"></label>' +
+      '<label>Description pour le client<textarea name="description" rows="2" placeholder="Veau mijoté, sauce crémeuse aux champignons">' + esc(r.description || "") + "</textarea></label>" +
+      '<label>Ingrédients (dans l\'ordre de la fiche technique)<textarea name="ingredients" rows="4" placeholder="Veau 35 %, riz, crème (lait), champignons, farine de blé, beurre, oignons, sel, poivre">' + esc(r.ingredients || "") + "</textarea></label>" +
+      '<fieldset class="algs"><legend>Allergènes présents</legend>' + Object.keys(ALG).map(function (k) { return '<label class="check"><input type="checkbox" name="alg" value="' + k + '"' + (r.allergenes.indexOf(k) > -1 ? " checked" : "") + "><span>" + esc(ALG[k]) + "</span></label>"; }).join("") + "</fieldset>" +
+      '<label>Traces éventuelles<input name="traces" value="' + esc(r.traces || "") + '" placeholder="Peut contenir des traces de fruits à coque"></label>' +
+      '<div class="grid2"><label>Poids net (g)<input name="poids" inputmode="numeric" value="' + (r.poids || "") + '"></label><label>À consommer sous (jours après livraison)<input name="dlcJours" inputmode="numeric" value="' + (r.dlcJours || 6) + '"></label></div>' +
+      '<label>Conservation<input name="conservation" value="' + esc(r.conservation || "") + '"></label>' +
+      '<label>Réchauffage<textarea name="rechauffage" rows="2">' + esc(r.rechauffage || "") + "</textarea></label>" +
+      '<label>Mention sanitaire du fabricant (estampille, si fournie)<input name="sanitaire" value="' + esc(r.sanitaire || "") + '" placeholder="FR 72.xxx.xxx CE"></label>' +
+      '<p class="err" id="rf-e"></p><div class="adm-tools"><button class="btn btn--main" type="submit">Enregistrer</button>' + (r.id ? '<button class="btn btn--quiet" type="button" id="rf-del">Supprimer</button>' : "") + "</div></form>";
+    var f = $("recf"); f.type.value = r.type;
+    $("rf-file").addEventListener("change", function (e) { var file = e.target.files[0]; if (!file) return; resize(file).then(function (d) { photoData = d; $("rf-ph").innerHTML = '<img src="' + d + '" alt="">'; }); });
+    if ($("rf-del")) $("rf-del").addEventListener("click", function () { if (!confirm("Supprimer définitivement cette recette ?")) return; call("recette_delete", { id: r.id }).then(function () { closeDrawer(); loadMenus(); }); });
+    f.addEventListener("submit", function (e) {
+      e.preventDefault(); var d = { id: r.id, type: f.type.value, nom: f.nom.value, description: f.description.value, ingredients: f.ingredients.value, traces: f.traces.value, poids: f.poids.value, dlcJours: f.dlcJours.value, conservation: f.conservation.value, rechauffage: f.rechauffage.value, sanitaire: f.sanitaire.value, allergenes: $$('[name="alg"]:checked', f).map(function (i) { return i.value; }) };
+      if (!d.nom.trim()) { $("rf-e").textContent = "Le nom est obligatoire."; return; }
+      if (!d.ingredients.trim() && !confirm("Pas de liste d'ingrédients : l'étiquette sera incomplète. Enregistrer quand même ?")) return;
+      if (photoData) d.photo = photoData;
+      $("rf-e").textContent = "Enregistrement…";
+      call("recette_save", d).then(function () { closeDrawer(); loadMenus(); }).catch(function (er) { $("rf-e").textContent = er.message; });
+    });
+  }
+
+  // Étiquettes des barquettes de la tournée sélectionnée : planche A4 de 8 étiquettes 99,1 x 67,7 mm
+  $("t-labels").addEventListener("click", function () {
+    var date = $("t-date").value; if (!date) return;
+    var w = window.open("", "_blank"); if (!w) { alert("Autorisez l'ouverture de fenêtre pour imprimer les étiquettes."); return; }
+    w.document.write("<p style='font:16px sans-serif;padding:2rem'>Préparation des étiquettes…</p>");
+    call("etiquettes", { date: date }).then(function (r) { w.document.open(); w.document.write(labelsHtml(r)); w.document.close(); })
+      .catch(function (e) { w.document.body.innerHTML = "<p style='font:16px sans-serif;padding:2rem'>" + esc(e.message) + "</p>"; });
+  });
+  function labelsHtml(r) {
+    var JU = ["", "LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE"];
+    var fd = function (iso) { return iso ? new Date(iso + "T12:00:00").toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—"; };
+    var part = function (x, lab) { if (!x) return '<p class="miss">' + lab + " : à renseigner dans le menu</p>"; return '<p class="nm"><span>' + lab + "</span> " + esc(x.nom) + (x.poids ? " <em>" + x.poids + " g</em>" : "") + '</p><p class="ing">' + (x.ingredients || "Ingrédients à renseigner") + "</p>" + (x.traces ? '<p class="ing">' + esc(x.traces) + "</p>" : ""); };
+    var cards = r.etiquettes.map(function (e) {
+      var al = [].concat(e.plat ? e.plat.allergenes : [], e.dessert ? e.dessert.allergenes : []).filter(function (v, i, a) { return a.indexOf(v) === i; });
+      var san = [e.plat && e.plat.sanitaire, e.dessert && e.dessert.sanitaire].filter(Boolean).join(" · ");
+      return '<div class="lb"><div class="top"><div class="day">' + JU[e.jour] + ' <b>' + (e.service === "midi" ? "MIDI" : "SOIR") + '</b></div><div class="who">' + esc(e.client) + "<br><small>" + esc(e.commune || "") + " · " + fd(e.date) + "</small></div></div>" +
+        part(e.plat, "Plat") + part(e.dessert, "Dessert") +
+        '<p class="alg">Allergènes : ' + (al.length ? al.map(esc).join(", ") : "aucun") + "</p>" +
+        '<div class="bot"><div class="dlc' + (e.horsDlc ? " bad" : "") + '">À consommer jusqu\'au <b>' + fd(e.dlc) + '</b></div><div class="cons">' + esc(e.conservation) + "</div></div>" +
+        '<p class="rh">' + esc((e.plat && e.plat.rechauffage) || "Retirer le film, réchauffer au micro-ondes.") + "</p>" +
+        '<p class="ft">Resto Pickup · R L C RL CONCEPT, 1 B rue Pierre et Marie Curie, 92140 Clamart · Lot ' + e.lot + (san ? " · " + esc(san) : "") + "</p></div>";
+    }).join("");
+    var warn = (r.manques && r.manques.length ? "<p>Menu incomplet pour : " + r.manques.map(esc).join(", ") + ". Complétez le planning puis relancez.</p>" : "") + (r.etiquettes.some(function (e) { return e.horsDlc; }) ? "<p>Attention : certaines barquettes ont une date limite antérieure à leur jour de consommation (en rouge).</p>" : "");
+    return '<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Étiquettes du ' + fd(r.date) + "</title><style>" +
+      "@page{size:A4;margin:12.9mm 4.65mm}*{box-sizing:border-box}body{margin:0;font-family:Verdana,Arial,sans-serif;color:#1B2A4E}" +
+      ".bar{padding:12px 16px;background:#FAF7F2;font-size:14px}.bar button{font:700 15px Verdana;padding:10px 18px;border-radius:99px;border:0;background:#1B2A4E;color:#fff;cursor:pointer}.bar p{color:#B33A22;margin:.4em 0}" +
+      ".sheet{display:grid;grid-template-columns:99.1mm 99.1mm;column-gap:2.5mm;grid-auto-rows:67.7mm}" +
+      ".lb{overflow:hidden;padding:2.6mm 3mm;border:.2mm dashed #c9cfdc;display:flex;flex-direction:column;gap:.6mm;break-inside:avoid}" +
+      ".top{display:flex;justify-content:space-between;align-items:flex-start;gap:2mm;border-bottom:.5mm solid #1B2A4E;padding-bottom:1mm}" +
+      ".day{font:700 15pt/1 Georgia,serif;letter-spacing:.02em}.day b{display:inline-block;font:700 9pt/1 Verdana;background:#E04A2F;color:#fff;border-radius:3mm;padding:1mm 2mm;vertical-align:middle}" +
+      ".who{text-align:right;font:700 7.5pt/1.2 Verdana}.who small{font-weight:400;font-size:6.5pt}" +
+      ".nm{margin:0;font:700 8.4pt/1.2 Verdana}.nm span{font-weight:400;font-size:6pt;text-transform:uppercase;letter-spacing:.06em;color:#4A5368}.nm em{font-style:normal;font-weight:400;font-size:6.5pt}" +
+      ".ing{margin:0;font:7pt/1.22 Verdana;color:#26334f}.ing b{font-weight:700;color:#000}.miss{margin:0;font:700 7pt Verdana;color:#B33A22}" +
+      ".alg{margin:0;font:700 7pt/1.2 Verdana}.bot{display:flex;justify-content:space-between;gap:2mm;margin-top:auto;border-top:.3mm solid #c9cfdc;padding-top:.8mm}" +
+      ".dlc{font:7pt Verdana}.dlc b{font-size:9pt}.dlc.bad b{color:#B33A22}.cons{font:700 7pt Verdana;text-align:right}.rh{margin:0;font:6.4pt/1.2 Verdana;color:#4A5368}.ft{margin:0;font:6.2pt/1.2 Verdana;color:#4A5368}.lb.full{outline:1mm solid #E04A2F}" +
+      "@media print{.bar{display:none}.lb{border-color:transparent}}</style></head><body>" +
+      '<div class="bar"><b>' + r.etiquettes.length + " étiquettes</b> pour la tournée du " + fd(r.date) + ", planche A4 de 8 étiquettes 99,1 × 67,7 mm (format courant type L7165). " + warn + '<p id="full" hidden>Texte trop long sur certaines étiquettes (encadrées en rouge) : raccourcissez la liste d\'ingrédients ou la consigne de réchauffage de la recette.</p><button onclick="print()">Imprimer</button></div><div class="sheet">' + cards + "</div><script>var f=[].filter.call(document.querySelectorAll('.lb'),function(e){return e.scrollHeight>e.clientHeight+1});f.forEach(function(e){e.classList.add('full')});if(f.length)document.getElementById('full').hidden=false;<\/script></body></html>";
   }
 
   if (token && LIVE) start();

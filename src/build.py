@@ -692,7 +692,7 @@ def head_bits(slug, title, desc, ld):
             f'<meta name="theme-color" content="#1B2A4E">\n{FONTS}\n<link rel="stylesheet" href="style.css">\n'
             f'<script type="application/ld+json">{ldj}</script>')
 
-SCRIPTS = '<script src="config.js"></script>\n<script src="contact.js"></script>\n<script src="app.js"></script>\n<script src="week.js"></script>\n<script src="addr.js"></script>\n<script src="account.js"></script>\n<script src="zones.js"></script>\n<script src="offrir.js"></script>\n<script src="equipe.js"></script>'
+SCRIPTS = '<script src="config.js"></script>\n<script src="contact.js"></script>\n<script src="app.js"></script>\n<script src="week.js"></script>\n<script src="addr.js"></script>\n<script src="menu.js"></script>\n<script src="account.js"></script>\n<script src="zones.js"></script>\n<script src="offrir.js"></script>\n<script src="equipe.js"></script>'
 
 def main():
     os.makedirs(SITE, exist_ok=True); os.makedirs(ART, exist_ok=True)

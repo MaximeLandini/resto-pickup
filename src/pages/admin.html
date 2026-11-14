@@ -23,6 +23,7 @@
         <button type="button" data-tab="bord" aria-current="page">{{ic_calendrier}}<span>Tableau de bord</span></button>
         <button type="button" data-tab="tournee">{{ic_livraison}}<span>Tournées</span></button>
         <button type="button" data-tab="prod">{{ic_four}}<span>Production</span></button>
+        <button type="button" data-tab="menus">{{ic_calendrier}}<span>Menus et recettes</span></button>
         <button type="button" data-tab="clients">{{ic_personnes}}<span>Clients</span></button>
         <button type="button" data-tab="messages">{{ic_telephone}}<span>Messages</span><i class="adm-badge" data-badge="messages" hidden></i></button>
         <button type="button" data-tab="demandes">{{ic_coeur}}<span>Demandes</span><i class="adm-badge" data-badge="demandes" hidden></i></button>
@@ -46,7 +47,7 @@
 
       <section data-panel="tournee" hidden>
         <header class="adm-h"><h1>Tournée</h1>
-          <div class="adm-tools"><select id="t-date" aria-label="Date de la tournée"></select><button type="button" class="btn btn--ghost" id="t-print">Imprimer la feuille</button><button type="button" class="btn btn--ghost" id="t-csv">Exporter CSV</button><a class="btn btn--main" id="t-maps" target="_blank" rel="noopener">Itinéraire Google Maps</a></div>
+          <div class="adm-tools"><select id="t-date" aria-label="Date de la tournée"></select><button type="button" class="btn btn--ghost" id="t-print">Imprimer la feuille</button><button type="button" class="btn btn--ghost" id="t-labels">Étiquettes des barquettes</button><button type="button" class="btn btn--ghost" id="t-csv">Exporter CSV</button><a class="btn btn--main" id="t-maps" target="_blank" rel="noopener">Itinéraire Google Maps</a></div>
         </header>
         <div class="run-sum" id="run-sum"></div>
         <ol class="stops" id="stops"></ol>
@@ -72,6 +73,19 @@
         <header class="adm-h"><h1>Demandes</h1><div class="adm-tools"><select id="d-f" aria-label="Filtrer"><option value="ouvertes">À traiter</option><option value="">Toutes</option></select></div></header>
         <p class="adm-lead">Rappels demandés sur le site, personnes orientées par un professionnel, demandes de flyers.</p>
         <ul class="reqs" id="reqs"></ul>
+      </section>
+
+      <section data-panel="menus" hidden>
+        <header class="adm-h"><h1>Menus et recettes</h1><div class="adm-tools seg-admin"><button type="button" class="btn btn--main" data-msub="plan">Planning</button><button type="button" class="btn btn--ghost" data-msub="lib">Recettes</button></div></header>
+        <div data-mpanel="plan">
+          <p class="adm-lead">Au début du mois, choisissez pour chaque semaine le plat et le dessert de chaque jour, midi et soir, puis publiez. Le menu publié s'affiche sur le site, dans l'espace des clients, et sert aux étiquettes des barquettes.</p>
+          <div class="adm-tools" style="margin:.4rem 0 1rem"><label class="lbl-inline">Mois <input type="month" id="m-mois"></label></div>
+          <div id="m-weeks"></div>
+        </div>
+        <div data-mpanel="lib" hidden>
+          <div class="adm-tools" style="margin:0 0 1rem"><button type="button" class="btn btn--main" id="r-new">Nouvelle recette</button><input type="search" id="r-q" placeholder="Rechercher une recette" aria-label="Rechercher une recette"><select id="r-f" aria-label="Type"><option value="">Plats et desserts</option><option value="plat">Plats</option><option value="dessert">Desserts</option></select></div>
+          <ul class="recipes" id="r-list"></ul>
+        </div>
       </section>
 
       <section data-panel="cadeaux" hidden>

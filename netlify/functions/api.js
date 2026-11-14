@@ -14,6 +14,8 @@ const R = {
   "admin-login": require("../../api/admin-login"),
   admin: require("../../api/admin"),
   setup: require("../../api/setup"),
+  menu: require("../../api/menu"),
+  photo: require("../../api/photo"),
   bug: require("../../api/bug"),
 };
 
@@ -35,6 +37,7 @@ exports.handler = async (event) => {
       json(o) { resolve({ statusCode: code, headers: h, body: JSON.stringify(o) }); },
       send(s) { resolve({ statusCode: code, headers: h, body: String(s) }); },
       end() { resolve({ statusCode: code, headers: h, body: "" }); },
+      binary(buf) { resolve({ statusCode: code, headers: h, body: Buffer.from(buf).toString("base64"), isBase64Encoded: true }); },
     };
     let p; try { p = Promise.resolve(fn(req, res)); } catch (e) { p = Promise.reject(e); }
     p.catch(async (e) => { console.error(e); if (e.status !== 503) await require("../../api/_lib").reportBug("/api/" + name, e).catch(() => {}); resolve({ statusCode: e.status || 500, headers: h, body: JSON.stringify({ error: e.status === 503 ? "Service pas encore configuré, appelez le 06 60 68 05 07" : "Erreur serveur" }) }); });
