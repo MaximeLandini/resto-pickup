@@ -262,6 +262,16 @@ const T = {
     raison: "Vous recevez ce message parce que vous avez rempli un formulaire sur restopickup.com.",
   }),
 
+  // Remboursement
+  remboursementClient: ({ montant, motif, total }) => client({
+    subject: `Nous vous remboursons ${eur(montant).replace("\u00a0", " ")}`, preheader: "Le montant revient sur votre carte ou votre compte sous 5 à 10 jours.", eyebrow: "Remboursement",
+    title: `Nous vous remboursons ${eur(montant)}.`,
+    body: (motif ? P(`Motif : ${esc(motif)}.`) : "") + ticket([["Remboursement", eur(montant), total ? "Paiement remboursé en totalité" : "Remboursement partiel"]], null, null)
+      + note("L'argent revient sur la carte ou le compte utilisé pour payer, en général sous <b>5 à 10 jours</b> selon votre banque. Vous n'avez rien à faire.", "ok"),
+    raison: "Vous recevez ce message pour confirmer un remboursement de Resto Pickup.",
+  }),
+  remboursementEquipe: ({ nom, montant, motif, par, cid }) => equipe({ subject: `Remboursement : ${eur(montant).replace("\u00a0", " ")} à ${nom}`, tone: "jaune", tag: "Remboursement", title: `${eur(montant)} remboursés à ${esc(nom)}`, body: fiche([["Motif", esc(motif) || "non précisé"], ["Fait par", esc(par)]]), cta: cid ? ["Voir la fiche", `${SITE()}/admin.html#client=${cid}`] : null }),
+
   // Bug technique
   bug: ({ where, msg, n, extra }) => equipe({ subject: `Bug sur le site : ${where}`, tone: "rouge", tag: "Erreur technique", title: esc(where), lead: n ? `${n} fois depuis la dernière alerte.` : "Une erreur vient de se produire.", body: `<pre style="white-space:pre-wrap;word-break:break-word;font:13px/1.5 Menlo,Consolas,monospace;background:${C.farine};color:${C.marine};padding:14px;border-radius:10px;margin:0 0 12px">${esc(msg)}</pre>${extra ? `<p style="font:14px/1.5 ${SANS};color:${C.ardoise}">${esc(extra)}</p>` : ""}` }),
 };

@@ -57,6 +57,7 @@ async function purge() {
   for (const k of await store.list("deliv/")) { const d = k.split("/")[1]; if (d && now - Date.parse(d) > an) await store.del(k); }
   for (const k of await store.list("msg/")) { const t = await store.get(k); if (t && t.dernier && now - Date.parse(t.dernier) > 3 * an) await store.del(k); }
   for (const k of await store.list("adminlogin/")) { const r = await store.get(k); if (r && r.exp < now) await store.del(k); }
+  for (const k of await store.list("adminlock/")) { const r = await store.get(k); if (r && now - r.t > 3600e3) await store.del(k); }
 }
 
 module.exports = async (req, res) => {
@@ -67,6 +68,22 @@ module.exports = async (req, res) => {
     const b = body(req), a = b.action;
 
     if (a === "overview") purge().catch((e) => console.error("purge", e.message)); // durées de conservation (une fois par jour)
+    if (a === "rembourser") {
+      // Remboursement total ou partiel d'un paiement : l'argent revient sur la carte ou le compte du client (5 à 10 jours)
+      const pid = String(b.pi || ""); if (!/^pi_/.test(pid)) return res.status(400).json({ error: "Paiement inconnu" });
+      const pi = await stripe.paymentIntents.retrieve(pid, { expand: ["latest_charge"] });
+      const ch = pi.latest_charge || {}, reste = (pi.amount_received || 0) - (ch.amount_refunded || 0);
+      const montant = b.montant ? Math.round(parseFloat(String(b.montant).replace(",", ".")) * 100) : reste;
+      if (!(montant > 0) || montant > reste) return res.status(400).json({ error: `Montant impossible : ${(reste / 100).toFixed(2).replace(".", ",")} € remboursables au maximum` });
+      const motif = String(b.motif || "").slice(0, 200);
+      const r = await stripe.refunds.create({ payment_intent: pid, amount: montant, reason: "requested_by_customer", metadata: { par: admin, motif } }, { idempotencyKey: `rp-${pid}-${montant}-${reste}` });
+      const { T } = require("./_mail"), { team } = require("./_lib");
+      const c = pi.customer ? await stripe.customers.retrieve(typeof pi.customer === "string" ? pi.customer : pi.customer.id).catch(() => ({})) : {};
+      if (c.email && b.prevenir !== false) await sendMail(c.email, T.remboursementClient({ montant, motif, total: montant === reste && !ch.amount_refunded })).catch((e) => console.error(e));
+      await sendMail(team(), T.remboursementEquipe({ nom: c.name || c.email || "Client", montant, motif, par: admin, cid: c.id })).catch(() => {});
+      return res.status(200).json({ ok: true, rembourse: montant / 100, statut: r.status });
+    }
+
     if (a === "effacer") {
       // Droit à l'effacement : supprime messages, notes, statuts de livraison et anonymise la fiche Stripe (les factures restent, obligation légale)
       const cid = String(b.cid || ""); if (!/^cus_/.test(cid)) return res.status(400).json({ error: "Client inconnu" });
@@ -119,12 +136,14 @@ module.exports = async (req, res) => {
       const c = await stripe.customers.retrieve(b.cid);
       const subs = await stripe.subscriptions.list({ customer: b.cid, status: "all", limit: 10, expand: ["data.customer"] });
       const inv = await stripe.invoices.list({ customer: b.cid, limit: 12 });
+      const pis = await stripe.paymentIntents.list({ customer: b.cid, limit: 20, expand: ["data.latest_charge"] }).catch(() => ({ data: [] }));
       const t = await store.thread(b.cid);
       if (t.nonLu) { t.nonLu = 0; await store.set(`msg/${b.cid}`, t); }
       const note = await store.get(`note/${b.cid}`, { texte: "" });
       return res.status(200).json({
         client: { cid: c.id, nom: c.name, email: c.email, tel: c.phone, avoir: c.balance < 0 ? -c.balance / 100 : 0, cree: isoOf(new Date(c.created * 1000)) },
         abonnements: subs.data.map(shape), factures: inv.data.map((i) => ({ date: isoOf(new Date(i.created * 1000)), montant: i.total / 100, statut: i.status, lien: i.hosted_invoice_url })),
+        paiements: pis.data.filter((p) => p.status === "succeeded" || p.status === "processing").map((p) => { const ch = typeof p.latest_charge === "object" && p.latest_charge ? p.latest_charge : {}; return { id: p.id, date: isoOf(new Date(p.created * 1000)), montant: (p.amount_received || p.amount) / 100, rembourse: (ch.amount_refunded || 0) / 100, statut: p.status, libelle: p.description || "" }; }),
         messages: t.messages, note: note.texte,
       });
     }
@@ -152,6 +171,9 @@ module.exports = async (req, res) => {
         await stripe.subscriptions.update(s.id, { pause_collection: "" });
       } else if (b.type === "arreter") {
         await stripe.subscriptions.update(s.id, { cancel_at_period_end: true });
+      } else if (b.type === "annuler") {
+        // arrêt immédiat, sans attendre la fin de la semaine payée (le remboursement éventuel se fait ensuite, paiement par paiement)
+        await stripe.subscriptions.cancel(s.id, { invoice_now: false, prorate: false });
       } else if (b.type === "reactiver") {
         await stripe.subscriptions.update(s.id, { cancel_at_period_end: false });
       } else if (b.type === "adresse") {
