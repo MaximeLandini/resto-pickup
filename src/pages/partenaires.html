@@ -1,0 +1,100 @@
+<section class="pro-hero">
+  <div class="wrap pro-hero__grid">
+    <div>
+      <p class="eyebrow eyebrow--on">CCAS, soignants, pharmacies, résidences</p>
+      <h1>Une personne âgée mange mal chez elle ? <span>Orientez-la vers nous en une minute.</span></h1>
+      <p class="pro-hero__lead">Vous la voyez tous les jours, nous livrons ses repas chaque semaine. Donnez-nous son nom et son numéro, avec son accord : nous l'appelons, nous lui expliquons tout simplement, et c'est elle qui décide.</p>
+      <div class="row"><a class="btn btn--on btn--lg" href="#orienter">Orienter une personne</a><a class="btn btn--line-on btn--lg" href="docs/flyer-resto-pickup.pdf" download>Télécharger le flyer</a></div>
+    </div>
+    <ul class="pro-hero__facts">
+      <li><b>{{prix}}</b><span>le repas, plat et dessert, livraison plafonnée à {{livmax}} par semaine</span></li>
+      <li><b>1 fois</b><span>par semaine, en main propre, en camion réfrigéré</span></li>
+      <li><b>0 €</b><span>pour votre structure, aucun engagement pour la personne</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="head-center"><p class="eyebrow">Pour qui</p><h2>Les professionnels qui nous orientent des personnes</h2></div>
+    <ul class="pros">
+      <li>{{ic_maison}}<b>CCAS et mairies</b><span>Une demande de portage, un retour à domicile, une personne isolée repérée par les services.</span></li>
+      <li>{{ic_coeur}}<b>Infirmiers et SSIAD</b><span>Un patient qui saute des repas, un frigo vide, une perte de poids qui vous inquiète.</span></li>
+      <li>{{ic_croix}}<b>Pharmacies et médecins</b><span>Une personne qui sort d'hospitalisation ou qui ne peut plus faire ses courses.</span></li>
+      <li>{{ic_personnes}}<b>Assistantes sociales et CLIC</b><span>Un plan d'aide à compléter, une famille qui cherche une solution simple.</span></li>
+      <li>{{ic_immeuble}}<b>Résidences autonomie</b><span>Des résidents qui cuisinent en appartement et ont besoin d'un relais.</span></li>
+      <li>{{ic_calendrier}}<b>Aides à domicile</b><span>Vos intervenants n'ont plus à faire les courses et la cuisine des repas du soir.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section section--sunk">
+  <div class="wrap">
+    <div class="head-center"><p class="eyebrow">Ce que nous garantissons à la personne</p><h2>Vous pouvez nous recommander les yeux fermés.</h2></div>
+    <div class="garanties">
+      <div><h3>Une vraie personne au téléphone</h3><p>Nous appelons la personne, nous parlons doucement, nous répétons. Rien n'est signé dans l'urgence. Si elle le souhaite, nous appelons aussi un enfant ou un proche.</p></div>
+      <div><h3>Une livraison qui rassure</h3><p>Remis en main propre, jamais devant la porte. Le livreur range au frigo si on le lui demande. Si personne n'ouvre, il appelle la personne, puis son proche.</p></div>
+      <div><h3>Simple à réchauffer</h3><p>Une barquette par repas, avec le jour et le service écrits en gros. Le film se retire, le micro-ondes fait le reste. Plat et dessert, comme chez le traiteur.</p></div>
+      <div><h3>Sans engagement</h3><p>Pause pendant une hospitalisation, arrêt d'un simple appel, sans frais. Une semaine d'essai sans abonnement est possible.</p></div>
+    </div>
+    <div class="note-warn pro-limits"><p><strong>Ce que nous ne faisons pas, pour que vous orientiez juste :</strong> pas de menus spéciaux (sans sel, diabétique, mixé), un seul menu pour tous ; pas de passage quotidien, nous livrons une fois par semaine. Pour ces besoins, un service de portage quotidien sera plus adapté.</p></div>
+  </div>
+</section>
+
+<section class="section" id="orienter">
+  <div class="wrap pro-forms">
+    <form class="panel" data-contact="orientation" novalidate>
+      <div data-form-body>
+        <p class="eyebrow">Orienter une personne</p>
+        <h2>Nous l'appelons pour vous.</h2>
+        <div class="grid2" style="margin-top:1rem">
+          <div class="field"><label for="o-nom">Nom de la personne</label><input id="o-nom" name="nom" required></div>
+          <div class="field"><label for="o-tel">Son téléphone</label><input id="o-tel" name="tel" type="tel" inputmode="tel" required><p class="err" data-err></p></div>
+        </div>
+        <div class="field" style="margin-top:1rem"><label for="o-com">Sa commune</label><input id="o-com" name="commune" placeholder="Ex. : Coulaines"></div>
+        <div class="grid2" style="margin-top:1rem">
+          <div class="field"><label for="o-struct">Votre structure</label><input id="o-struct" name="structure" placeholder="Ex. : CCAS d'Allonnes"></div>
+          <div class="field"><label for="o-pro">Votre nom et téléphone</label><input id="o-pro" name="pro" placeholder="Pour vous tenir informé"></div>
+        </div>
+        <div class="field" style="margin-top:1rem"><label for="o-msg">À savoir avant d'appeler <span style="font-weight:400">(facultatif)</span></label><textarea id="o-msg" name="message" placeholder="Ex. : malentendante, appeler plutôt le matin, sa fille s'occupe des papiers"></textarea></div>
+        <label class="check" style="margin-top:1rem"><input type="checkbox" name="accord" value="1" required><span>La personne est d'accord pour que Resto Pickup l'appelle.</span></label>
+        <p class="err" data-err-accord></p>
+        <input type="hidden" name="type" value="orientation"><input class="hp" name="site_web" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" class="btn btn--main btn--lg" style="margin-top:1rem">Transmettre</button>
+      </div>
+      <div class="sheet__ok" data-ok hidden><img src="img/assiette.svg" alt="" width="72" height="72"><h2>Merci, c'est transmis.</h2><p>Nous appelons la personne très vite, du lundi au vendredi.</p></div>
+    </form>
+    <div class="stack">
+      <div class="flyer-card">
+        <a href="docs/flyer-resto-pickup.pdf" download class="flyer-card__img"><img src="img/flyer-apercu.jpg" alt="Aperçu du flyer Resto Pickup, recto et verso" width="900" height="636" loading="lazy"></a>
+        <div><h3>Le flyer, à laisser à la personne</h3><p>Format A5 recto verso, en gros caractères, avec le prix, le téléphone et la carte des communes.</p><a class="btn btn--ghost" href="docs/flyer-resto-pickup.pdf" download>Télécharger le PDF</a></div>
+      </div>
+      <form class="panel" data-contact="flyers" novalidate>
+        <div data-form-body>
+          <h3>Recevoir des flyers imprimés</h3>
+          <p class="small" style="margin:.3rem 0 1rem">Gratuit. Nous les déposons ou les postons.</p>
+          <div class="field"><label for="f-struct">Structure</label><input id="f-struct" name="structure" required></div>
+          <div class="field" style="margin-top:1rem"><label for="f-adr">Adresse</label><input id="f-adr" name="adresse" required></div>
+          <div class="grid2" style="margin-top:1rem">
+            <div class="field"><label for="f-mail">E-mail ou téléphone</label><input id="f-mail" name="email" required></div>
+            <div class="field"><label for="f-q">Combien ?</label><select id="f-q" name="quantite"><option>25</option><option selected>50</option><option>100</option></select></div>
+          </div>
+          <input type="hidden" name="type" value="flyers"><input class="hp" name="site_web" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <p class="err" data-err-gen></p>
+          <button type="submit" class="btn btn--main" style="margin-top:1rem">Recevoir des flyers</button>
+        </div>
+        <div class="sheet__ok" data-ok hidden><h3>C'est noté.</h3><p>Vos flyers arrivent très vite.</p></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="section section--sunk">
+  <div class="wrap faq-wrap">
+    <div class="stack">
+      <h2>Questions des professionnels</h2>
+      <div class="callme">{{ic_telephone}}<div><p>Une situation à nous présenter ?</p><a class="big-tel big-tel--ink" href="tel:{{telHref}}">{{tel}}</a></div></div>
+    </div>
+    <div class="faq">{{profaq}}</div>
+  </div>
+</section>

@@ -1,0 +1,318 @@
+<section class="hero3" id="accueil">
+  <div class="wrap hero3__grid">
+    <div class="hero3__text">
+      <p class="tag">À table, chez vous.</p>
+      <h1>Les bons repas de la semaine, <span class="relief">livrés chez vous en une fois.</span></h1>
+      <p class="hero3__lead">Un bon plat et son dessert, cuisinés comme chez le traiteur. Vous choisissez combien de repas vous voulez. Vous les rangez au frigo et vous les réchauffez en quelques minutes.</p>
+      <p class="hero3__price"><strong>{{prix}}</strong> <span>le repas, plat et dessert<br>+ livraison, {{livmax}} maximum par semaine</span></p>
+      <div class="hero3__cta">
+        <a class="btn btn--main btn--lg" href="#composer">Voir mon prix et ma date</a>
+        <a class="btn btn--ghost btn--lg" href="tel:{{telHref}}">{{ic_telephone}}{{tel}}</a>
+      </div>
+      <p class="hero3__aidant">Vous commandez pour un parent ? <a href="#proches">C'est prévu, voici comment</a>.</p>
+      <p class="hero3__phone">Pas à l'aise avec Internet ? <button type="button" class="linkbtn" data-rappel>On vous rappelle</button> et on commande ensemble.</p>
+    </div>
+    <div class="hero3__vis" aria-hidden="true">
+      <img class="hero3__tomate" src="img/assiette.svg" alt="">
+      <div class="plate hero3__p1"><img src="img/plats/mardi-midi.jpg" alt=""></div>
+      <div class="plate hero3__p2"><img src="img/plats/lundi-soir.jpg" alt=""></div>
+      <div class="plate hero3__p3"><img src="img/plats/dimanche-midi.jpg" alt=""></div>
+      <div class="hero3__tag"><img src="img/jour-2.svg" alt="" width="34" height="34"><span><b>Mardi, le midi</b>Bœuf bourguignon</span></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <ul class="proofs">
+      <li>{{ic_livraison}}<span><b>Une livraison par semaine</b>remise en main propre</span></li>
+      <li>{{ic_pause}}<span><b>Sans engagement</b>on arrête quand on veut</span></li>
+      <li>{{ic_telephone}}<span><b>Une vraie personne</b>au bout du fil</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="howto" id="carton">
+  <div class="wrap">
+    <div class="head-center">
+      <p class="eyebrow">Comment ça marche</p>
+      <h2>Une barquette, quelques minutes au micro-ondes, <span class="relief">et c'est prêt.</span></h2>
+      <p class="lead">Pas de cuisine, pas de vaisselle, pas de recette à suivre.</p>
+    </div>
+    <ol class="steps3">
+      <li>
+        <div class="steps3__vis">
+          <div class="tray">
+            <div class="tray__food" style="background-image:url(img/plats/mardi-soir.jpg)"></div>
+            <div class="tray__label"><img src="img/jour-2.svg" alt="" width="30" height="30"><p><b>Mardi</b><span>le soir</span></p></div>
+          </div>
+        </div>
+        <span class="steps3__n">1</span>
+        <h3>Prenez la barquette du jour</h3>
+        <p>Le jour et le repas sont écrits en gros dessus. Pas d'erreur possible.</p>
+      </li>
+      <li>
+        <div class="steps3__vis">
+          <div class="mw" aria-hidden="true">
+            <div class="mw__door"><div class="mw__plate"><div class="tray tray--mini"><div class="tray__food" style="background-image:url(img/plats/mardi-soir.jpg)"></div></div></div></div>
+            <div class="mw__panel"><span class="mw__time" id="mw-time">3:00</span><i></i><i></i><i></i><i></i><b></b></div>
+          </div>
+        </div>
+        <span class="steps3__n">2</span>
+        <h3>Quelques minutes au micro-ondes</h3>
+        <p>Le temps est écrit sur l'étiquette. Vous retirez le film et vous lancez.</p>
+      </li>
+      <li>
+        <div class="steps3__vis">
+          <div class="served">
+            <div class="plate"><img src="img/plats/mardi-soir.jpg" alt="Gratin de pâtes au jambon servi à l'assiette"></div>
+            <span class="served__ding">Ding !</span>
+          </div>
+        </div>
+        <span class="steps3__n">3</span>
+        <h3>À table !</h3>
+        <p>Un plat et son dessert : un vrai repas, chaud, à l'heure qui vous convient.</p>
+      </li>
+    </ol>
+    <ul class="facts facts--center">
+      <li>{{ic_refrigere}}<span><b>Au frigo</b>entre 0 et 4 °C</span></li>
+      <li>{{ic_calendrier}}<span><b>Date limite</b>écrite sur chaque barquette</span></li>
+      <li>{{ic_allergenes}}<span><b>Allergènes</b>en gras, en clair</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section section--sunk" id="menu">
+  <div class="wrap">
+    <div class="sem__top">
+      <div class="stack" style="gap:.4rem">
+        <p class="eyebrow">Au menu {{badge}}</p>
+        <h2>{{semaine}}</h2>
+        <p class="lead">Un plat différent chaque midi et chaque soir, avec son dessert. Tous nos clients reçoivent le même menu : c'est ce qui nous permet de garder ce prix, sans rien jeter.</p>
+      </div>
+      <div class="seg" role="group" aria-label="Afficher" data-dish-toggle>
+        <button type="button" aria-pressed="true" data-show="tout">Tout</button>
+        <button type="button" aria-pressed="false" data-show="midi">Le midi</button>
+        <button type="button" aria-pressed="false" data-show="soir">Le soir</button>
+      </div>
+    </div>
+    <div class="dishes__scroll" tabindex="0" aria-label="Les repas de la semaine, faites défiler">
+      <div class="dishes" data-show="tout">{{dishes}}</div>
+    </div>
+    <div class="diet">{{ic_allergenes}}<div><h3>Un seul menu, pour tout le monde</h3><p>Nous ne faisons pas de version <b>sans sel</b>, <b>diabétique</b> ou <b>mixée</b>. Si votre médecin vous a prescrit un régime strict, notre service n'est pas adapté.</p><p>Les ingrédients et les allergènes sont écrits sur chaque barquette. Un doute&nbsp;? <a href="tel:{{telHref}}"><b>{{tel}}</b></a></p></div></div>
+  </div>
+</section>
+
+<section class="compose" id="composer">
+  <div class="wrap">
+    <div class="head-center">
+      <p class="eyebrow">Votre commande</p>
+      <h2>Votre prix et votre date <span class="relief">en 30 secondes.</span></h2>
+      <p class="lead">Changez les mots en rouge. Vous choisissez le midi, le soir ou les deux, et le nombre de jours. Le prix et la date s'affichent tout de suite.</p>
+    </div>
+    <div class="stage__grid">
+      <form class="phrase" id="phrase" novalidate aria-label="Composer votre semaine">
+        <p class="phrase__line">
+          <span class="ph">Je commande pour <span class="slot"><select id="ph-pour" aria-label="Pour qui">
+            <option value="moi">moi</option><option value="mere">ma mère</option><option value="pere">mon père</option><option value="parents">mes parents</option><option value="proche">un proche</option>
+          </select></span>,</span>
+          <span class="ph"><span class="slot"><select id="ph-pers" aria-label="Nombre de personnes">
+            <option value="1">une personne</option><option value="2">deux personnes</option>
+          </select></span>,</span>
+          <span class="ph"><span class="slot"><select id="ph-svc" aria-label="Quels repas">
+            <option value="soir">le soir</option><option value="midi">le midi</option><option value="midi-soir">midi et soir</option>
+          </select></span></span>
+          <span class="ph"><span class="slot"><select id="ph-jours" aria-label="Combien de jours par semaine">
+            <option value="7">tous les jours</option><option value="6">6 jours sur 7</option><option value="5">5 jours sur 7</option><option value="4">4 jours par semaine</option><option value="alt">un jour sur deux</option><option value="3">3 jours par semaine</option><option value="2">2 jours par semaine</option><option value="x" hidden>jours choisis</option>
+          </select></span>,</span>
+          <span class="ph">livré au <span class="slot slot--cp"><input id="ph-cp" inputmode="numeric" maxlength="5" autocomplete="postal-code" placeholder="72000" aria-label="Code postal de livraison"></span>.</span>
+        </p>
+        <div class="phrase__answer" aria-live="polite">
+          <p class="phrase__price"><strong id="ph-total">{{p1}}</strong> <span id="ph-per">par semaine, 7 repas</span></p>
+          <p class="phrase__when" id="ph-when">Indiquez le code postal pour voir votre jour de livraison.</p>
+        </div>
+        <label class="check essai"><input type="checkbox" id="ph-essai"><span><b>Juste une semaine pour essayer</b>, sans abonnement</span></label>
+        <div class="row">
+          <a class="btn btn--main btn--lg" id="ph-go" href="commander.html#f-soir-1">Continuer</a>
+          <a class="btn btn--quiet" href="tel:{{telHref}}">ou commandez par téléphone</a>
+        </div>
+      </form>
+      <div class="nappe" aria-label="Aperçu de votre semaine">
+        <div class="set">
+          <div class="set__head"><span id="set-title">Votre semaine</span><span class="set__price">{{prix}} le repas</span></div>
+          <div class="set__grid" id="set-grid">{{settable}}</div>
+          <p class="set__hint">Touchez une lettre pour choisir vos jours, une assiette pour voir le plat.</p>
+          <p class="set__foot" id="set-foot">Vous recevez <b>7 repas</b> le jour de livraison. Vous les rangez au frigo et vous réchauffez celui du jour.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="qualite" id="qualite">
+  <div class="wrap">
+    <div class="q-head">
+      <p class="eyebrow">La différence</p>
+      <h2>Le plat tout prêt du rayon du supermarché ? <span class="relief">Non merci.</span></h2>
+      <p class="lead">Vous avez cuisiné toute votre vie, vous savez ce qui est bon. Une barquette prise au supermarché et mangée sur un coin de table, ce n'est pas un vrai repas.</p>
+    </div>
+
+    <div class="match">
+      <figure class="match__side match__side--them">
+        <div class="match__vis" aria-hidden="true">
+          <img class="match__tray" src="img/rayon-barquette.jpg" alt="" width="300" height="300" loading="lazy">
+        </div>
+        <figcaption><span class="match__tag">Au rayon</span><b>Le plat tout prêt du supermarché</b></figcaption>
+      </figure>
+      <div class="match__vs" aria-hidden="true">VS</div>
+      <figure class="match__side match__side--us">
+        <div class="match__vis" aria-hidden="true">
+          <img class="match__plate" src="img/plats/mardi-midi.jpg" alt="" width="260" height="260" loading="lazy">
+        </div>
+        <figcaption><span class="match__tag match__tag--us">Chez vous</span><b>Le repas Resto Pickup</b></figcaption>
+      </figure>
+    </div>
+
+    <dl class="duel">
+      <div class="duel__row"><dt>Dans la barquette</dt><dd class="them"><span>Souvent un plat seul, le dessert s'achète à part</span></dd><dd class="us"><span>Un plat <b>et</b> son dessert</span></dd></div>
+      <div class="duel__row"><dt>Les recettes</dt><dd class="them"><span>Les mêmes qui reviennent, semaine après semaine</span></dd><dd class="us"><span>14 recettes différentes par semaine : {{vsRecettes}}…</span></dd></div>
+      <div class="duel__row"><dt>Les courses</dt><dd class="them"><span>Choisir, payer, porter le sac depuis le magasin</span></dd><dd class="us"><span>Livré une fois par semaine, en main propre, rangé au frigo</span></dd></div>
+      <div class="duel__row"><dt>Le menu</dt><dd class="them"><span>Il faut y penser tous les jours</span></dd><dd class="us"><span>Le menu de la semaine est déjà fait, le jour est écrit sur la barquette</span></dd></div>
+      <div class="duel__row"><dt>La fraîcheur</dt><dd class="them"><span>Des jours en rayon, puis le trajet jusqu'à chez vous</span></dd><dd class="us"><span>Transporté en camion réfrigéré jusqu'à votre porte</span></dd></div>
+    </dl>
+
+    <div class="etude">
+      <p class="etude__t">Ce qu'on trouve au rayon, selon l'étude de l'association de consommateurs CLCV</p>
+      <ul class="etude__n">
+        <li><b>46 %</b><span>des plats cuisinés contiennent au moins un additif</span></li>
+        <li><b>1 sur 2</b><span>des plats à base de viande utilise de la viande transformée plutôt que fraîche</span></li>
+        <li><b>40 %</b><span>des plats contiennent des sucres ajoutés</span></li>
+      </ul>
+      <p class="etude__src">Étude CLCV, mai 2025 : 150 plats cuisinés frais et surgelés relevés dans 10 enseignes. <a href="https://www.clcv.org/storage/app/media/DP_plats_cuisin%C3%A9s_clcv-2.pdf" rel="noopener" target="_blank">Lire l'étude</a></p>
+      <p class="etude__us">Chez nous, la liste des ingrédients est écrite sur chaque barquette. Comparez.</p>
+    </div>
+
+    <p class="pledge">On vous livre ce qu'on servirait à nos parents.</p>
+  </div>
+</section>
+
+<section class="section section--brand" id="proches">
+  <img class="assiette-deco" src="img/assiette.svg" alt="">
+  <div class="wrap split">
+    <div class="stack">
+      <p class="eyebrow eyebrow--on">Vous commandez pour un parent</p>
+      <h2>Vous ne pouvez pas passer chaque semaine. Nous, si.</h2>
+      <ul class="ticks ticks--on">
+        <li>Vous payez, il reçoit ses repas chez lui.</li>
+        <li>Factures par e-mail, tout à distance.</li>
+        <li>En main propre, jamais devant la porte.</li>
+        <li>Personne n'ouvre ? On l'appelle, puis vous.</li>
+      </ul>
+      <div class="row" style="margin-top:.6rem"><a class="btn btn--on btn--lg" href="#composer" data-pour="mere">Commander pour un parent</a><a class="btn btn--line-on" href="repas-domicile-parent-age.html">En savoir plus</a></div>
+    </div>
+    <div class="compare">
+      <h3>À la semaine, ou chaque jour ?</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th></th><th>Resto Pickup</th><th>Portage quotidien</th></tr></thead>
+          <tbody>
+            <tr><th>Heure du repas</th><td>Celle de votre parent</td><td>Fixée par la tournée</td></tr>
+            <tr><th>À chaque repas</th><td>Plat et dessert</td><td>Selon le prestataire</td></tr>
+            <tr><th>Passages</th><td>1 par semaine</td><td>Jusqu'à 1 par jour</td></tr>
+            <tr><th>Engagement</th><td>Aucun</td><td>Selon le prestataire</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--sunk" id="offrir">
+  <div class="wrap gift-band">
+    <div class="stack">
+      <p class="eyebrow">Pour Noël, pour un anniversaire, pour un retour d'hôpital</p>
+      <h2>Offrez de bons repas <span class="relief">à vos parents.</span></h2>
+      <p class="lead">Une carte cadeau de 5, 10 ou 20 repas, valable un an. Vous la recevez tout de suite, à imprimer ou à envoyer. Votre proche commande quand il veut, en ligne ou par téléphone.</p>
+      <div class="row"><a class="btn btn--main btn--lg" href="offrir-des-repas.html">Offrir des repas</a></div>
+    </div>
+    <a class="giftcard giftcard--tilt" href="offrir-des-repas.html" aria-label="Voir la carte cadeau">
+      <img class="giftcard__plate" src="img/assiette.svg" alt="">
+      <img class="giftcard__logo" src="img/logo-blanc.svg" alt="" width="120" height="75">
+      <p class="giftcard__k">Carte cadeau</p>
+      <p class="giftcard__n"><b>10</b> repas</p>
+      <p class="giftcard__v">plat et dessert, livrés chez vous</p>
+      <p class="giftcard__to">Pour <b>Maman</b>, de la part de <b>Julien</b></p>
+    </a>
+  </div>
+</section>
+
+<section class="section" id="zones">
+  <div class="wrap">
+    <div class="head-center">
+      <p class="eyebrow">Où nous livrons</p>
+      <h2>Sarthe, Mayenne, Orne : <span class="relief">plus de 420 communes.</span></h2>
+      <p class="lead">Le mardi au Mans et dans un rayon de 30 km. Le jeudi autour de Loué et Sablé, jusqu'à Laval, Évron, Mayenne et Alençon.</p>
+    </div>
+    <div class="zones2">
+      <div class="map" id="map">
+        <div class="map__bar">
+          <span class="map__lg"><i class="lg lg--mardi"></i>Livré le mardi</span>
+          <span class="map__lg"><i class="lg lg--jeudi"></i>Livré le jeudi</span>
+        </div>
+        <div class="map__view">{{map}}<div class="map__tip" id="map-tip" hidden></div>
+          <div class="map__zoom" role="group" aria-label="Zoom"><button type="button" data-zoom="in" aria-label="Zoomer">+</button><button type="button" data-zoom="out" aria-label="Dézoomer">−</button></div>
+        </div>
+        <div class="map__go" role="group" aria-label="Centrer la carte"><button type="button" data-go="le-mans">Le Mans</button><button type="button" data-go="loue">Loué</button><button type="button" data-go="mayenne-orne">Laval</button><button type="button" data-go="all">Tout voir</button></div>
+        <p class="map__src">Touchez une commune. Contours : IGN, Admin Express (geo.api.gouv.fr).</p>
+      </div>
+      <div class="finder">
+        <label for="z-q" class="finder__l">Votre commune est-elle livrée ?</label>
+        <input id="z-q" autocomplete="off" placeholder="Tapez son nom, ex. Coulaines">
+        <div id="z-res" class="finder__res" aria-live="polite"></div>
+        <div class="zday">{{zonedays}}</div>
+        <p class="hint" style="color:var(--rp-ardoise)">Votre commune n'y est pas ? Appelez le <b>{{tel}}</b> : nous ouvrons de nouvelles communes selon la demande.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--sunk" id="questions">
+  <div class="wrap faq-wrap">
+    <div class="stack">
+      <div class="carte">
+        <p class="carte__t">La carte</p>
+        <p class="carte__sub">Plat et dessert. Prix des repas, la livraison est en dessous.</p>
+        <ul class="carte__list">
+          <li><span>Le repas, plat et dessert</span><i></i><b>{{prix}}</b></li>
+          <li><span>5 soirs par semaine<small>du lundi au vendredi</small></span><i></i><b>{{r5}}</b></li>
+          <li><span>Tous les soirs<small>7 repas par semaine</small></span><i></i><b>{{r7}}</b></li>
+          <li><span>Midi et soir, tous les jours<small>14 repas par semaine</small></span><i></i><b>{{r14}}</b></li>
+          <li><span>Livraison<small>{{liv}} par repas, {{livmin}} minimum</small></span><i></i><b>{{livmax}} max.</b></li>
+        </ul>
+        <p class="carte__foot">Vous choisissez le midi, le soir ou les deux, de 2 à 7 jours, ou un jour sur deux. Minimum 3 repas par semaine. Sans engagement.</p>
+      </div>
+      <div class="callme">
+        {{ic_telephone}}
+        <div><p>Une question ? Une personne vous répond.</p><a class="big-tel big-tel--ink" href="tel:{{telHref}}">{{tel}}</a><br><button type="button" class="btn btn--ghost" data-rappel>Être rappelé</button></div>
+      </div>
+    </div>
+    <div>
+      <h2 style="margin-bottom:1rem">Vos questions</h2>
+      <div class="faq faq--ic">{{faq}}</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-bottom:clamp(5rem,8vw,6rem)">
+  <div class="wrap">
+    <div class="vichy">
+      <div class="cartouche">
+        <h2>Votre première semaine, <span class="relief">sans abonnement.</span></h2>
+        <p class="lead">Sept repas du soir, livrés en une fois. Vous continuez si vous aimez.</p>
+        <a class="btn btn--main btn--lg" href="#composer" data-formule="essai">Essayer une semaine</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="dock" aria-label="Commander">
+  <a class="btn btn--ghost" href="tel:{{telHref}}">{{ic_telephone}}Appeler</a>
+  <a class="btn btn--main" href="#composer">Commander</a>
+</div>

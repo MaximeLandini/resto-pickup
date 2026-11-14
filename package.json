@@ -1,0 +1,9 @@
+{
+  "name": "resto-pickup",
+  "private": true,
+  "description": "Site Resto Pickup : pages statiques (src/build.py) et fonctions serveur Netlify (api/).",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0",
+    "stripe": "^17.5.0"
+  }
+}

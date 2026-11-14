@@ -1,0 +1,8 @@
+node_modules/
+deploy/
+artifact/
+*.zip
+src/flyer/_p*.png
+src/flyer/_flyer.html
+site/_sources/
+.netlify/

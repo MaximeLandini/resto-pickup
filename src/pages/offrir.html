@@ -1,0 +1,96 @@
+<section class="gift-hero">
+  <div class="wrap gift-hero__grid">
+    <div class="gift-hero__text">
+      <p class="eyebrow">Carte cadeau</p>
+      <h1>Offrez de bons repas <span class="relief">à ceux que vous aimez.</span></h1>
+      <p class="lead">Pour vos parents, un grand-parent, un voisin qui rentre de l'hôpital. Une carte Resto Pickup, valable un an, que votre proche utilise quand il veut, en ligne ou par téléphone.</p>
+      <ul class="ticks">
+        <li>Vous la recevez tout de suite, à imprimer ou à envoyer par e-mail.</li>
+        <li>Votre proche n'a rien à payer tant que la carte n'est pas épuisée.</li>
+        <li>Livré chez lui en main propre, en Sarthe, en Mayenne et dans l'Orne.</li>
+      </ul>
+      <a class="btn btn--main btn--lg" href="#choisir">Choisir ma carte</a>
+    </div>
+    <div class="gift-hero__vis" aria-hidden="true">
+      <div class="giftcard giftcard--tilt" data-preview>
+        <img class="giftcard__plate" src="img/assiette.svg" alt="">
+        <img class="giftcard__logo" src="img/logo-blanc.svg" alt="" width="120" height="75">
+        <p class="giftcard__k">Carte cadeau</p>
+        <p class="giftcard__n"><b data-g-repas>10</b> repas</p>
+        <p class="giftcard__v">plat et dessert, livrés chez vous</p>
+        <p class="giftcard__to">Pour <b data-g-pour>Maman</b>, de la part de <b data-g-de>Julien</b></p>
+        <p class="giftcard__code">RP-NOËL-2026</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--sunk" id="choisir">
+  <div class="wrap gift">
+    <form class="panel gift__form" id="gift-form" novalidate>
+      <h2>Votre carte</h2>
+      <span class="qlabel" id="q-n">Combien de repas offrir ?</span>
+      <div class="choices choices--gift" role="radiogroup" aria-labelledby="q-n">
+        <label class="choice"><input type="radio" name="formule" value="5"><span><b>5 repas</b><small>Une semaine de dîners, livraison comprise</small><em>{{g5}}</em></span></label>
+        <label class="choice"><input type="radio" name="formule" value="10" checked><span><b>10 repas</b><small>Deux semaines de dîners</small><em>{{g10}}</em></span></label>
+        <label class="choice"><input type="radio" name="formule" value="20"><span><b>20 repas</b><small>Un mois de dîners</small><em>{{g20}}</em></span></label>
+        <label class="choice"><input type="radio" name="formule" value="autre"><span><b>Autre</b><small>De 3 à 60 repas</small><em data-g-autre>à vous de choisir</em></span></label>
+      </div>
+      <div class="field gift__autre" hidden><label for="g-n">Nombre de repas</label><div class="stepper"><button type="button" data-step="-1" aria-label="Un repas de moins">−</button><input id="g-n" type="number" inputmode="numeric" min="3" max="60" value="14"><button type="button" data-step="1" aria-label="Un repas de plus">+</button></div></div>
+      <div class="grid2" style="margin-top:1.2rem">
+        <div class="field"><label for="g-pour">Pour</label><input id="g-pour" name="pour" maxlength="40" placeholder="Ex. : Maman, Papi Jean" required></div>
+        <div class="field"><label for="g-de">De la part de</label><input id="g-de" name="de" maxlength="40" placeholder="Ex. : Julien et Claire" required></div>
+      </div>
+      <div class="field" style="margin-top:1rem"><label for="g-msg">Un petit mot <span style="font-weight:400">(facultatif)</span></label><textarea id="g-msg" name="message" maxlength="240" placeholder="Ex. : Joyeux Noël ! Comme ça, plus besoin de cuisiner le soir."></textarea></div>
+      <div class="field" style="margin-top:1rem"><label for="g-email">Votre e-mail</label><input id="g-email" name="email" type="email" autocomplete="email" required><p class="hint">Vous y recevez la carte et le reçu.</p></div>
+      <p class="err" id="g-err" aria-live="polite"></p>
+      <div class="gift__pay">
+        <p class="gift__total"><span>Total</span><strong data-g-total>{{g10}}</strong></p>
+        <button type="submit" class="btn btn--main btn--lg" id="g-btn">Payer et recevoir la carte</button>
+      </div>
+      <p class="small">Paiement sécurisé par Stripe : carte bancaire, Apple Pay ou Google Pay. Vous préférez commander la carte par téléphone ? <button type="button" class="linkbtn" data-rappel>On vous rappelle</button>.</p>
+    </form>
+    <aside class="gift__how">
+      <h2>Comment ça marche</h2>
+      <ol class="gsteps">
+        <li><b>Vous offrez</b>Vous choisissez le nombre de repas et vous payez. La carte arrive tout de suite.</li>
+        <li><b>Vous la donnez</b>Imprimée sous le sapin, glissée dans une carte, ou envoyée par e-mail.</li>
+        <li><b>Votre proche se régale</b>Il commande en ligne avec son code, ou il nous appelle au <a href="tel:{{telHref}}"><b>{{tel}}</b></a> et nous faisons tout avec lui.</li>
+      </ol>
+      <div class="note-ok"><p><strong>Bon à savoir.</strong> Votre proche doit habiter au Mans, à Loué, Laval, Alençon ou dans une des communes que nous livrons. <a href="index.html#zones">Vérifier sa commune</a>.</p></div>
+    </aside>
+  </div>
+</section>
+
+<section class="section" id="carte" hidden>
+  <div class="wrap gift-done">
+    <p class="eyebrow">Merci</p>
+    <h2>Voici votre carte cadeau.</h2>
+    <p class="lead" data-done-lead>Elle vient aussi de partir sur votre e-mail.</p>
+    <div class="giftcard giftcard--big" id="giftcard">
+      <img class="giftcard__plate" src="img/assiette.svg" alt="">
+      <img class="giftcard__logo" src="img/logo-blanc.svg" alt="Resto Pickup" width="150" height="94">
+      <p class="giftcard__k">Carte cadeau</p>
+      <p class="giftcard__n"><b data-c-repas></b> repas</p>
+      <p class="giftcard__v">plat et dessert, livrés chez vous</p>
+      <p class="giftcard__to">Pour <b data-c-pour></b>, de la part de <b data-c-de></b></p>
+      <p class="giftcard__msg" data-c-msg></p>
+      <div class="giftcard__use"><p class="giftcard__code" data-c-code></p><p>À utiliser sur restopickup.fr ou au {{tel}}<br>Valable jusqu'au <span data-c-exp></span></p></div>
+    </div>
+    <div class="row gift-done__act">
+      <button type="button" class="btn btn--main btn--lg" data-print>Imprimer la carte</button>
+      <a class="btn btn--ghost btn--lg" data-mail href="#">Envoyer par e-mail</a>
+      <button type="button" class="btn btn--ghost btn--lg" data-copy>Copier le code</button>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap faq-wrap">
+    <div class="stack">
+      <h2>Les questions qu'on nous pose</h2>
+      <p class="lead">Une autre question ? Appelez-nous au <a href="tel:{{telHref}}"><b>{{tel}}</b></a>.</p>
+    </div>
+    <div class="faq">{{giftfaq}}</div>
+  </div>
+</section>

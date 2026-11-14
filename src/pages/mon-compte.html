@@ -1,0 +1,78 @@
+<section class="section" style="padding-top:2rem">
+  <div class="wrap">
+    <div id="acct-login" class="login">
+      <div class="card">
+        <p class="eyebrow">Votre espace</p>
+        <h1 style="font-size:2rem">Bonjour !</h1>
+        <form id="f-login" class="form-stack" novalidate>
+          <div class="field"><label for="l-email">Votre adresse e-mail</label><input id="l-email" type="email" autocomplete="email" required><p class="hint">Celle donnée à la commande. Vous recevez un code, pas besoin de mot de passe.</p></div>
+          <button class="btn btn--main btn--lg" type="submit">Recevoir mon code</button>
+        </form>
+        <form id="f-code" class="form-stack" novalidate hidden>
+          <div class="field code"><label for="l-code">Le code reçu par e-mail</label><input id="l-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required><p class="hint" id="l-sent"></p></div>
+          <button class="btn btn--main btn--lg" type="submit">Ouvrir mon espace</button>
+          <button class="btn btn--quiet" type="button" id="l-back">Changer d'adresse e-mail</button>
+        </form>
+        <p class="err" id="l-err" aria-live="polite"></p>
+        <div class="note-ok"><p>Pas d'e-mail, ou plus simple au téléphone ? Appelez le <b>{{tel}}</b> : nous faisons tout pour vous.</p></div>
+        <button class="btn btn--ghost" type="button" id="l-demo" hidden>Voir un exemple d'espace client</button>
+      </div>
+    </div>
+
+    <div id="acct-home" hidden>
+      <div class="sem__top" style="margin-bottom:1.4rem">
+        <div class="stack" style="gap:.3rem"><p class="eyebrow">Votre espace</p><h1 style="font-size:clamp(1.8rem,1.3rem+1.6vw,2.4rem)" id="a-hello">Bonjour</h1></div>
+        <button class="btn btn--quiet" type="button" id="a-out">Se déconnecter</button>
+      </div>
+      <div class="acct">
+        <div class="stack" style="gap:1.4rem">
+          <div class="card card--next">
+            <div class="next">
+              <div class="leaf" id="a-leaf"><span class="leaf__m">nov.</span><b class="leaf__n">5</b><span class="leaf__w">jeudi</span></div>
+              <div class="stack" style="gap:.3rem"><p class="eyebrow" id="a-status">Prochaine livraison</p><h2 id="a-next">Jeudi 5 novembre</h2><p id="a-nextsub" style="color:var(--rp-ardoise)"></p></div>
+            </div>
+            <div id="a-sem"></div>
+            <div class="note-ok" id="a-msg" hidden><p></p></div>
+          </div>
+          <div class="card">
+            <h3>Au menu de cette livraison</h3>
+            <div class="weekstrip" id="a-week">{{weekstrip}}</div>
+          </div>
+          <div class="acts">
+            <button class="act" type="button" data-open="skip">{{ic_pause}}<span><b id="a-skip-t">Je serai absent</b><small id="a-skip-s">Vacances, hôpital : une ou plusieurs semaines, sans livraison ni paiement.</small></span></button>
+            <button class="act" type="button" data-open="msg">{{ic_telephone}}<span><b>Écrire à l'équipe <i class="adm-badge" id="a-unread" hidden></i></b><small>Une question, un souci, un compliment : nous répondons vite.</small></span></button>
+            <button class="act" type="button" data-open="change">{{ic_calendrier}}<span><b>Changer mes repas</b><small>Midi, soir, nombre de jours, une ou deux personnes.</small></span></button>
+            <button class="act" type="button" data-open="address">{{ic_livraison}}<span><b>Adresse et consignes au livreur</b><small>Digicode, étage, voisin qui réceptionne.</small></span></button>
+            <button class="act" type="button" data-open="portal">{{ic_cadenas}}<span><b>Moyen de paiement</b><small>Changer de carte ou d'IBAN, arrêter l'abonnement.</small></span></button>
+            <button class="act" type="button" data-open="gift">{{ic_coeur}}<span><b>J'ai une carte cadeau</b><small>Saisissez le code : le montant est déduit de vos prochaines semaines.</small></span></button>
+          </div>
+        </div>
+        <aside class="stack" style="gap:1.4rem">
+          <div class="card">
+            <h3>Votre abonnement</h3>
+            <dl class="kv" id="a-kv"></dl>
+          </div>
+          <div class="card">
+            <h3>Mes paiements</h3>
+            <p class="pay-next" id="a-paynext"></p>
+            <ul class="mini" id="a-invoices"></ul>
+          </div>
+          <div class="card" style="background:var(--rp-farine);border-color:var(--rp-farine)">
+            <h3>Une question ?</h3>
+            <p>Une personne vous répond, du lundi au vendredi.</p>
+            <a class="big-tel big-tel--ink" href="tel:{{telHref}}">{{tel}}</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="veil" id="veil" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-t" hidden>
+  <div class="sheet__in">
+    <h2 id="sheet-t" style="font-size:1.6rem"></h2>
+    <div id="sheet-b"></div>
+    <div class="nav-steps" style="margin-top:.4rem"><button class="btn btn--ghost" type="button" id="sheet-x">Annuler</button><button class="btn btn--main btn--lg" type="button" id="sheet-ok">Confirmer</button></div>
+  </div>
+</div>

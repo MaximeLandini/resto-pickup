@@ -1,0 +1,112 @@
+<section class="section" id="commander" style="padding-top:2rem">
+  <div class="wrap">
+    <div class="thanks note-ok" role="status" style="margin-bottom:1.5rem"><p><strong>C'est noté.</strong> Vous allez recevoir un e-mail de confirmation. Nous vous appelons avant la première livraison pour fixer les derniers détails.</p></div>
+    <div class="order">
+      <form class="panel" id="order-form" novalidate>
+        <ol class="progress">
+          <li aria-current="step">1. Vos repas</li>
+          <li>2. La livraison</li>
+          <li>3. Le paiement</li>
+        </ol>
+
+        <fieldset data-step="1">
+          <legend>Vos repas</legend>
+          <div class="phone-band">{{ic_telephone}}<p><b>Pas à l'aise avec Internet ?</b>On vous rappelle et on fait la commande ensemble.</p><button type="button" class="btn btn--ghost" data-rappel>Être rappelé</button></div>
+          <p class="mini-total" id="mini-total" aria-live="polite"></p>
+          <span class="qlabel" id="q-svc">Quels repas ?</span>
+          <div class="choices choices--3" role="radiogroup" aria-labelledby="q-svc">
+            <label class="choice"><input type="radio" name="service" value="midi"><span><b>Le midi</b><small>Le déjeuner</small></span></label>
+            <label class="choice"><input type="radio" name="service" value="soir" checked><span><b>Le soir</b><small>Le dîner</small></span></label>
+            <label class="choice"><input type="radio" name="service" value="midi-soir"><span><b>Midi et soir</b><small>Les deux repas</small></span></label>
+          </div>
+          <span class="qlabel" id="q-days">Quels jours ? <small class="qhint">Touchez un jour pour l'ajouter ou le retirer.</small></span>
+          <div class="presets" role="group" aria-label="Choix rapides"><button type="button" data-preset="1234567" aria-pressed="false">Tous les jours</button><button type="button" data-preset="12345" aria-pressed="false">Du lundi au vendredi</button><button type="button" data-preset="1357" aria-pressed="false">Un jour sur deux</button></div>
+          <div class="daypick" role="group" aria-labelledby="q-days">
+            <label><input type="checkbox" name="jours" value="1" checked><span>Lun.</span></label>
+            <label><input type="checkbox" name="jours" value="2" checked><span>Mar.</span></label>
+            <label><input type="checkbox" name="jours" value="3" checked><span>Mer.</span></label>
+            <label><input type="checkbox" name="jours" value="4" checked><span>Jeu.</span></label>
+            <label><input type="checkbox" name="jours" value="5" checked><span>Ven.</span></label>
+            <label><input type="checkbox" name="jours" value="6" checked><span>Sam.</span></label>
+            <label><input type="checkbox" name="jours" value="7" checked><span>Dim.</span></label>
+          </div>
+          <p class="err" id="days-err" aria-live="polite"></p>
+          <span class="qlabel">Pour combien de personnes ?</span>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="personnes" value="1" checked><span><b>1 personne</b><small>Un repas à chaque fois</small></span></label>
+            <label class="choice"><input type="radio" name="personnes" value="2"><span><b>2 personnes</b><small>Deux repas identiques à chaque fois</small></span></label>
+          </div>
+          <span class="qlabel">Qui reçoit les repas ?</span>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="pour" value="moi" checked><span><b>Moi</b><small>Je les reçois chez moi</small></span></label>
+            <label class="choice"><input type="radio" name="pour" value="proche"><span><b>Un parent ou un proche</b><small>Je paie, il ou elle les reçoit chez lui</small></span></label>
+          </div>
+          <label class="check essai"><input type="checkbox" name="essai" value="1" id="f-essai"><span><b>Juste une semaine pour essayer</b><br>Une seule livraison, sans abonnement. Vous continuez si vous aimez.</span></label>
+          <div class="nav-steps"><a class="btn btn--ghost" href="index.html#composer">Retour</a><button type="button" class="btn btn--main" data-next>Continuer</button></div>
+        </fieldset>
+
+        <fieldset data-step="2" hidden>
+          <legend>Où livrons-nous ?</legend>
+          <p class="mini-recap" id="mini-recap"></p>
+          <div class="form-stack">
+            <p class="sub" id="who-label">Vos coordonnées de livraison</p>
+            <div class="grid2">
+              <div class="field"><label for="f-prenom">Prénom</label><input id="f-prenom" name="prenom" autocomplete="given-name" required></div>
+              <div class="field"><label for="f-nom">Nom</label><input id="f-nom" name="nom" autocomplete="family-name" required></div>
+            </div>
+            <div class="field"><label for="f-adresse">Adresse</label><input id="f-adresse" name="adresse" autocomplete="street-address" placeholder="Numéro et rue" required></div>
+            <div class="grid2">
+              <div class="field"><label for="f-cp">Code postal</label><input id="f-cp" name="cp" inputmode="numeric" maxlength="5" autocomplete="postal-code" required><p class="hint" id="cp-msg" aria-live="polite"></p></div>
+              <div class="field"><label for="f-commune">Commune</label><select id="f-commune" name="commune" required disabled><option value="">Saisissez d'abord le code postal</option></select></div>
+            </div>
+            <div class="field"><label for="f-tel">Téléphone</label><input id="f-tel" name="tel" type="tel" autocomplete="tel" required><p class="hint">Le livreur appelle si personne n'ouvre.</p></div>
+            <div class="field"><label for="f-consignes">Pour le livreur <span style="font-weight:400">(facultatif)</span></label><textarea id="f-consignes" name="consignes" placeholder="Ex. : digicode 1234, 2e étage, sonner longtemps"></textarea></div>
+            <div data-proche hidden class="form-stack">
+              <p class="sub">Vous, qui payez</p>
+              <div class="grid2">
+                <div class="field"><label for="p-prenom">Votre prénom</label><input id="p-prenom" name="p_prenom" autocomplete="given-name" data-req="1"></div>
+                <div class="field"><label for="p-nom">Votre nom</label><input id="p-nom" name="p_nom" autocomplete="family-name" data-req="1"></div>
+              </div>
+              <div class="grid2">
+                <div class="field"><label for="p-email">Votre e-mail</label><input id="p-email" name="p_email" type="email" autocomplete="email" data-req="1"><p class="hint">Vous y recevez les factures.</p></div>
+                <div class="field"><label for="p-tel">Votre téléphone</label><input id="p-tel" name="p_tel" type="tel" autocomplete="tel" data-req="1"></div>
+              </div>
+            </div>
+            <div class="field" data-moi><label for="f-email">E-mail <span style="font-weight:400">(pour les factures)</span></label><input id="f-email" name="email" type="email" autocomplete="email"><p class="hint">Pas d'e-mail ? Laissez vide, les factures arrivent par courrier.</p></div>
+          </div>
+          <div class="nav-steps"><button type="button" class="btn btn--ghost" data-prev>Retour</button><button type="button" class="btn btn--main" data-next>Continuer</button></div>
+        </fieldset>
+
+        <fieldset data-step="3" hidden>
+          <legend>Vérifiez et payez</legend>
+          <div class="recap" id="recap"></div>
+          <details class="giftcode" id="giftcode"><summary>J'ai une carte cadeau</summary>
+            <div class="field"><label for="f-code">Code de la carte</label><div class="team__row"><input id="f-code" name="code_cadeau" placeholder="RP-XXXX-XXXX" autocapitalize="characters" autocomplete="off"></div><p class="hint">Son montant sera déduit sur la page de paiement, puis semaine après semaine.</p></div>
+          </details>
+          <div class="field" style="margin-top:1.2rem">
+            <label class="check"><input type="checkbox" id="f-cgv" name="cgv"><span style="font-weight:400">J'accepte les <a href="conditions-generales.html">conditions générales de vente</a>.</span></label>
+          </div>
+          <p class="err" id="pay-err" aria-live="polite"></p>
+          <div class="nav-steps"><button type="button" class="btn btn--ghost" data-prev>Retour</button><button type="submit" class="btn btn--accent btn--lg" id="pay-btn">Payer et valider</button></div>
+          <p class="demo" id="pay-demo" hidden>Aperçu : ici le client part sur la page de paiement sécurisée Stripe (carte, Apple Pay, Google Pay ou prélèvement SEPA), puis revient sur la confirmation.</p>
+        </fieldset>
+      </form>
+
+      <aside class="panel summary" aria-label="Récapitulatif">
+        <h3>Votre commande</h3>
+        <dl>
+          <dt>Formule</dt><dd id="s-formule">Soir</dd>
+          <dt>Pour</dt><dd id="s-pers">1 personne</dd>
+          <dt>Repas</dt><dd id="s-nb">7 repas</dd>
+          <dt>Prix du repas</dt><dd id="s-unit">{{prix}}</dd>
+          <dt>Livraison</dt><dd id="s-liv">Incluse</dd>
+          <dt>1re livraison</dt><dd id="s-first">après le code postal</dd>
+        </dl>
+        <div class="total"><span id="s-per">Par semaine</span><strong id="s-total">{{p1}}</strong></div>
+        <p class="small" id="s-small">Débité chaque semaine. Pause ou arrêt sans frais avant le samedi.</p>
+        <div class="pay-logos" aria-label="Moyens de paiement acceptés"><span>CB</span><span>Visa</span><span>Mastercard</span><span>Apple Pay</span><span>Google Pay</span><span>Prélèvement</span></div>
+        <p class="small" style="margin-top:1rem">Besoin d'aide ? <a href="tel:{{telHref}}"><strong>{{tel}}</strong></a></p>
+      </aside>
+    </div>
+  </div>
+</section>

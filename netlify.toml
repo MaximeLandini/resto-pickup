@@ -1,0 +1,32 @@
+[build]
+  publish = "site"
+  functions = "netlify/functions"
+  command = "python3 src/build.py"
+
+[build.environment]
+  RP_LIVE = "1"
+  PYTHON_VERSION = "3.11"
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = []
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+[[headers]]
+  for = "/equipe.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

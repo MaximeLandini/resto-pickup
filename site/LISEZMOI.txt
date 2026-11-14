@@ -1,0 +1,32 @@
+RESTO PICKUP, site statique
+
+Mettre en ligne : déposer le contenu de ce dossier sur Vercel ou Netlify (gratuit), relier le nom de domaine.
+Paiement : créer dans Stripe un prix récurrent hebdomadaire de 11,99 € TTC, puis définir les variables
+STRIPE_SECRET_KEY, STRIPE_PRICE_REPAS, STRIPE_PRICE_REPAS_UNIQUE (même prix, ponctuel, pour la semaine d'essai), SITE_URL. Mettre "/api/checkout" dans stripeCheckoutEndpoint (_sources/data.json).
+Espace client : activer le portail client Stripe et coller son lien dans stripePortalUrl.
+
+Photos des plats : renseigner "photo" (ex. img/blanquette.jpg) pour chaque repas dans data.json, déposer les images dans img/.
+Changer le menu de la semaine : modifier "menu" dans _sources/data.json, puis lancer : python3 _sources/build.py
+Changer téléphone, prix, communes, jours de livraison : même fichier, même commande.
+
+ESPACE CLIENT (mon-compte.html)
+Connexion par code envoyé par e-mail, sans mot de passe ni base de données : tout est stocké dans Stripe.
+Variables à ajouter : SESSION_SECRET (chaîne aléatoire longue), BREVO_API_KEY et MAIL_FROM (envoi du code).
+Pour activer l'espace : dans _sources/data.json, mettre "apiBase": "." (fonctions sur le même domaine), puis relancer le build. Tant que apiBase est vide, la page montre un exemple.
+Dans Stripe : configurer le portail client (factures, moyen de paiement, résiliation).
+Les absences et changements apparaissent dans les métadonnées de l'abonnement Stripe (absences, formule, personnes, livre_adresse, consignes).
+
+PHOTOS
+Les photos de plats viennent d'Unsplash (licence libre, usage commercial autorisé) et sont provisoires : à remplacer par vos vraies photos (même nom de fichier dans img/plats/).
+
+COMMANDE PAR TÉLÉPHONE (bouton « On vous rappelle »)
+Les demandes de rappel, d'orientation par un professionnel et de flyers arrivent par e-mail sur MAIL_EQUIPE (variable à définir).
+Pour prendre une commande au téléphone : ouvrir /equipe.html (page non référencée), saisir la clé ADMIN_KEY (variable à définir, 12 caractères minimum),
+remplir la commande, cliquer « Créer le lien de paiement », puis « SMS à la personne » ou « SMS au proche ». Le lien Stripe est valable 24 h.
+
+CARTE CADEAU (/offrir-des-repas.html)
+Paiement Stripe ponctuel, code généré automatiquement (RP-XXXX-XXXX), carte à imprimer et e-mail à l'acheteur, validité un an.
+Le bénéficiaire saisit le code à l'étape 3 de la commande, ou l'équipe le saisit sur /equipe.html : le montant devient un avoir Stripe déduit semaine après semaine.
+
+FLYER PROFESSIONNELS
+docs/flyer-resto-pickup.pdf (A5 recto verso). Pour le régénérer après un changement de prix : python3 _sources/flyer/make_flyer.py

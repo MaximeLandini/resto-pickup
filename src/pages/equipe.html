@@ -1,0 +1,62 @@
+<section class="section" style="padding-top:2rem">
+  <div class="wrap team">
+    <div class="team__head">
+      <p class="eyebrow">Outil équipe, page non référencée</p>
+      <h1>Commande prise au téléphone</h1>
+      <p class="lead">Vous remplissez pendant l'appel, vous créez le lien de paiement, vous l'envoyez par SMS au client ou à son enfant. Il paie en deux minutes, l'abonnement démarre tout seul.</p>
+      <div class="field team__key"><label for="t-key">Clé équipe</label><input id="t-key" type="password" autocomplete="off"><p class="hint">Mémorisée sur cet appareil.</p></div>
+    </div>
+
+    <form class="team__grid" id="team-form" novalidate>
+      <div class="panel">
+        <h2 class="team__h">1. Les repas</h2>
+        <span class="qlabel">Service</span>
+        <div class="rseg rseg--3"><label><input type="radio" name="service" value="midi"><span>Midi</span></label><label><input type="radio" name="service" value="soir" checked><span>Soir</span></label><label><input type="radio" name="service" value="midi-soir"><span>Midi et soir</span></label></div>
+        <span class="qlabel">Jours</span>
+        <div class="daypick">
+          <label><input type="checkbox" name="jours" value="1" checked><span>Lun.</span></label><label><input type="checkbox" name="jours" value="2" checked><span>Mar.</span></label><label><input type="checkbox" name="jours" value="3" checked><span>Mer.</span></label><label><input type="checkbox" name="jours" value="4" checked><span>Jeu.</span></label><label><input type="checkbox" name="jours" value="5" checked><span>Ven.</span></label><label><input type="checkbox" name="jours" value="6"><span>Sam.</span></label><label><input type="checkbox" name="jours" value="7"><span>Dim.</span></label>
+        </div>
+        <span class="qlabel">Personnes</span>
+        <div class="rseg"><label><input type="radio" name="personnes" value="1" checked><span>1 personne</span></label><label><input type="radio" name="personnes" value="2"><span>2 personnes</span></label></div>
+        <label class="check" style="margin-top:1rem"><input type="checkbox" name="essai" value="1"><span>Semaine d'essai, sans abonnement</span></label>
+        <div class="field" style="margin-top:1rem"><label for="t-code">Code cadeau <span style="font-weight:400">(facultatif)</span></label><div class="team__row"><input id="t-code" name="code_cadeau" placeholder="RP-XXXX-XXXX" autocapitalize="characters"><button type="button" class="btn btn--ghost" id="t-check">Vérifier</button></div><p class="hint" id="t-code-msg" aria-live="polite"></p></div>
+        <p class="team__total" id="t-total" aria-live="polite"></p>
+      </div>
+
+      <div class="panel">
+        <h2 class="team__h">2. La personne livrée</h2>
+        <div class="grid2"><div class="field"><label for="t-prenom">Prénom</label><input id="t-prenom" name="prenom" required></div><div class="field"><label for="t-nom">Nom</label><input id="t-nom" name="nom" required></div></div>
+        <div class="field" style="margin-top:1rem"><label for="t-adr">Adresse</label><input id="t-adr" name="adresse" required></div>
+        <div class="grid2" style="margin-top:1rem"><div class="field"><label for="t-cp">Code postal</label><input id="t-cp" name="cp" inputmode="numeric" maxlength="5" required></div><div class="field"><label for="t-com">Commune</label><select id="t-com" name="commune" required><option value="">Code postal d'abord</option></select></div></div>
+        <p class="hint" id="t-zone" aria-live="polite"></p>
+        <div class="field" style="margin-top:1rem"><label for="t-tel">Téléphone</label><input id="t-tel" name="tel" type="tel" required></div>
+        <div class="field" style="margin-top:1rem"><label for="t-cons">Consignes livreur</label><textarea id="t-cons" name="consignes" placeholder="Digicode, étage, malentendant…"></textarea></div>
+      </div>
+
+      <div class="panel">
+        <h2 class="team__h">3. Qui paie ?</h2>
+        <div class="rseg"><label><input type="radio" name="pour" value="moi" checked><span>La personne livrée</span></label><label><input type="radio" name="pour" value="proche"><span>Un enfant, un proche</span></label></div>
+        <div class="field" style="margin-top:1rem" data-t-moi><label for="t-email">E-mail de la personne <span style="font-weight:400">(facultatif)</span></label><input id="t-email" name="email" type="email"></div>
+        <div data-t-proche hidden>
+          <div class="grid2" style="margin-top:1rem"><div class="field"><label for="t-pp">Prénom</label><input id="t-pp" name="p_prenom"></div><div class="field"><label for="t-pn">Nom</label><input id="t-pn" name="p_nom"></div></div>
+          <div class="grid2" style="margin-top:1rem"><div class="field"><label for="t-pe">E-mail</label><input id="t-pe" name="p_email" type="email"></div><div class="field"><label for="t-pt">Téléphone</label><input id="t-pt" name="p_tel" type="tel"></div></div>
+        </div>
+        <p class="err" id="t-err" aria-live="polite"></p>
+        <button type="submit" class="btn btn--main btn--lg" style="margin-top:1.2rem;width:100%">Créer le lien de paiement</button>
+      </div>
+    </form>
+
+    <div class="panel team__out" id="t-out" hidden>
+      <p class="eyebrow">Lien prêt, valable 24 heures</p>
+      <p class="team__link" id="t-link"></p>
+      <label class="field" for="t-sms" style="margin-top:1rem"><span style="font-weight:700">Message</span><textarea id="t-sms" rows="4"></textarea></label>
+      <div class="row" style="margin-top:1rem">
+        <a class="btn btn--main" id="t-sms-1" href="#">SMS à la personne</a>
+        <a class="btn btn--main" id="t-sms-2" href="#" hidden>SMS au proche</a>
+        <a class="btn btn--ghost" id="t-mail" href="#">E-mail</a>
+        <button type="button" class="btn btn--ghost" id="t-copy">Copier</button>
+      </div>
+      <p class="hint" style="margin-top:.8rem">Les boutons SMS ouvrent l'application Messages du téléphone, avec le texte déjà écrit. Sur ordinateur, utilisez « Copier ».</p>
+    </div>
+  </div>
+</section>

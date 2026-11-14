@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Flyer Resto Pickup</title>
+<style>
+@font-face { font-family: "YS"; src: url(ys.woff2) format("woff2"); }
+@font-face { font-family: "AH"; src: url(atkinson-hyperlegible-next-latin-400-normal.woff2) format("woff2"); font-weight: 400; }
+@font-face { font-family: "AH"; src: url(atkinson-hyperlegible-next-latin-700-normal.woff2) format("woff2"); font-weight: 700; }
+@page { size: 148mm 210mm; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --m: #1B2A4E; --t: #E04A2F; --b: #B33A22; --a: #4A5368; --f: #FAF7F2; --c: #DCE5EF; --fil: #C9D2DF; }
+body { font-family: "AH", Arial, sans-serif; color: var(--m); -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: lining-nums; }
+.page { width: 148mm; height: 210mm; position: relative; overflow: hidden; background: #fff; page-break-after: always; }
+.serif { font-family: "YS", Georgia, serif; font-weight: 400; }
+.kick { font-size: 6.8pt; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
+.num { font-family: "YS"; color: var(--t); }
+
+/* ---------- RECTO ---------- */
+.r-top { position: absolute; left: 10mm; width: 62mm; top: 8mm; display: flex; justify-content: space-between; padding-bottom: 2mm; border-bottom: .35mm solid var(--m); z-index: 3; background: transparent; }
+.r-top span:last-child { color: var(--a); }
+.r-plate { position: absolute; width: 118mm; right: -44mm; top: -30mm; z-index: 1; }
+.r-photo { position: absolute; width: 60mm; height: 60mm; right: 9mm; top: 26mm; border-radius: 50%; overflow: hidden; z-index: 2; box-shadow: 0 3mm 7mm -2mm rgb(27 42 78 / .45); border: 1.6mm solid #fff; }
+.r-photo img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.12); }
+.r-dish { position: absolute; right: 12mm; top: 89mm; z-index: 2; text-align: right; font-size: 7pt; color: var(--a); line-height: 1.3; }
+.r-dish b { color: var(--m); font-size: 7.5pt; display: block; }
+.r-logo { position: absolute; left: 7mm; top: 19mm; width: 78mm; z-index: 2; }
+.r-tag { position: absolute; left: 10mm; top: 66mm; font-size: 14pt; z-index: 2; color: var(--b); }
+.r-h { position: absolute; left: 10mm; right: 10mm; top: 99mm; font-size: 23pt; line-height: 1.06; letter-spacing: -.2pt; }
+.r-h em { font-style: normal; color: var(--b); }
+.r-steps { position: absolute; left: 10mm; right: 10mm; top: 125mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+.r-steps div { border-top: .35mm solid var(--m); padding-top: 2mm; font-size: 8.6pt; line-height: 1.32; color: var(--a); }
+.r-steps .num { font-size: 15pt; line-height: 1; display: block; margin-bottom: 1.2mm; }
+.r-steps b { color: var(--m); display: block; font-size: 9.2pt; margin-bottom: .5mm; }
+.r-price { position: absolute; left: 10mm; right: 10mm; top: 157mm; display: flex; align-items: center; gap: 4mm; }
+.r-price .p { font-weight: 700; font-size: 31pt; line-height: 1; letter-spacing: -.5pt; }
+.r-price .p small { font-size: 18pt; }
+.r-price .l { font-size: 9pt; line-height: 1.32; color: var(--a); border-left: .35mm solid var(--fil); padding-left: 4mm; }
+.r-price .l b { color: var(--m); }
+.r-price .seal { margin-left: auto; width: 19mm; height: 19mm; border-radius: 50%; border: .5mm solid var(--m); display: grid; place-items: center; text-align: center; font-size: 6.5pt; line-height: 1.2; font-weight: 700; transform: rotate(-8deg); }
+.r-foot { position: absolute; left: 0; right: 0; bottom: 0; height: 32mm; background: var(--m); color: #fff; padding: 5.5mm 10mm 0; display: grid; grid-template-columns: 1fr auto; align-items: start; }
+.r-foot .kick { color: var(--c); }
+.r-tel { font-weight: 700; font-size: 25pt; letter-spacing: .3pt; white-space: nowrap; margin-top: 1mm; }
+.r-tel i { font-style: normal; color: var(--t); font-weight: 400; }
+.r-foot .web { font-size: 8pt; color: var(--c); margin-top: .5mm; }
+.sem { display: flex; gap: 1.6mm; margin-top: 2mm; }
+.sem span { width: 6.4mm; display: grid; justify-items: center; gap: .8mm; font-size: 5.6pt; font-weight: 700; color: var(--c); }
+.sem span::before { content: ""; width: 5.2mm; height: 5.2mm; border-radius: 50%; border: .45mm solid currentColor; box-sizing: border-box; }
+.sem span.on { color: #fff; }
+.sem span.on::before { background: var(--t); border-color: var(--t); }
+.r-sem p { font-size: 6.4pt; color: var(--c); margin-top: 1mm; text-align: right; }
+.vichy { position: absolute; left: 0; right: 0; bottom: 0; height: 4mm; background-image: linear-gradient(90deg, rgb(255 255 255 / .45) 50%, transparent 50%), linear-gradient(rgb(255 255 255 / .45) 50%, transparent 50%); background-size: 4mm 4mm; }
+
+/* ---------- VERSO ---------- */
+.v { padding: 8mm 10mm 0; }
+.v-top { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 2mm; border-bottom: .35mm solid var(--m); }
+.v-top span:last-child { color: var(--a); }
+.v-head { display: grid; grid-template-columns: 10mm 1fr 44mm; gap: 2mm; margin-top: 4mm; align-items: start; }
+.v-head .num { font-size: 15pt; line-height: 1.1; }
+.v-head h2 { font-size: 17pt; line-height: 1.05; }
+.v-head p { font-size: 7.4pt; line-height: 1.35; color: var(--a); }
+table.menu { width: 100%; border-collapse: collapse; margin-top: 4mm; }
+.menu th { text-align: left; font-size: 6.4pt; letter-spacing: .14em; text-transform: uppercase; color: var(--a); font-weight: 700; padding: 0 0 1.4mm; border-bottom: .35mm solid var(--m); }
+.menu td { vertical-align: top; padding: 1.55mm 2mm 1.55mm 0; border-bottom: .25mm solid var(--fil); font-size: 8.2pt; line-height: 1.22; }
+.menu td small { display: block; color: var(--a); font-size: 7.2pt; margin-top: .3mm; }
+.menu td.d { width: 15mm; padding-right: 0; }
+.dd { display: flex; align-items: center; gap: 1.6mm; font-size: 6.6pt; font-weight: 700; }
+.dd i { width: 6mm; height: 6mm; border-radius: 50%; border: .45mm solid var(--m); display: grid; place-items: center; font-style: normal; font-family: "YS"; font-size: 8pt; flex: none; }
+.v-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; margin-top: 4.5mm; }
+.v-grid h3 { font-size: 11pt; padding-bottom: 1.4mm; border-bottom: .35mm solid var(--m); margin-bottom: 1.6mm; }
+.v-grid h3 .num { margin-right: 1.5mm; }
+.prix div { display: flex; justify-content: space-between; align-items: baseline; font-size: 8.2pt; padding: .9mm 0; border-bottom: .25mm dotted var(--fil); }
+.prix div b { font-size: 9pt; }
+.prix p, .zon p.n { font-size: 7pt; color: var(--a); margin-top: 1.4mm; line-height: 1.35; }
+.zon .z { display: grid; grid-template-columns: auto 1fr; gap: 2.4mm; align-items: center; padding: 1.2mm 0; border-bottom: .25mm dotted var(--fil); font-size: 8.2pt; line-height: 1.25; }
+.zon .z b { display: block; }
+.zon .z span.s { color: var(--a); font-size: 7.4pt; }
+.semi { display: flex; gap: .9mm; }
+.semi u { text-decoration: none; width: 3.6mm; height: 3.6mm; border-radius: 50%; border: .35mm solid var(--m); font-size: 4.6pt; font-weight: 700; display: grid; place-items: center; }
+.semi u.on { background: var(--t); border-color: var(--t); color: #fff; }
+.v-foot { position: absolute; left: 0; right: 0; bottom: 0; height: 42mm; background: var(--f); padding: 4.5mm 10mm 0; display: grid; grid-template-columns: 1fr 22mm 27mm; gap: 4mm; align-items: start; }
+.v-foot .kick { color: var(--a); }
+.v-foot .tel { font-weight: 700; font-size: 18pt; white-space: nowrap; margin-top: .8mm; }
+.v-foot .tel i { font-style: normal; color: var(--t); font-weight: 400; }
+.v-foot .par { font-size: 7.4pt; line-height: 1.35; color: var(--a); margin-top: 1.4mm; }
+.v-foot .par b { color: var(--m); }
+.qr svg { width: 22mm; height: 22mm; display: block; }
+.qr p { font-size: 6pt; text-align: center; margin-top: .8mm; color: var(--a); }
+.stamp { height: 22mm; border: .35mm dashed #9aa6bb; border-radius: 50%; display: grid; place-items: center; text-align: center; font-size: 6pt; color: #8590a5; letter-spacing: .08em; text-transform: uppercase; }
+.legal { position: absolute; left: 10mm; right: 10mm; bottom: 5mm; font-size: 5.6pt; color: var(--a); }
+.v .vichy { height: 3mm; background-size: 3mm 3mm; background-image: linear-gradient(90deg, rgb(27 42 78 / .5) 50%, transparent 50%), linear-gradient(rgb(27 42 78 / .5) 50%, transparent 50%); }
+</style></head>
+<body>
+<section class="page">
+  <div class="r-top kick"><span>Repas livrés à domicile</span><span>Sarthe</span></div>
+  <p class="r-tag serif">À table, chez vous.</p>
+  <p class="r-dish"><b>Mardi midi</b>Bœuf bourguignon, pommes vapeur<br>et tarte aux pommes</p>
+  <img class="r-plate" src="../../site/img/assiette.svg" alt="">
+  <div class="r-photo"><img src="../../site/img/plats/mardi-midi.jpg" alt=""></div>
+  <img class="r-logo" src="resto-pickup_principale_marine-transparent.svg" alt="Resto Pickup">
+  <h1 class="r-h serif">Tous vos repas de la semaine, <em>livrés chez vous en une fois.</em></h1>
+  <div class="r-steps">
+    <div><span class="num">1</span><b>On sonne une fois</b>Le mardi ou le jeudi, le livreur vous remet le carton en main propre.</div>
+    <div><span class="num">2</span><b>Tout va au frigo</b>Une barquette par repas, le jour est écrit dessus.</div>
+    <div><span class="num">3</span><b>Vous réchauffez</b>Quelques minutes au micro‑ondes, à l'heure qui vous va.</div>
+  </div>
+  <div class="r-price">
+    <p class="p">11,99<small>&nbsp;€</small></p>
+    <p class="l"><b>le repas, plat et dessert</b><br>livraison {{liv}} par repas<br>jamais plus de {{livmax}} par semaine</p>
+    <p class="seal">Semaine<br>d'essai<br>sans<br>abonnement</p>
+  </div>
+  <div class="r-foot">
+    <div>
+      <p class="kick">Pour commander, une personne vous répond</p>
+      <p class="r-tel"><i>[</i>{{tel}}<i>]</i></p>
+      <p class="web">Du lundi au vendredi · restopickup.fr</p>
+    </div>
+    <div class="r-sem"><div class="sem"><span>L</span><span class="on">M</span><span>M</span><span class="on">J</span><span>V</span><span>S</span><span>D</span></div><p>Livré le mardi ou le jeudi</p></div>
+    <div class="vichy"></div>
+  </div>
+</section>
+
+<section class="page v">
+  <div class="v-top kick"><span>Resto Pickup</span><span>Exemple de semaine</span></div>
+  <div class="v-head"><span class="num">01</span><h2 class="serif">Une semaine dans votre frigo.</h2><p>Un plat différent chaque midi et chaque soir, et son dessert. Le menu change toutes les semaines, il est le même pour tous.</p></div>
+  <table class="menu">
+    <thead><tr><th></th><th>Le midi</th><th>Le soir</th></tr></thead>
+    <tbody>{{menu}}</tbody>
+  </table>
+  <div class="v-grid">
+    <div class="prix">
+      <h3 class="serif"><span class="num">02</span>Vos repas</h3>
+      <div><span>Le repas, plat et dessert</span><b>{{prix}}</b></div>
+      <div><span>5 soirs par semaine</span><b>{{p5}}</b></div>
+      <div><span>Tous les soirs</span><b>{{p1}}</b></div>
+      <div><span>Midi et soir, 7 jours</span><b>{{p2}}</b></div>
+      <div><span>+ Livraison, {{liv}} par repas</span><b>{{livmax}} max.</b></div>
+      <p>Le midi, le soir ou les deux, de 2 à 7 jours, ou un jour sur deux. Pause ou arrêt d'un simple appel.</p>
+    </div>
+    <div class="zon">
+      <h3 class="serif"><span class="num">03</span>Nous livrons</h3>
+      <div class="z"><span class="semi"><u>L</u><u class="on">M</u><u>M</u></span><span><b>Le Mans et 30 km autour</b><span class="s">le mardi</span></span></div>
+      <div class="z"><span class="semi"><u>M</u><u class="on">J</u><u>V</u></span><span><b>Loué, Sablé, Laval, Évron, Mayenne, Alençon</b><span class="s">le jeudi, et leurs alentours</span></span></div>
+      <p class="n">En camion réfrigéré. Personne n'ouvre ? Le livreur vous appelle, puis votre proche.</p>
+    </div>
+  </div>
+  <div class="v-foot">
+    <div>
+      <p class="kick">Commander, poser une question</p>
+      <p class="tel"><i>[</i>{{tel}}<i>]</i></p>
+      <p class="par"><b>Pour un parent ?</b> Vous commandez et payez à distance, il reçoit ses repas chez lui.</p>
+    </div>
+    <div class="qr">{{qr}}<p>restopickup.fr</p></div>
+    <div class="stamp">Cachet<br>du<br>professionnel</div>
+  </div>
+  <p class="legal">Resto Pickup, marque de R L C RL CONCEPT, EURL, 572 136 869 RCS Nanterre. Ne pas jeter sur la voie publique.</p>
+  <div class="vichy"></div>
+</section>
+</body></html>

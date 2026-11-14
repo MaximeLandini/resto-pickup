@@ -1,0 +1,91 @@
+<div class="adm" id="adm">
+  <section class="adm-login" id="adm-login">
+    <div class="card">
+      <img src="img/logo-compacte.svg" alt="Resto Pickup" width="200" height="50">
+      <h1>Espace équipe</h1>
+      <form id="al-1" class="form-stack" novalidate>
+        <div class="field"><label for="al-email">Votre e-mail</label><input id="al-email" type="email" autocomplete="email" required></div>
+        <button class="btn btn--main btn--lg" type="submit">Recevoir mon code</button>
+      </form>
+      <form id="al-2" class="form-stack" novalidate hidden>
+        <div class="field code"><label for="al-code">Code reçu par e-mail</label><input id="al-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" required></div>
+        <button class="btn btn--main btn--lg" type="submit">Entrer</button>
+      </form>
+      <p class="err" id="al-err" aria-live="polite"></p>
+      <button class="btn btn--ghost" type="button" id="al-demo" hidden>Voir la démonstration</button>
+    </div>
+  </section>
+
+  <div class="adm-app" id="adm-app" hidden>
+    <aside class="adm-nav">
+      <a class="adm-brand" href="index.html"><img src="img/logo-compacte.svg" alt="Resto Pickup" width="170" height="42"></a>
+      <nav aria-label="Espace équipe">
+        <button type="button" data-tab="bord" aria-current="page">{{ic_calendrier}}<span>Tableau de bord</span></button>
+        <button type="button" data-tab="tournee">{{ic_livraison}}<span>Tournées</span></button>
+        <button type="button" data-tab="prod">{{ic_four}}<span>Production</span></button>
+        <button type="button" data-tab="clients">{{ic_personnes}}<span>Clients</span></button>
+        <button type="button" data-tab="messages">{{ic_telephone}}<span>Messages</span><i class="adm-badge" data-badge="messages" hidden></i></button>
+        <button type="button" data-tab="demandes">{{ic_coeur}}<span>Demandes</span><i class="adm-badge" data-badge="demandes" hidden></i></button>
+        <button type="button" data-tab="cadeaux">{{ic_cadenas}}<span>Cartes cadeaux</span></button>
+        <a href="equipe.html">{{ic_telephone}}<span>Commande au téléphone</span></a>
+      </nav>
+      <p class="adm-who"><span id="adm-who"></span><button type="button" class="linkbtn" id="adm-out">Déconnexion</button></p>
+    </aside>
+    <main class="adm-main">
+      <p class="adm-demo" id="adm-demo" hidden>Démonstration avec des données d'exemple. Une fois Stripe branché, ce sont vos vraies commandes.</p>
+
+      <section data-panel="bord">
+        <header class="adm-h"><h1>Tableau de bord</h1><button type="button" class="btn btn--ghost" data-refresh>Actualiser</button></header>
+        <div class="kpis" id="kpis"></div>
+        <div class="adm-cols">
+          <div class="card"><h2>Prochaines tournées</h2><div id="next-runs"></div></div>
+          <div class="card"><h2>À traiter</h2><ul class="todo" id="todo"></ul></div>
+        </div>
+        <div class="card"><h2>Derniers clients</h2><div id="last-clients"></div></div>
+      </section>
+
+      <section data-panel="tournee" hidden>
+        <header class="adm-h"><h1>Tournée</h1>
+          <div class="adm-tools"><select id="t-date" aria-label="Date de la tournée"></select><button type="button" class="btn btn--ghost" id="t-print">Imprimer la feuille</button><button type="button" class="btn btn--ghost" id="t-csv">Exporter CSV</button><a class="btn btn--main" id="t-maps" target="_blank" rel="noopener">Itinéraire Google Maps</a></div>
+        </header>
+        <div class="run-sum" id="run-sum"></div>
+        <ol class="stops" id="stops"></ol>
+      </section>
+
+      <section data-panel="prod" hidden>
+        <header class="adm-h"><h1>Production de la semaine</h1><div class="adm-tools"><select id="p-week" aria-label="Semaine"></select><button type="button" class="btn btn--ghost" id="p-print">Imprimer</button></div></header>
+        <p class="adm-lead">Le nombre exact de barquettes à commander et à étiqueter, par jour et par service, pour toutes les livraisons de la semaine.</p>
+        <div id="prod"></div>
+      </section>
+
+      <section data-panel="clients" hidden>
+        <header class="adm-h"><h1>Clients</h1><div class="adm-tools"><input id="c-q" type="search" placeholder="Nom, commune, téléphone, e-mail" aria-label="Rechercher un client"><select id="c-f" aria-label="Filtrer"><option value="">Tous</option><option value="actif">Actifs</option><option value="pause">En pause</option><option value="past_due">Impayés</option><option value="essai">Essais</option><option value="fin">Arrêtés</option></select><button type="button" class="btn btn--ghost" id="c-csv">Exporter CSV</button></div></header>
+        <div class="tbl-wrap"><table class="adm-tbl" id="c-tbl"><thead><tr><th>Client</th><th>Commune</th><th>Repas</th><th>Par semaine</th><th>Statut</th></tr></thead><tbody></tbody></table></div>
+      </section>
+
+      <section data-panel="messages" hidden>
+        <header class="adm-h"><h1>Messages</h1></header>
+        <ul class="threads" id="threads"></ul>
+      </section>
+
+      <section data-panel="demandes" hidden>
+        <header class="adm-h"><h1>Demandes</h1><div class="adm-tools"><select id="d-f" aria-label="Filtrer"><option value="ouvertes">À traiter</option><option value="">Toutes</option></select></div></header>
+        <p class="adm-lead">Rappels demandés sur le site, personnes orientées par un professionnel, demandes de flyers.</p>
+        <ul class="reqs" id="reqs"></ul>
+      </section>
+
+      <section data-panel="cadeaux" hidden>
+        <header class="adm-h"><h1>Cartes cadeaux</h1></header>
+        <div class="tbl-wrap"><table class="adm-tbl" id="g-tbl"><thead><tr><th>Code</th><th>Montant</th><th>De / Pour</th><th>Achat</th><th>Expire</th><th>État</th></tr></thead><tbody></tbody></table></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="drawer" id="drawer" hidden>
+    <div class="drawer__in" role="dialog" aria-modal="true" aria-labelledby="dr-t">
+      <button type="button" class="sheet__x" data-dclose aria-label="Fermer">×</button>
+      <div id="dr-body"></div>
+    </div>
+  </div>
+</div>
+<script>window.RP_MENU = {{menuJson}};</script>
