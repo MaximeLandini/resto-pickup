@@ -18,6 +18,8 @@ const R = {
 };
 
 exports.handler = async (event) => {
+  // Fonction au format Lambda : il faut brancher Netlify Blobs à la main avec le contexte de la requête
+  try { require("@netlify/blobs").connectLambda(event); } catch (e) { console.error("Blobs", e.message); }
   const name = String(event.path || "").replace(/^.*\/(api|\.netlify\/functions\/api)\/?/, "").split("/")[0];
   const fn = R[name];
   if (!fn) return { statusCode: 404, body: JSON.stringify({ error: "Inconnu" }) };
