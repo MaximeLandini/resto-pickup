@@ -3,6 +3,13 @@
   functions = "netlify/functions"
   command = "python3 src/build.py"
 
+# Pas de post-traitement Netlify : il réécrivait les liens en URL sans .html,
+# différentes des canoniques (pages « non canoniques » en double pour Google)
+[build.processing]
+  skip_processing = true
+[build.processing.html]
+  pretty_urls = false
+
 [build.environment]
   RP_LIVE = "1"
   PYTHON_VERSION = "3.11"
