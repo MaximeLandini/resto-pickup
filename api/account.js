@@ -11,7 +11,16 @@ module.exports = async (req, res) => {
     const factures = invs.data.filter((i) => i.status !== "draft").map((i) => ({ date: new Date(i.created * 1000).toISOString().slice(0, 10), montant: i.total / 100, statut: i.status, lien: i.hosted_invoice_url, pdf: i.invoice_pdf }));
     const t = await store.thread(cid).catch(() => ({ messages: [] }));
     const avoir = c.balance < 0 ? -c.balance / 100 : 0;
-    if (!s) return res.status(200).json({ nom: c.name, email: c.email, actif: false, factures, messages: t.messages, avoir });
+    if (!s) {
+      // Pas d'abonnement : semaine d'essai payée (livraison à venir) ou abonnement terminé
+      const pis = await stripe.paymentIntents.list({ customer: cid, limit: 10, expand: ["data.latest_charge"] }).catch(() => ({ data: [] }));
+      const today = new Date().toISOString().slice(0, 10);
+      const p = pis.data.find((x) => (x.status === "succeeded" || x.status === "processing") && x.metadata && x.metadata.service && (x.metadata.premiere_livraison || "") >= today);
+      const rembourse = p && p.latest_charge && p.latest_charge.amount_refunded >= (p.amount_received || p.amount);
+      const essai = p && !rembourse ? { livraison: p.metadata.premiere_livraison, service: p.metadata.service, jours: p.metadata.jours, personnes: +p.metadata.personnes || 1, adresse: p.metadata.livre_adresse, montant: (p.amount_received || p.amount) / 100 } : null;
+      const deja = (await stripe.subscriptions.list({ customer: cid, status: "all", limit: 1 })).data.length > 0;
+      return res.status(200).json({ nom: c.name, email: c.email, actif: false, essai, ancienAbonne: deja, factures, messages: t.messages, nonLu: t.nonLuClient || 0, avoir });
+    }
     const m = s.metadata || {};
     const z = ZONES[m.zone] || ZONES["le-mans"];
     let next = nextDelivery(z.jour);

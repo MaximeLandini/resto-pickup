@@ -80,11 +80,14 @@ function notifyTeam(tpl) {
   return sendMail(team(), tpl).catch((e) => console.error("alerte équipe", e.message));
 }
 // Bug serveur ou navigateur : un e-mail par type d'erreur et par heure au maximum
+const _bugVus = new Map();
 async function reportBug(where, err, extra = "") {
   try {
     const msg = String((err && (err.stack || err.message)) || err || "").slice(0, 1500);
     const sig = crypto.createHash("sha1").update(where + "|" + msg.split("\n")[0]).digest("hex").slice(0, 16);
     const store = require("./_store");
+    if (_bugVus.has(sig) && Date.now() - _bugVus.get(sig) < 3600e3) return; // même instance : déjà signalé
+    _bugVus.set(sig, Date.now());
     const k = `bug/${sig}`, prev = await store.get(k).catch(() => null);
     if (prev && Date.now() - prev.t < 3600e3) { await store.set(k, { ...prev, n: (prev.n || 1) + 1 }).catch(() => {}); return; }
     await store.set(k, { t: Date.now(), n: 1, where, msg: msg.slice(0, 300) }).catch(() => {});

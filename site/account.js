@@ -10,7 +10,7 @@
   var MS = ["janv.", "févr.", "mars", "avril", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
   var dfmt = function (d) { return J[d.getDay()] + " " + (d.getDate() === 1 ? "1er" : d.getDate()) + " " + M[d.getMonth()]; };
   var JN = ["", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
-  function nbRepas(a) { return a.jours.length * (a.service === "midi-soir" ? 2 : 1) * a.personnes; }
+  function nbRepas(a) { return String(a.jours || "").length * (a.service === "midi-soir" ? 2 : 1) * a.personnes; }
   function svcLab(a) { return a.service === "midi-soir" ? "Midi et soir" : a.service === "midi" ? "Le midi" : "Le soir"; }
   function daysLab(j) { var d = j.split("").map(Number); if (d.length === 7) return "tous les jours"; if (j === "12345") return "du lundi au vendredi"; if (j === "1357") return "un jour sur deux"; if (d.length >= 5) return "tous les jours sauf le " + [1,2,3,4,5,6,7].filter(function (x) { return d.indexOf(x) < 0; }).map(function (x) { return JN[x]; }).join(" et le "); return d.map(function (x) { return JN[x]; }).join(", ").replace(/, ([^,]*)$/, " et $1"); }
   var cap = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
@@ -66,7 +66,30 @@
   function render() {
     $("acct-login").hidden = true; $("acct-home").hidden = false;
     $("a-hello").textContent = "Bonjour " + (A.nom || "").split(" ")[0];
-    if (!A.actif) { $("a-next").textContent = "Pas d'abonnement en cours"; $("a-status").textContent = "Votre abonnement"; return; }
+    // Actions réservées à un abonnement en cours
+    document.querySelectorAll('[data-open="skip"],[data-open="change"],[data-open="address"]').forEach(function (b) { var card = b.closest("li,.act,.card") || b; card.hidden = !A.actif; });
+    var ub0 = $("a-unread"); if (ub0) { ub0.hidden = !A.nonLu; ub0.textContent = A.nonLu || ""; }
+    invoices();
+    if (!A.actif) {
+      var E = A.essai, wk = $("a-week"); if (wk) wk.hidden = !E;
+      $("a-sem").innerHTML = "";
+      if (E) {
+        var de = new Date(E.livraison + "T12:00:00"), lf = $("a-leaf");
+        lf.querySelector(".leaf__m").textContent = MS[de.getMonth()]; lf.querySelector(".leaf__n").textContent = de.getDate(); lf.querySelector(".leaf__w").textContent = J[de.getDay()];
+        $("a-status").textContent = "Votre semaine d'essai, livrée le"; $("a-next").textContent = cap(dfmt(de));
+        $("a-nextsub").textContent = nbRepas(E) + " repas, remis en main propre. Vous aimez ? Passez à l'abonnement quand vous voulez, sans engagement.";
+        $("a-kv").innerHTML = [["Repas", svcLab(E)], ["Jours", daysLab(E.jours || "")], ["Pour", E.personnes === 2 ? "2 personnes" : "1 personne"], ["Payé", euro(E.montant)], ["Adresse", E.adresse || ""]].map(function (r) { return "<dt>" + r[0] + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("");
+        document.querySelectorAll("#a-week figure").forEach(function (f) { var dd = { lun: 1, mar: 2, mer: 3, jeu: 4, ven: 5, sam: 6, dim: 7 }[f.querySelector("figcaption").textContent.slice(0, 3).toLowerCase()]; f.hidden = (E.service !== "midi-soir" && f.dataset.svc !== E.service) || String(E.jours || "").indexOf(String(dd)) < 0; });
+      } else {
+        $("a-status").textContent = A.ancienAbonne ? "Votre abonnement est arrêté" : "Aucune commande en cours";
+        $("a-next").textContent = "Envie de recommander ?";
+        $("a-nextsub").innerHTML = 'Composez votre semaine en une minute, ou appelez le ' + esc(C.tel || "06 60 68 05 07") + '. <a href="index.html#composer">Commander</a>';
+        $("a-kv").innerHTML = "";
+      }
+      var pn0 = $("a-paynext"); if (pn0) pn0.innerHTML = A.avoir ? "Avoir carte cadeau : <b>" + euro(A.avoir) + "</b>, déduit de votre prochaine commande." : "Aucun paiement prévu.";
+      return;
+    }
+    $("a-week") && ($("a-week").hidden = false);
     var d = new Date(A.prochaine + "T12:00:00");
     var leaf = $("a-leaf");
     leaf.querySelector(".leaf__m").textContent = MS[d.getMonth()];
@@ -88,9 +111,11 @@
     if (pn) pn.innerHTML = (A.statutPaiement === "past_due" ? '<b style="color:var(--rp-brique)">Le dernier paiement n\'est pas passé.</b> Mettez à jour votre carte ou votre IBAN dans « Moyen de paiement ». ' : "") +
       (A.pauseJusquau ? "Pas de paiement pendant votre absence." : "Prochain paiement : <b>" + euro(Math.max(0, A.prixSemaine - (A.avoir || 0))) + "</b>" + (A.prochainPrelevement ? " vers le " + dfmt(new Date(A.prochainPrelevement + "T12:00:00")) : "") + ".") +
       (A.avoir ? "<br>Avoir carte cadeau : <b>" + euro(A.avoir) + "</b>, déduit automatiquement." : "");
-    var li = $("a-invoices");
-    if (li) li.innerHTML = fs.length ? fs.map(function (f) { return "<li><span>" + new Date(f.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) + "</span><b>" + euro(f.montant) + '</b><span class="pill pill--' + (f.statut === "paid" ? "ok" : f.statut === "open" ? "bad" : "off") + '">' + ({ paid: "Payée", open: "À régler", void: "Annulée" }[f.statut] || f.statut) + "</span>" + (f.lien ? '<a href="' + esc(f.lien) + '" target="_blank" rel="noopener">' + (f.statut === "open" ? "Régler" : "Facture") + "</a>" : "") + "</li>"; }).join("") : '<li class="muted">Aucune facture pour l\'instant.</li>';
     $("a-kv").innerHTML = rows.map(function (r) { return "<dt>" + r[0] + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("");
+  }
+  function invoices() {
+    var fs = A.factures || [], li = $("a-invoices");
+    if (li) li.innerHTML = fs.length ? fs.map(function (f) { return "<li><span>" + new Date(f.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) + "</span><b>" + euro(f.montant) + '</b><span class="pill pill--' + (f.statut === "paid" ? "ok" : f.statut === "open" ? "bad" : "off") + '">' + ({ paid: "Payée", open: "À régler", void: "Annulée" }[f.statut] || f.statut) + "</span>" + (f.lien ? '<a href="' + esc(f.lien) + '" target="_blank" rel="noopener">' + (f.statut === "open" ? "Régler" : "Facture") + "</a>" : "") + "</li>"; }).join("") : '<li class="muted">Aucune facture pour l\'instant.</li>';
   }
   function chatHtml(ms) {
     if (!ms.length) return '<p class="muted" style="padding:.6rem">Pas encore de message. Écrivez-nous, une vraie personne vous répond.</p>';
@@ -101,6 +126,7 @@
   /* Fenêtres d'action */
   var current = null;
   function open(kind) {
+    if (!A.actif && (kind === "skip" || kind === "change" || kind === "address")) return say("Cette action concerne un abonnement en cours. Pour toute question : " + (C.tel || "06 60 68 05 07") + ".");
     current = kind;
     var t = "", b = "", d = new Date(A.prochaine + "T12:00:00"), next = new Date(d.getTime() + 7 * 864e5);
     if (kind === "portal") {

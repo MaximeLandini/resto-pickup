@@ -723,7 +723,7 @@ def main():
     cfg["zones"] = D["zones"]
     js = "window.RP = " + json.dumps(cfg, ensure_ascii=False) + ";\n" + "RP.fee = function (n) { var l = RP.livraison; return n > 0 ? Math.round(Math.min(l.max, Math.max(l.min, l.parRepas * n)) * 100) / 100 : 0; };\nRP.total = function (n) { return Math.round((n * RP.prixRepas + RP.fee(n)) * 100) / 100; };\n"
     if os.environ.get("RP_LIVE") == "1":  # remontée des erreurs JavaScript des visiteurs vers l'équipe
-        js += ("(function(){var n=0;function s(m,src){if(n++>3||!m)return;try{navigator.sendBeacon('./api/bug',new Blob([JSON.stringify({msg:String(m).slice(0,500),src:String(src||'').slice(0,300),page:location.pathname})],{type:'application/json'}))}catch(e){}}"
+        js += ("(function(){var n=0,vu={};function s(m,src){m=String(m||'');if(!m||vu[m]||n>=3)return;vu[m]=1;n++;try{navigator.sendBeacon('./api/bug',new Blob([JSON.stringify({msg:String(m).slice(0,500),src:String(src||'').slice(0,300),page:location.pathname})],{type:'application/json'}))}catch(e){}}"
                "window.addEventListener('error',function(e){if(e.filename&&e.filename.indexOf(location.origin)!==0)return;s(e.message,(e.filename||'')+':'+(e.lineno||''))});"
                "window.addEventListener('unhandledrejection',function(e){var r=e.reason;s(r&&(r.message||r),r&&r.stack)})})();\n")
     for d in (SITE, ART):
