@@ -4,7 +4,7 @@ let _store = null;
 function store() {
   if (!_store) {
     const { getStore } = require("@netlify/blobs");
-    _store = getStore({ name: "restopickup", consistency: "strong" });
+    _store = getStore({ name: "restopickup" });
   }
   return _store;
 }
