@@ -1574,3 +1574,12 @@ p { text-wrap: pretty; }
 .cmp--num { min-width: 30rem; }
 .cmp--num td { white-space: nowrap; }
 @media (max-width: 600px) { .cmp:not(.cmp--num) { min-width: 0; } .cmp:not(.cmp--num), .cmp:not(.cmp--num) tbody, .cmp:not(.cmp--num) tr, .cmp:not(.cmp--num) td, .cmp:not(.cmp--num) tbody th { display: block; } .cmp:not(.cmp--num) thead { display: none; } .cmp:not(.cmp--num) tr { padding: .6rem 0; border-bottom: 1px solid var(--rp-filet); } .cmp:not(.cmp--num) td, .cmp:not(.cmp--num) tbody th { border: 0; padding: .2rem .9rem; } }
+
+/* Très petits écrans (320 px) : rien ne dépasse */
+@media (max-width: 360px) {
+  .callme { padding: 1rem .8rem; }
+  .callme .big-tel { font-size: 1.25rem; }
+  .carte { padding: 1.3rem .7rem 1.1rem; }
+  .carte__list b { font-size: .85rem; }
+  .carte__list i { min-width: .4rem; }
+}

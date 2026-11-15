@@ -341,7 +341,8 @@ SERVICE = {
     "@type": "Service", "@id": D["site"] + "/#service", "name": "Portage de repas à domicile en abonnement hebdomadaire",
     "serviceType": "Livraison de repas à domicile", "provider": {"@id": D["site"] + "/#entreprise"},
     "audience": {"@type": "PeopleAudience", "suggestedMinAge": 65},
-    "areaServed": [{"@type": "City", "name": "Le Mans"}, {"@type": "City", "name": "Loué"}],
+    "areaServed": [{"@type": "City", "name": n} for n in ("Le Mans", "Laval", "Alençon", "Sablé-sur-Sarthe", "Loué", "Mayenne", "Évron", "Château-Gontier-sur-Mayenne")]
+                  + [{"@type": "AdministrativeArea", "name": n} for n in ("Sarthe", "Mayenne", "Orne")],
     "offers": [
         {"@type": "Offer", "name": "Repas livré à domicile (plat et dessert), à l'unité dans un abonnement hebdomadaire", "price": f"{P:.2f}", "priceCurrency": "EUR",
          "priceSpecification": {"@type": "UnitPriceSpecification", "price": f"{P:.2f}", "priceCurrency": "EUR", "unitText": "repas livré"},
@@ -475,6 +476,11 @@ def zone_page(z):
         (f"Quel est le prix du portage de repas à {first} ?", f"{eur(P)} le repas, plat et dessert, plus la livraison : {eur(LPR)} par repas, plafonnée à {eur(LMAX)} par semaine. Vous choisissez le nombre de repas par semaine, midi, soir ou les deux."),
         (f"Jusqu'à quand commander pour être livré ce {z['jourNom']} ?", f"Commandez au moins {D['delaiCommandeJours']} jours avant le {z['jourNom']}. Au-delà, la première livraison a lieu le {z['jourNom']} suivant."),
     ]
+    bigs = [c for c in COMMUNES.values() if c["zone"] is z and c["nom"] in BIG and c["nom"] != first]
+    if bigs:
+        lst = ", ".join(c["nom"] for c in bigs[:-1]) + (" et " if len(bigs) > 1 else "") + bigs[-1]["nom"]
+        faq.insert(1, (f"Livrez-vous aussi {lst} ?", f"Oui. {lst} {'sont livrées' if len(bigs) > 1 else 'est livrée'} chaque {z['jourNom']}, avec les communes autour. Chaque commune a sa page avec son jour de livraison et le lien pour commander."))
+    biglinks = " · ".join(f'<a href="{c["page"]}">{E(c["nom"])}</a>' for c in bigs)
     body = f"""{crumbs_html([("Accueil", ""), (z["nom"], z["page"])])}
 <section class="section" style="padding-top:1.5rem"><div class="wrap split">
   <div class="stack">
@@ -491,6 +497,7 @@ def zone_page(z):
 </div></section>
 <section class="section section--sunk"><div class="wrap prose" style="max-width:none">
   <h2>Les communes livrées le {z['jourNom']}</h2>
+  {f'<p>Villes principales : {biglinks}.</p>' if bigs else ''}
   {towns(z)}
 </div></section>
 <section class="section"><div class="wrap prose">
@@ -505,7 +512,10 @@ def zone_page(z):
 <section class="section"><div class="wrap"><div class="callout"><div><h2>Commander par téléphone</h2><p>Du lundi au vendredi.</p></div><a class="big-tel" href="tel:{D['telHref']}">{E(D['tel'])}</a></div></div></section>"""
     title = f"Portage de repas à domicile : {z['nom']} | Resto Pickup"
     desc = f"Livraison de repas à domicile à {first} et {len(names)-1} communes autour, chaque {z['jourNom']}. Plat et dessert de qualité traiteur, {eur(P)} le repas, livraison plafonnée à {eur(LMAX)} par semaine. Sans engagement."
-    ld = [ORG, faq_ld(faq), crumbs_ld([("Accueil", ""), (z["nom"], z["page"])])]
+    svc = {"@type": "Service", "name": f"Portage de repas à domicile : {z['nom']}", "serviceType": "Livraison de repas à domicile", "provider": {"@id": D["site"] + "/#entreprise"},
+           "areaServed": [{"@type": "City", "name": n} for n in names],
+           "offers": {"@type": "Offer", "price": f"{P:.2f}", "priceCurrency": "EUR", "description": "Repas (plat et dessert), livraison en sus plafonnée à 15 € par semaine"}}
+    ld = [ORG, svc, faq_ld(faq), crumbs_ld([("Accueil", ""), (z["nom"], z["page"])])]
     return z["page"], title, desc, body, ld
 
 PARENT_FAQ = [
@@ -677,8 +687,8 @@ def equipe_page():
 
 def index_page():
     body = open(os.path.join(ROOT, "pages", "index.html"), encoding="utf-8").read()
-    title = "Portage de repas à domicile au Mans et à Loué | Resto Pickup"
-    desc = f"Tous les repas de la semaine livrés en une fois, en camion réfrigéré : plat et dessert de qualité traiteur à {eur(P)} le repas. Le Mans, Loué et alentour. Sans engagement."
+    title = "Portage de repas à domicile : Le Mans, Laval, Alençon | Resto Pickup"
+    desc = f"Repas de qualité traiteur livrés une fois par semaine en camion réfrigéré : plat et dessert à {eur(P)}. Le Mans, Sablé, Laval, Alençon et {len(COMMUNES)} communes en Sarthe, Mayenne et Orne. Sans engagement."
     return "index.html", title, desc, body, [ORG, SERVICE, faq_ld(FAQ)]
 
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible+Next:wght@400;700&display=swap"><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">'
@@ -801,7 +811,7 @@ def main():
     communes = {z["nom"]: ", ".join(sorted({c[0] for c in z["communes"]})) for z in D["zones"]}
     llms = f"""# Resto Pickup
 
-> Livraison hebdomadaire à domicile de repas de qualité traiteur (plat et dessert) à réchauffer au micro-ondes, pour les personnes âgées qui vivent chez elles et leurs proches. Sarthe : Le Mans, Loué et alentour.
+> Livraison hebdomadaire à domicile de repas de qualité traiteur (plat et dessert) à réchauffer au micro-ondes, pour les personnes âgées qui vivent chez elles et leurs proches. {len(COMMUNES)} communes livrées en Sarthe (Le Mans, Sablé, Loué), en Mayenne (Laval, Évron, Mayenne, Château-Gontier) et dans l'Orne (Alençon).
 
 ## Faits
 - Prix : {eur(P)} le repas complet (plat et dessert). Livraison : {eur(LPR)} par repas, minimum {eur(LMIN)}, plafonnée à {eur(LMAX)} par semaine. Minimum {RMIN} repas par semaine.
@@ -834,6 +844,15 @@ def main():
 
 ## Pour les aidants qui vivent loin
 Un enfant ou un proche peut commander depuis n'importe quelle ville de France (ou de l'étranger) pour un parent qui vit dans une commune desservie : commande et paiement en ligne ou par téléphone, factures envoyées au payeur, appel du livreur au proche si personne n'ouvre. Chaque commune desservie a sa page : {D['site']}/repas-domicile-<nom-de-la-commune>.html (exemple : {D['site']}/repas-domicile-brulon.html).
+
+## Réponses courtes
+- Qui livre des repas à domicile aux personnes âgées au Mans ? Resto Pickup livre Le Mans et les communes situées jusqu'à 30 km autour chaque mardi : plat et dessert de qualité traiteur à {eur(P)} le repas, livraison plafonnée à {eur(LMAX)} par semaine. {D['site']}/portage-repas-le-mans.html
+- Portage de repas à Laval, Évron, Mayenne, Château-Gontier ou Alençon ? Resto Pickup livre ces villes et leurs alentours chaque jeudi, au même prix. {D['site']}/portage-repas-laval-alencon.html
+- Portage de repas à Sablé-sur-Sarthe ou Loué ? Livraison chaque jeudi. {D['site']}/portage-repas-loue.html
+- Combien coûte une semaine ? Exemple : 5 soirs par semaine reviennent à {eur(tot(5))}, livraison comprise. 7 midis et 7 soirs : {eur(tot(14))}.
+- Faut-il s'engager ? Non : abonnement sans engagement, pause ou arrêt avant le samedi pour la semaine suivante, semaine d'essai possible.
+- Peut-on commander pour un parent quand on habite loin ? Oui : le proche commande et paie en ligne ou par téléphone, les repas sont remis en main propre au parent, les factures sont envoyées au payeur. {D['site']}/repas-domicile-parent-age.html
+- Les repas sont-ils adaptés aux régimes ? Non : menu unique, pas de version sans sel, diabétique ou mixée.
 
 ## Société
 {D['legal']['raison']}, {D['legal']['forme']}, SIREN 572 136 869, nom commercial Resto Pickup.
