@@ -1563,6 +1563,7 @@ p { text-wrap: pretty; }
 .gcard span { color: var(--rp-ardoise); font-size: .95rem; }
 .gcard .gcard__d { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .guide .tbl-wrap { margin: 1rem 0 1.4rem; }
+.guide .answer { background: var(--rp-blanc); border-left: 4px solid var(--rp-marine); border-radius: var(--r); padding: 1rem 1.2rem; margin: 1.2rem 0 1.6rem; }
 .cmp { width: 100%; border-collapse: collapse; min-width: 32rem; font-size: .95rem; }
 .cmp th, .cmp td { text-align: left; padding: .7rem .9rem; border-bottom: 1px solid var(--rp-filet); vertical-align: top; }
 .cmp thead th { font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--rp-ardoise); border-bottom: 2px solid var(--rp-filet); }

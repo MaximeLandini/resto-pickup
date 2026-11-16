@@ -398,12 +398,18 @@ def cmd_link(c):
     # lien unique vers commander.html : la commune passe par data-*, pas par l'URL (évite 400 URL non indexables à crawler)
     return f"commander.html\" data-cp=\"{c['cps'][0]}\" data-commune=\"{E(c['nom'])}"
 
+def guides_block(titre="Nos guides pour les proches"):
+    gs = load_guides()[:3]
+    if not gs: return ""
+    li = "".join(f'<li><a href="{g["slug"]}">{E(g["h1"])}</a></li>' for g in gs)
+    return f'<h2>{titre}</h2><ul>{li}</ul><p><a href="guides.html">Tous les guides pratiques</a></p>'
+
 def commune_page(c):
     z, n, dep = c["zone"], c["nom"], DEPT.get(c["dept"], "")
     cps = ", ".join(sorted(c["cps"]))
     nb = neighbours(c)
     big = nearest_big(c)
-    loc = f"à {round(big[1])} km de {big[0]}" if big and big[1] >= 3 else ""
+    loc = f"à {round(big[1])} km de {big[0]}" if big and big[1] >= 3 and n not in BIG else ""
     veille = ["", "vendredi", "samedi", "dimanche", "lundi", "mardi", "mercredi", "jeudi"][(z["jour"] - D["delaiCommandeJours"] - 1) % 7 + 1]
     faq = [
         (f"Livrez-vous des repas à domicile à {n} ?", f"Oui. Resto Pickup livre {n} ({cps}, {dep}) chaque {z['jourNom']}, en camion réfrigéré. Tous les repas de la semaine sont remis en main propre en une seule fois."),
@@ -436,6 +442,7 @@ def commune_page(c):
     <h2>Ce qui est livré à {E(n)}</h2>
     <ul><li><b>Vous choisissez</b> le midi, le soir ou les deux, de 2 à 7 jours par semaine, ou un jour sur deux.</li><li><b>Une barquette par repas</b>, avec le jour écrit dessus.</li><li><b>Sans engagement</b> : pause pendant une hospitalisation, arrêt d'un simple appel.</li></ul>
     <p>Exemple : 5 soirs par semaine, {eur(tot(5))} livraison comprise. <a href="./#menu">Voir le menu de la semaine</a>.</p>
+    {guides_block()}
   </div>
   <aside class="cm-near"><h2>Communes voisines livrées</h2><ul>{near}</ul><p><a href="communes-livrees.html">Toutes les communes livrées</a></p></aside>
 </div></section>
@@ -506,6 +513,7 @@ def zone_page(z):
   <h2>Des repas à la carte</h2>
   <ul><li><b>Vous choisissez vos repas</b> : le midi, le soir ou les deux.</li><li><b>Vous choisissez vos jours</b> : de 2 à 7 jours par semaine, ou un jour sur deux.</li><li><b>Un seul prix</b> : {eur(P)} le repas, plat et dessert, plus la livraison ({eur(LPR)} par repas, jamais plus de {eur(LMAX)} par semaine). Par exemple, 5 soirs par semaine : {eur(tot(5))} livraison comprise.</li></ul>
   <p>Sans engagement : pause ou arrêt par téléphone avant le samedi pour la semaine suivante. Voir <a href="./#menu">le menu de la semaine</a>.</p>
+  {guides_block("Guides pour bien choisir")}
   <h2>Questions sur {E(first)}</h2>
   <div class="faq" style="margin-top:0">{faq_html(faq)}</div>
 </div></section>
