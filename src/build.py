@@ -2,7 +2,7 @@
 """Génère le site statique Resto Pickup depuis data.json et les gabarits.
 Usage : python3 build.py   (sortie dans ../site et ../artifact)
 Pour changer le menu de la semaine : modifier "menu" dans data.json puis relancer."""
-import json, html, os, shutil, datetime, re
+import hashlib, json, html, os, shutil, datetime, re
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.join(ROOT, "..", "site")
@@ -10,6 +10,7 @@ ART = os.path.join(ROOT, "..", "artifact")
 D = json.load(open(os.path.join(ROOT, "data.json"), encoding="utf-8"))
 E = html.escape
 TODAY = datetime.date.today().isoformat()
+HASHES = {}
 
 def eur(x):
     return f"{x:.2f}".replace(".", ",") + "\u00a0€"
@@ -786,6 +787,7 @@ def main():
         full = (f'<!doctype html>\n<html lang="fr">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
                 f'<meta name="claude:viewport-fit-sides" content="cover">\n{head_bits(slug, title, desc, ld)}\n</head>\n<body>\n{content}\n{scripts}\n</body>\n</html>\n')
         full = frtypo(full)
+        HASHES[slug] = hashlib.sha1(full.encode("utf-8")).hexdigest()[:16]
         open(os.path.join(SITE, slug), "w", encoding="utf-8").write(full)
         if slug == "index.html":
             frag = (f'<meta name="claude:viewport-fit-sides" content="cover">\n{head_bits(slug, title, desc, ld)}\n'
@@ -813,7 +815,16 @@ def main():
         shutil.copy(os.path.join(SITE, f), os.path.join(ART, f))
     # SEO / GEO
     urls = [p[0] for p in pages if p[0] not in ("mentions-legales.html", "conditions-generales.html", "politique-confidentialite.html", "commander.html", "mon-compte.html", "equipe.html", "admin.html")]
-    sm = "".join(f"<url><loc>{D['site']}/{'' if u=='index.html' else u}</loc><lastmod>{TODAY}</lastmod></url>" for u in urls)
+    # lastmod = date du dernier changement réel de la page (empreinte stockée dans src/lastmod.json),
+    # pas la date du build : Google ignore les lastmod qui changent à chaque génération
+    lmf = os.path.join(ROOT, "lastmod.json")
+    try: LM = json.load(open(lmf, encoding="utf-8"))
+    except Exception: LM = {}
+    for u in urls:
+        if LM.get(u, {}).get("h") != HASHES.get(u): LM[u] = {"h": HASHES.get(u), "d": TODAY}
+    if os.environ.get("RP_LIVE") != "1":
+        open(lmf, "w", encoding="utf-8").write(json.dumps({u: LM[u] for u in urls}, ensure_ascii=False, indent=0, sort_keys=True) + "\n")
+    sm = "".join(f"<url><loc>{D['site']}/{'' if u=='index.html' else u}</loc><lastmod>{LM[u]['d']}</lastmod></url>" for u in urls)
     open(os.path.join(SITE, "sitemap.xml"), "w").write(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{sm}</urlset>\n')
     open(os.path.join(SITE, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /equipe.html\nDisallow: /admin.html\n\nSitemap: {D['site']}/sitemap.xml\n")
     communes = {z["nom"]: ", ".join(sorted({c[0] for c in z["communes"]})) for z in D["zones"]}
