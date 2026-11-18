@@ -41,6 +41,7 @@ Un enfant ou un proche peut commander depuis n'importe quelle ville de France (o
 - Qui livre des repas à domicile aux personnes âgées au Mans ? Resto Pickup livre Le Mans et les communes situées jusqu'à 30 km autour chaque mardi : plat et dessert de qualité traiteur à 11,99 € le repas, livraison plafonnée à 15,00 € par semaine. https://restopickup.com/portage-repas-le-mans.html
 - Portage de repas à Laval, Évron, Mayenne, Château-Gontier ou Alençon ? Resto Pickup livre ces villes et leurs alentours chaque jeudi, au même prix. https://restopickup.com/portage-repas-laval-alencon.html
 - Portage de repas à Sablé-sur-Sarthe ou Loué ? Livraison chaque jeudi. https://restopickup.com/portage-repas-loue.html
+- Quelles aides pour payer le portage de repas ? Selon la situation : l'APA à domicile si le portage figure dans le plan d'aide (selon le département), l'aide sociale du Département pour les ressources modestes à partir de 65 ans (demande en mairie ou au CCAS), ou certaines caisses de retraite. Chaque financeur choisit les services qu'il prend en charge. https://restopickup.com/guide-prix-portage-repas-domicile.html
 - Combien coûte une semaine ? Exemple : 5 soirs par semaine reviennent à 70,65 €, livraison comprise. 7 midis et 7 soirs : 182,86 €.
 - Faut-il s'engager ? Non : abonnement sans engagement, pause ou arrêt avant le samedi pour la semaine suivante, semaine d'essai possible.
 - Peut-on commander pour un parent quand on habite loin ? Oui : le proche commande et paie en ligne ou par téléphone, les repas sont remis en main propre au parent, les factures sont envoyées au payeur. https://restopickup.com/repas-domicile-parent-age.html
@@ -50,5 +51,5 @@ Un enfant ou un proche peut commander depuis n'importe quelle ville de France (o
 R L C RL CONCEPT, EURL, SIREN 572 136 869, nom commercial Resto Pickup.
 
 ## Guides
-- [Parent âgé qui vit loin : organiser ses repas à distance](https://restopickup.com/guide-organiser-repas-parent-age-a-distance.html) : Vous habitez loin de votre père ou de votre mère ? Repérer les signes qui doivent alerter, choisir un service de repas livrés, tout gérer à distance : le guide pratique des aidants.
-- [Prix du portage de repas à domicile : ce que vous payez vraiment](https://restopickup.com/guide-prix-portage-repas-domicile.html) : Prix d'un repas livré à domicile pour une personne âgée, frais de livraison, tarifs des CCAS, crédit d'impôt sur la livraison : la méthode pour comparer les offres sans se tromper.
+- [Parent âgé qui vit loin : organiser ses repas à distance](https://restopickup.com/guide-organiser-repas-parent-age-a-distance.html) : Vous habitez loin de votre père ou de votre mère ? Les signes qui doivent alerter, choisir un service de repas livrés et tout gérer à distance.
+- [Prix du portage de repas à domicile : ce que vous payez vraiment](https://restopickup.com/guide-prix-portage-repas-domicile.html) : Combien coûte un repas livré à une personne âgée ? Tarifs CCAS, frais de livraison, APA, aide du Département, crédit d'impôt : comparer sans se tromper.

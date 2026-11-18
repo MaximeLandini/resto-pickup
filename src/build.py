@@ -405,6 +405,12 @@ def guides_block(titre="Nos guides pour les proches"):
     li = "".join(f'<li><a href="{g["slug"]}">{E(g["h1"])}</a></li>' for g in gs)
     return f'<h2>{titre}</h2><ul>{li}</ul><p><a href="guides.html">Tous les guides pratiques</a></p>'
 
+def a_(n):
+    "Préposition « à » contractée : au Mans, aux Mées, à Laval"
+    if n.startswith("Le "): return "au " + n[3:]
+    if n.startswith("Les "): return "aux " + n[4:]
+    return "à " + n
+
 def commune_page(c):
     z, n, dep = c["zone"], c["nom"], DEPT.get(c["dept"], "")
     cps = ", ".join(sorted(c["cps"]))
@@ -413,10 +419,10 @@ def commune_page(c):
     loc = f"à {round(big[1])} km de {big[0]}" if big and big[1] >= 3 and n not in BIG else ""
     veille = ["", "vendredi", "samedi", "dimanche", "lundi", "mardi", "mercredi", "jeudi"][(z["jour"] - D["delaiCommandeJours"] - 1) % 7 + 1]
     faq = [
-        (f"Livrez-vous des repas à domicile à {n} ?", f"Oui. Resto Pickup livre {n} ({cps}, {dep}) chaque {z['jourNom']}, en camion réfrigéré. Tous les repas de la semaine sont remis en main propre en une seule fois."),
-        (f"Combien coûte le portage de repas à {n} ?", f"{eur(P)} le repas, plat et dessert. La livraison coûte {eur(LPR)} par repas, avec un minimum de {eur(LMIN)} et jamais plus de {eur(LMAX)} par semaine. Par exemple, 5 soirs par semaine reviennent à {eur(tot(5))}, livraison comprise."),
-        (f"J'habite loin, puis-je commander pour mon parent à {n} ?", f"Oui, c'est le cas de beaucoup de nos clients. Vous commandez et payez en ligne ou par téléphone depuis n'importe où en France, les repas sont livrés chez votre parent à {n}, et les factures arrivent chez vous. Si personne n'ouvre, le livreur appelle votre parent, puis vous."),
-        (f"Quand commander pour une livraison à {n} ?", f"Au plus tard {D['delaiCommandeJours']} jours avant le {z['jourNom']}, soit le {veille} précédent. Ensuite, la livraison a lieu chaque {z['jourNom']} sans rien refaire."),
+        (f"Livrez-vous des repas à domicile {a_(n)} ?", f"Oui. Resto Pickup livre {n} ({cps}, {dep}) chaque {z['jourNom']}, en camion réfrigéré. Tous les repas de la semaine sont remis en main propre en une seule fois."),
+        (f"Combien coûte le portage de repas {a_(n)} ?", f"{eur(P)} le repas, plat et dessert. La livraison coûte {eur(LPR)} par repas, avec un minimum de {eur(LMIN)} et jamais plus de {eur(LMAX)} par semaine. Par exemple, 5 soirs par semaine reviennent à {eur(tot(5))}, livraison comprise."),
+        (f"J'habite loin, puis-je commander pour mon parent {a_(n)} ?", f"Oui, c'est le cas de beaucoup de nos clients. Vous commandez et payez en ligne ou par téléphone depuis n'importe où en France, les repas sont livrés chez votre parent {a_(n)}, et les factures arrivent chez vous. Si personne n'ouvre, le livreur appelle votre parent, puis vous."),
+        (f"Quand commander pour une livraison {a_(n)} ?", f"Au plus tard {D['delaiCommandeJours']} jours avant le {z['jourNom']}, soit le {veille} précédent. Ensuite, la livraison a lieu chaque {z['jourNom']} sans rien refaire."),
     ]
     near = "".join(f'<li><a href="{x["page"]}">{E(x["nom"])}</a> <small>{round(km(c["xy"], x["xy"]))} km</small></li>' for x in nb)
     day = ["", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"][z["jour"]]
@@ -424,8 +430,8 @@ def commune_page(c):
 <section class="section cm-hero" style="padding-top:1.5rem"><div class="wrap split">
   <div class="stack">
     <p class="eyebrow">{E(dep)} · {E(cps)}{(" · " + E(loc)) if loc else ""}</p>
-    <h1>Portage de repas à domicile à {E(n)}</h1>
-    <p class="lead">Chaque {day}, notre camion réfrigéré passe à {E(n)} et remet en main propre tous les repas de la semaine : un plat et son dessert, à réchauffer en quelques minutes au micro-ondes. Pour vous, ou pour votre père ou votre mère.</p>
+    <h1>Portage de repas à domicile {E(a_(n))}</h1>
+    <p class="lead">Chaque {day}, notre camion réfrigéré passe {E(a_(n))} et remet en main propre tous les repas de la semaine : un plat et son dessert, à réchauffer en quelques minutes au micro-ondes. Pour vous, ou pour votre père ou votre mère.</p>
     <div class="row"><a class="btn btn--main btn--lg" href="{cmd_link(c)}">Commander pour {E(n)}</a><button type="button" class="btn btn--ghost btn--lg" data-rappel="parent">On vous rappelle</button></div>
   </div>
   <ul class="cm-facts">
@@ -437,10 +443,10 @@ def commune_page(c):
 </div></section>
 <section class="section section--sunk"><div class="wrap cm-grid">
   <div class="prose">
-    <h2>Votre parent vit à {E(n)}, vous non ?</h2>
-    <p>Vous habitez à Paris, Nantes, Lyon, Marseille ou à l'étranger, et vous voulez que votre parent mange bien chez lui, à {E(n)}. Vous commandez en ligne ou au {E(D['tel'])}, vous payez à distance, et nous livrons. Les factures arrivent chez vous, le menu de la semaine aussi.</p>
+    <h2>Votre parent vit {E(a_(n))}, vous non ?</h2>
+    <p>Vous habitez à Paris, Nantes, Lyon, Marseille ou à l'étranger, et vous voulez que votre parent mange bien chez lui, {E(a_(n))}. Vous commandez en ligne ou au {E(D['tel'])}, vous payez à distance, et nous livrons. Les factures arrivent chez vous, le menu de la semaine aussi.</p>
     <p>Le livreur sonne et remet le carton en main propre, jamais devant la porte. Il range les repas au frigo si on le lui demande. Si personne n'ouvre, il appelle votre parent, puis vous.</p>
-    <h2>Ce qui est livré à {E(n)}</h2>
+    <h2>Ce qui est livré {E(a_(n))}</h2>
     <ul><li><b>Vous choisissez</b> le midi, le soir ou les deux, de 2 à 7 jours par semaine, ou un jour sur deux.</li><li><b>Une barquette par repas</b>, avec le jour écrit dessus.</li><li><b>Sans engagement</b> : pause pendant une hospitalisation, arrêt d'un simple appel.</li></ul>
     <p>Exemple : 5 soirs par semaine, {eur(tot(5))} livraison comprise. <a href="./#menu">Voir le menu de la semaine</a>.</p>
     {guides_block()}
@@ -448,13 +454,14 @@ def commune_page(c):
   <aside class="cm-near"><h2>Communes voisines livrées</h2><ul>{near}</ul><p><a href="communes-livrees.html">Toutes les communes livrées</a></p></aside>
 </div></section>
 <section class="section"><div class="wrap prose">
-  <h2>Questions sur la livraison à {E(n)}</h2>
+  <h2>Questions sur la livraison {E(a_(n))}</h2>
   <div class="faq" style="margin-top:0">{faq_html(faq)}</div>
 </div></section>
 <section class="section"><div class="wrap"><div class="callout"><div><h2>Commander pour {E(n)}</h2><p>Une personne vous répond du lundi au vendredi.</p></div><a class="big-tel" href="tel:{D['telHref']}">{E(D['tel'])}</a></div></div></section>"""
-    title = f"Portage de repas à domicile à {n} ({c['cps'][0]}) | Resto Pickup"
-    desc = f"Repas livrés à domicile à {n} ({dep}) chaque {day} : plat et dessert de qualité traiteur, {eur(P)} le repas, livraison {eur(LMAX)} max. par semaine. Idéal pour un parent âgé, commande possible à distance."
-    svc = {"@type": "Service", "name": f"Portage de repas à domicile à {n}", "serviceType": "Livraison de repas à domicile", "provider": {"@id": D["site"] + "/#entreprise"},
+    title = f"Portage de repas à domicile {a_(n)} ({c['cps'][0]}) | Resto Pickup"
+    if len(title) > 62: title = f"Portage de repas {a_(n)} ({c['cps'][0]}) | Resto Pickup"
+    desc = f"Repas livrés à domicile {a_(n)} ({dep}) chaque {day} : plat et dessert de qualité traiteur, {eur(P)} le repas, livraison {eur(LMAX)} max. par semaine. Idéal pour un parent âgé, commande possible à distance."
+    svc = {"@type": "Service", "name": f"Portage de repas à domicile {a_(n)}", "serviceType": "Livraison de repas à domicile", "provider": {"@id": D["site"] + "/#entreprise"},
            "areaServed": {"@type": "City", "name": n, "address": {"@type": "PostalAddress", "postalCode": c["cps"][0], "addressRegion": dep, "addressCountry": "FR"}},
            "offers": {"@type": "Offer", "price": f"{P:.2f}", "priceCurrency": "EUR", "description": "Repas (plat et dessert), livraison en sus plafonnée à 15 € par semaine"}}
     ld = [ORG, svc, faq_ld(faq), crumbs_ld([("Accueil", ""), (z["nom"], z["page"]), (n, c["page"])])]
@@ -480,8 +487,8 @@ def zone_page(z):
     first = [c[0] for c in z["communes"]][0]
     names = sorted({c[0] for c in z["communes"]})
     faq = [
-        (f"Livrez-vous les repas à domicile à {first} ?", f"Oui. Nous livrons {first} et {len(names)-1} communes autour chaque {z['jourNom']}, en camion réfrigéré, avec tous les repas de la semaine."),
-        (f"Quel est le prix du portage de repas à {first} ?", f"{eur(P)} le repas, plat et dessert, plus la livraison : {eur(LPR)} par repas, plafonnée à {eur(LMAX)} par semaine. Vous choisissez le nombre de repas par semaine, midi, soir ou les deux."),
+        (f"Livrez-vous les repas à domicile {a_(first)} ?", f"Oui. Nous livrons {first} et {len(names)-1} communes autour chaque {z['jourNom']}, en camion réfrigéré, avec tous les repas de la semaine."),
+        (f"Quel est le prix du portage de repas {a_(first)} ?", f"{eur(P)} le repas, plat et dessert, plus la livraison : {eur(LPR)} par repas, plafonnée à {eur(LMAX)} par semaine. Vous choisissez le nombre de repas par semaine, midi, soir ou les deux."),
         (f"Jusqu'à quand commander pour être livré ce {z['jourNom']} ?", f"Commandez au moins {D['delaiCommandeJours']} jours avant le {z['jourNom']}. Au-delà, la première livraison a lieu le {z['jourNom']} suivant."),
     ]
     bigs = [c for c in COMMUNES.values() if c["zone"] is z and c["nom"] in BIG and c["nom"] != first]
@@ -494,7 +501,7 @@ def zone_page(z):
   <div class="stack">
     <p class="eyebrow">Livraison chaque {z['jourNom']}</p>
     <h1>Portage de repas à domicile : {E(z['nom'])}</h1>
-    <p class="lead">Chaque {z['jourNom']}, nous livrons à {E(first)} et dans les communes voisines tous les repas de la semaine : plat et dessert de qualité traiteur, prêts à réchauffer au micro-ondes, pour {eur(P)} le repas, et une livraison plafonnée à {eur(LMAX)} par semaine.</p>
+    <p class="lead">Chaque {z['jourNom']}, nous livrons {E(a_(first))} et dans les communes voisines tous les repas de la semaine : plat et dessert de qualité traiteur, prêts à réchauffer au micro-ondes, pour {eur(P)} le repas, et une livraison plafonnée à {eur(LMAX)} par semaine.</p>
     <div class="row"><a class="btn btn--main" href="commander.html#f-soir-1">Commander</a><button type="button" class="btn btn--ghost" data-rappel="parent">On vous rappelle</button></div>
   </div>
   <form class="zone" novalidate style="margin-top:0">
@@ -520,7 +527,7 @@ def zone_page(z):
 </div></section>
 <section class="section"><div class="wrap"><div class="callout"><div><h2>Commander par téléphone</h2><p>Du lundi au vendredi.</p></div><a class="big-tel" href="tel:{D['telHref']}">{E(D['tel'])}</a></div></div></section>"""
     title = f"Portage de repas à domicile : {z['nom']} | Resto Pickup"
-    desc = f"Livraison de repas à domicile à {first} et {len(names)-1} communes autour, chaque {z['jourNom']}. Plat et dessert de qualité traiteur, {eur(P)} le repas, livraison plafonnée à {eur(LMAX)} par semaine. Sans engagement."
+    desc = f"Livraison de repas à domicile {a_(first)} et {len(names)-1} communes autour, chaque {z['jourNom']}. Plat et dessert de qualité traiteur, {eur(P)} le repas, livraison plafonnée à {eur(LMAX)} par semaine. Sans engagement."
     svc = {"@type": "Service", "name": f"Portage de repas à domicile : {z['nom']}", "serviceType": "Livraison de repas à domicile", "provider": {"@id": D["site"] + "/#entreprise"},
            "areaServed": [{"@type": "City", "name": n} for n in names],
            "offers": {"@type": "Offer", "price": f"{P:.2f}", "priceCurrency": "EUR", "description": "Repas (plat et dessert), livraison en sus plafonnée à 15 € par semaine"}}
@@ -868,6 +875,7 @@ Un enfant ou un proche peut commander depuis n'importe quelle ville de France (o
 - Qui livre des repas à domicile aux personnes âgées au Mans ? Resto Pickup livre Le Mans et les communes situées jusqu'à 30 km autour chaque mardi : plat et dessert de qualité traiteur à {eur(P)} le repas, livraison plafonnée à {eur(LMAX)} par semaine. {D['site']}/portage-repas-le-mans.html
 - Portage de repas à Laval, Évron, Mayenne, Château-Gontier ou Alençon ? Resto Pickup livre ces villes et leurs alentours chaque jeudi, au même prix. {D['site']}/portage-repas-laval-alencon.html
 - Portage de repas à Sablé-sur-Sarthe ou Loué ? Livraison chaque jeudi. {D['site']}/portage-repas-loue.html
+- Quelles aides pour payer le portage de repas ? Selon la situation : l'APA à domicile si le portage figure dans le plan d'aide (selon le département), l'aide sociale du Département pour les ressources modestes à partir de 65 ans (demande en mairie ou au CCAS), ou certaines caisses de retraite. Chaque financeur choisit les services qu'il prend en charge. {D['site']}/guide-prix-portage-repas-domicile.html
 - Combien coûte une semaine ? Exemple : 5 soirs par semaine reviennent à {eur(tot(5))}, livraison comprise. 7 midis et 7 soirs : {eur(tot(14))}.
 - Faut-il s'engager ? Non : abonnement sans engagement, pause ou arrêt avant le samedi pour la semaine suivante, semaine d'essai possible.
 - Peut-on commander pour un parent quand on habite loin ? Oui : le proche commande et paie en ligne ou par téléphone, les repas sont remis en main propre au parent, les factures sont envoyées au payeur. {D['site']}/repas-domicile-parent-age.html
